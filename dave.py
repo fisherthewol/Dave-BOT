@@ -41,4 +41,4 @@ async def news(ctx):
 #            await client.say(bbc.entries[0]['link'])
 #            await client.say(game.entries[0]['link'])
 
-client.run("MzIxNjg3OTA1NTQ4MzY5OTIw.DBhqvQ.YJ2cqZEKKq3xy7ObST5bPEit38o")
+client.run("")
