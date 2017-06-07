@@ -6,7 +6,8 @@ a = 0
 
 description = "This is a WIP bot to work discord."
 bot_prefix = "!"
-global client = commands.Bot(description=description, command_prefix=bot_prefix)
+global client
+client = commands.Bot(description=description, command_prefix=bot_prefix)
 reddit = praw.Reddit('prequelbot',
                      user_agent='davebot:v1:t3rr0r_f3rr3t')
 subreddit = reddit.subreddit("prequelmemes")
@@ -50,7 +51,7 @@ class Dave:
             print("ID : {}" .format(client.user.id))
 
         @client.command(pass_context=True)
-        async def help(ctx):
+        async def helf(ctx):
             print("!help")
             await client.say("\nAvailible commands:\n"
                              "!help -- What you're seeing now.\n"
@@ -72,12 +73,12 @@ class Dave:
             print("!prequel")
             # Always get top post at time.
             self.a= 0
-            topbot = prawin()
+            topbot = main.prawin()
             await client.say(" \nImage: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              topbot["img"],topbot["title"],topbot["id"]))
 
-        client.run("blank")
+        client.run("MzIxNzA0NTQyNDA2NDQzMDA5.DBnQSA.nTlSsh4dtlpatkhvNRWzRqIHqjE")
 
 
 if __name__ == "__main__":
