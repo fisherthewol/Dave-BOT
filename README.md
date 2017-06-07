@@ -3,6 +3,10 @@ A Discord bot based on Discord.py.
 For our server, but could work for other servers.  
 *****
 # Quickstart  
+The following is a quickstart guide to getting the bot running and adding commands.  
+## Starting the bot as is.  
+Generate a new app at the discord website, and create a user on it. Copy the token and set it as a string inside ```client.run("")```.  
+## Adding Commands  
 Find the main file (currently dave.py), add a  
 ```
 @client.command(pass_context=True)
