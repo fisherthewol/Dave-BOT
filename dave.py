@@ -1,8 +1,15 @@
-import discord, feedparser, datetime, praw, time
+import discord, feedparser, praw, time
 from discord.ext import commands
 
 global a
 a = 0
+
+description = "This is a WIP bot to work discord."
+bot_prefix = "!"
+global client = commands.Bot(description=description, command_prefix=bot_prefix)
+reddit = praw.Reddit('prequelbot',
+                     user_agent='davebot:v1:t3rr0r_f3rr3t')
+subreddit = reddit.subreddit("prequelmemes")
 
 def logger (msg):
     ti = time.strftime("%H:%M:%S")
@@ -14,7 +21,6 @@ def logger (msg):
         with open("log.txt", "a+") as f:
             f.write("{}; {}: {}\n".format(da, ti, msg))
 
-
 class Dave:
     """Main class for BOT"""
     def __init__(self):
@@ -22,16 +28,6 @@ class Dave:
         self.topattr = {"title": "",
                         "img": "",
                         "id": ""}
-
-    now = datetime.datetime.now()
-    h = now.hour
-    description = "This is a WIP bot to work discord."
-    bot_prefix = "!"
-    client = commands.Bot(description=description, command_prefix=bot_prefix)
-    reddit = praw.Reddit('prequelbot',
-                         user_agent='davebot:v1:t3rr0r_f3rr3t')
-    subreddit = reddit.subreddit("prequelmemes")
-
 
     def prawin(self):
         topsub = subreddit.top("day", limit=1)
