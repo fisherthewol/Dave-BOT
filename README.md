@@ -5,7 +5,7 @@ For our server, but could work for other servers.
 # Quickstart  
 The following is a quickstart guide to getting the bot running and adding commands.  
 ## Starting the bot as is.  
-Generate a new app at the discord website, and create a user on it. Copy the token and set it as a string inside ```client.run("")```. 
+Generate a new app at the discord website, and create a user on it. Copy the token and set it as a string inside ```client.run("")```.  
 For the reddit function to work, you need to create a reddit app on reddit and create a praw.ini with the details from that. See https://praw.readthedocs.io/en/latest/ for more details.
 ## Adding Commands  
 Find the main file (currently dave.py), add a  
