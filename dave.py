@@ -81,12 +81,11 @@ class Dave:
                              "https://redd.it/{}\n".format(
                              topbot["img"],topbot["title"],topbot["id"]))
 
-        client.run("MzIxNzA0NTQyNDA2NDQzMDA5.DBh6NQ.-Stu3FoyzlnfGbRM5hJAROAhZII")
+        client.run("blank")
 
 
 if __name__ == "__main__":
     logger("Main File; discout is being called.")
     print("Main File; discout is being called.")
-    try:
-        main = Dave()
-        main.discout()
+    main = Dave()
+    main.discout()
