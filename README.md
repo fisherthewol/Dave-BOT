@@ -3,13 +3,18 @@ A Discord bot based on Discord.py.
 For our server, but could work for other servers.  
 *****
 # Quickstart  
+The following is a quickstart guide to getting the bot running and adding commands.  
+## Starting the bot as is.  
+Generate a new app at the discord website, and create a user on it. Copy the token and set it as a string inside ```client.run("")```.  
+For the reddit function to work, you need to create a reddit app on reddit and create a praw.ini with the details from that. See https://praw.readthedocs.io/en/latest/ for more details.
+## Adding Commands  
 Find the main file (currently dave.py), add a  
 ```
 @client.command(pass_context=True)
 async def cmd(ctx):
     stuff
 ```   
-where cmd is your command to put after !, and stuff is what to do when that happens.   
+where ```cmd``` is your command to put after !, and ```stuff``` is what to do when that happens.   
 stuff can be anything, we recommend using ```await client.say(string)``` for a basic thing.  
 For example:  
 ```
