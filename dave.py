@@ -1,4 +1,4 @@
-import discord, feedparser, praw, time
+import discord, feedparser, praw
 from discord.ext import commands
 
 global a
@@ -8,19 +8,11 @@ description = "This is a WIP bot to work discord."
 bot_prefix = "!"
 global client
 client = commands.Bot(description=description, command_prefix=bot_prefix)
+
 reddit = praw.Reddit('prequelbot',
                      user_agent='davebot:v1:t3rr0r_f3rr3t')
 subreddit = reddit.subreddit("prequelmemes")
 
-def logger (msg):
-    ti = time.strftime("%H:%M:%S")
-    da = time.strftime("%Y%m%d")
-    if a == 0:
-        with open("log.txt", "w+") as f:
-            f.write("{}; {}: {}\n".format(da, ti, msg))
-    elif a == 1:
-        with open("log.txt", "a+") as f:
-            f.write("{}; {}: {}\n".format(da, ti, msg))
 
 class Dave:
     """Main class for BOT"""
@@ -39,7 +31,6 @@ class Dave:
                 oldsub["title"] = str(submission.title)
                 oldsub["img"] = str(submission.url)
                 oldsub["id"] = str(submission.id)
-            logger("init, returning top now")
             print("init, returning top now")
             return oldsub
 
@@ -78,11 +69,10 @@ class Dave:
                              "https://redd.it/{}\n".format(
                              topbot["img"],topbot["title"],topbot["id"]))
 
-        client.run("MzIxNzA0NTQyNDA2NDQzMDA5.DBnQSA.nTlSsh4dtlpatkhvNRWzRqIHqjE")
+        client.run("")
 
 
 if __name__ == "__main__":
-    logger("Main File; discout is being called.")
     print("Main File; discout is being called.")
     main = Dave()
     main.discout()
