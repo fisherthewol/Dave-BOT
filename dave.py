@@ -1,37 +1,35 @@
-import discord, feedparser, praw
+import discord, feedparser, praw  # Need installing.
+import logging  # Builtins.
 from discord.ext import commands
 
-description = "This is a WIP bot to work discord."
+logging.basicConfig(level=logging.WARNING)
+
+# Sets up discord stuff.
+description = "This is a WIP bot to work discord. Use !bothelp."
 bot_prefix = "!"
 global client
 client = commands.Bot(description=description, command_prefix=bot_prefix)
 
+# Initilaises a praw isntance
 reddit = praw.Reddit('prequelbot',
-                     user_agent='davebot:v1:t3rr0r_f3rr3t')
+                     user_agent='davebot:v1.1:t3rr0r_f3rr3t')
 subreddit = reddit.subreddit("prequelmemes")
 
 
 class Dave:
-    """Main class for BOT"""
-    def __init__(self):
-        self.a = 0
-        self.topattr = {"title": "",
-                        "img": "",
-                        "id": ""}
-
+    """Main class for BOT."""
     def prawin(self):
+        """Praw-Based function for /r/prequelmemes."""
         topsub = subreddit.top("day", limit=1)
-        oldsub = {"title": "", "img": "", "id": ""}
-        self.topattr = {"title": "", "img": "", "id": ""}
-        if self.a == 0:
-            for submission in topsub:
-                oldsub["title"] = str(submission.title)
-                oldsub["img"] = str(submission.url)
-                oldsub["id"] = str(submission.id)
-            print("init, returning top now")
-            return oldsub
+        post = {"title": "", "img": "", "id": ""}
+        for submission in topsub:
+            post["title"] = str(submission.title)
+            post["img"] = str(submission.url)
+            post["id"] = str(submission.id)
+        return post
 
     def discout(self):
+        """Provides disocrd output."""
         @client.event
         async def on_ready():
             print("Login Successful")
@@ -39,10 +37,10 @@ class Dave:
             print("ID : {}" .format(client.user.id))
 
         @client.command(pass_context=True)
-        async def helf(ctx):
-            print("!help")
+        async def bothelp(ctx):
+            print("!bothelp")
             await client.say("\nAvailible commands:\n"
-                             "!help -- What you're seeing now.\n"
+                             "!bothelp -- What you're seeing now.\n"
                              "!news -- See top news stories now.\n"
                              "!prequel -- See top post from /r/prequelmemes.\n")
 
@@ -59,8 +57,6 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            # Always get top post at time.
-            self.a= 0
             topbot = main.prawin()
             await client.say(" \nImage: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
