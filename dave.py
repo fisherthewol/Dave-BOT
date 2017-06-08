@@ -1,9 +1,6 @@
 import discord, feedparser, praw
 from discord.ext import commands
 
-global a
-a = 0
-
 description = "This is a WIP bot to work discord."
 bot_prefix = "!"
 global client
