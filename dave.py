@@ -67,7 +67,7 @@ class Dave:
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
 
-        client.run("MzIxNzA0NTQyNDA2NDQzMDA5.DBnQSA.nTlSsh4dtlpatkhvNRWzRqIHqjE")
+        client.run("")
 
 
 if __name__ == "__main__":
