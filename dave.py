@@ -10,16 +10,17 @@ bot_prefix = "!"
 global client
 client = commands.Bot(description=description, command_prefix=bot_prefix)
 
-# Initilaises a praw isntance
-reddit = praw.Reddit('prequelbot',
-                     user_agent='davebot:v1.1:t3rr0r_f3rr3t')
-subreddit = reddit.subreddit("prequelmemes")
-
-
 class Dave:
     """Main class for BOT."""
     def prawin(self):
         """Praw-Based function for /r/prequelmemes."""
+        """
+           reddit is a PRAW instance we operate on;
+           Pulls client_id & _secret from praw.ini.
+        """
+        reddit = praw.Reddit('prequelbot',
+                             user_agent='davebot:v1.2:t3rr0r_f3rr3t')
+        subreddit = reddit.subreddit("prequelmemes")
         topsub = subreddit.top("day", limit=1)
         post = {"title": "", "img": "", "id": ""}
         for submission in topsub:
@@ -66,7 +67,7 @@ class Dave:
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
 
-        client.run("")
+        client.run("MzIxNzA0NTQyNDA2NDQzMDA5.DBnQSA.nTlSsh4dtlpatkhvNRWzRqIHqjE")
 
 
 if __name__ == "__main__":
