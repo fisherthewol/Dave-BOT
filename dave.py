@@ -29,13 +29,15 @@ class Dave:
         return post
 
     def discout(self):
-        """Provides disocrd output."""
+        """Provides discord output."""
+        # V Provides output on Successful Launch.
         @client.event
         async def on_ready():
             print("Login Successful")
             print("Name : {}" .format(client.user.name))
             print("ID : {}" .format(client.user.id))
 
+        # V Provides !bothelp command.
         @client.command(pass_context=True)
         async def bothelp(ctx):
             print("!bothelp")
@@ -44,6 +46,7 @@ class Dave:
                              "!news -- See top news stories now.\n"
                              "!prequel -- See top post from /r/prequelmemes.\n")
 
+        # V provides !news
         @client.command(pass_context=True)
         async def news(ctx):
             print("!news")
@@ -54,13 +57,14 @@ class Dave:
             await client.say(bbc.entries[0]['link'])
             await client.say(game.entries[0]['link'])
 
+        # V Proves !prequel command.
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            topbot = main.prawin()
-            await client.say(" \nImage: {}\nTitle = {}\nComments = "
+            post = main.prawin()
+            await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
-                             topbot["img"],topbot["title"],topbot["id"]))
+                             post["img"],post["title"],post["id"]))
 
         client.run("")
 
