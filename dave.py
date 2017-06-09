@@ -31,14 +31,14 @@ class Dave:
 
     def discout(self):
         """Provides discord output."""
-        # V Provides output on Successful Launch.
+        # V provides output on Successful Launch.
         @client.event
         async def on_ready():
             print("Login Successful")
             print("Name : {}" .format(client.user.name))
             print("ID : {}" .format(client.user.id))
 
-        # V Provides !bothelp command.
+        # V provides !bothelp command.
         @client.command(pass_context=True)
         async def bothelp(ctx):
             print("!bothelp")
@@ -58,7 +58,7 @@ class Dave:
             await client.say(bbc.entries[0]['link'])
             await client.say(game.entries[0]['link'])
 
-        # V Proves !prequel command.
+        # V provides !prequel command.
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
@@ -66,6 +66,13 @@ class Dave:
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
+
+        # V provides !pie command.
+        @client.command(pass_context=True)
+        async def pie(ctx):
+            print("!pie")
+            pie = feedparser.parse("https://www.youtube.com/user/tomwalker78")
+            await client.say(pie.entries[0]['link'])
 
         client.run("")
 
