@@ -93,7 +93,7 @@ class Dave:
                              post["img"],post["title"],post["id"]))
 
 
-        client.run("MzIxNjgwNDExNDgwNjg2NTk0.DB1Q0g.oVVKQQHpdznXqjVhHN8J-cf3DA8")
+        client.run("")
 
 
 if __name__ == "__main__":
