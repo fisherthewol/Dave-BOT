@@ -13,16 +13,22 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 class Dave:
     """Main class for BOT."""
     def prawin(self, sub, sort):
-        """Praw-Based function for /r/prequelmemes."""
-        """
-           reddit is a PRAW instance we operate on;
-           Pulls client_id & _secret from praw.ini.
+        """Praw-Based function, reads from reddit.
+           reddit is a PRAW instance we operate on; Pulls client_id & _secret
+           from praw.ini.
+           Always returns top/first post for given sort.
         """
         reddit = praw.Reddit('prequelbot',
-                             user_agent='davebot:v1.2:t3rr0r_f3rr3t')
+                             user_agent='davebot:v1.3:t3rr0r_f3rr3t')
         subreddit = reddit.subreddit(str(sub))
         if sort == "top":
             toppost = subreddit.top("day", limit=1)
+        elif sort == "new":
+            toppost = subreddit.new(limit=1)
+        elif sort == "rising":
+            toppost = subreddit.rising(limit=1)
+        elif sort == "hot":
+            toppost = subreddit.hot(limit=1)
         post = {"title": "", "img": "", "id": ""}
         for submission in toppost:
             post["title"] = str(submission.title)
@@ -78,7 +84,7 @@ class Dave:
             pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await client.say(pie.entries[0]['link'])
 
-        # V provides !subreddit command.
+        # V provides !subreddit command group.
         @client.group(pass_context=True)
         async def subreddit(ctx):
             print("!subreddit")
@@ -87,6 +93,7 @@ class Dave:
 
         @subreddit.command()
         async def top(sub: str):
+            """sub needs to be string otherwise it'll break."""
             print("!subreddit top")
             post = main.prawin(sub, top)
             await client.say("Image: {}\nTitle = {}\nComments = "
