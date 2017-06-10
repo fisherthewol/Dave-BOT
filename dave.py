@@ -12,7 +12,7 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 class Dave:
     """Main class for BOT."""
-    def prawin(self):
+    def prawin(self,sub):
         """Praw-Based function for /r/prequelmemes."""
         """
            reddit is a PRAW instance we operate on;
@@ -20,7 +20,7 @@ class Dave:
         """
         reddit = praw.Reddit('prequelbot',
                              user_agent='davebot:v1.2:t3rr0r_f3rr3t')
-        subreddit = reddit.subreddit("prequelmemes")
+        subreddit = reddit.subreddit(sub)
         topsub = subreddit.top("day", limit=1)
         post = {"title": "", "img": "", "id": ""}
         for submission in topsub:
@@ -31,6 +31,7 @@ class Dave:
 
     def discout(self):
         """Provides discord output."""
+
         # V provides output on Successful Launch.
         @client.event
         async def on_ready():
@@ -47,7 +48,7 @@ class Dave:
                              "!news -- See top news stories now.\n"
                              "!prequel -- See top post from /r/prequelmemes.\n")
 
-        # V provides !news
+        # V provides !news command.
         @client.command(pass_context=True)
         async def news(ctx):
             print("!news")
@@ -62,17 +63,25 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = main.prawin()
+            post = main.prawin(prequelmemes)
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
 
-        # V provides !pie command.
-        @client.command(pass_context=True)
-        async def pie(ctx):
-            print("!pie")
-            pie = feedparser.parse("https://www.youtube.com/user/tomwalker78")
-            await client.say(pie.entries[0]['link'])
+        # V provides !subreddit command.
+        @client.group(pass_context=True)
+        async def subreddit(ctx):
+            print("!subreddit")
+            if ctx.invoked_subcommand is None:
+                await client.say("Invalid subreddit; try again.")
+
+        @subreddit.command()
+        async def top(sub: str):
+            post = main.prawin(sub)
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(
+                             post["img"],post["title"],post["id"]))
+
 
         client.run("")
 
