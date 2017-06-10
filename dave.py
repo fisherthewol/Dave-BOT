@@ -12,7 +12,7 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 class Dave:
     """Main class for BOT."""
-    def prawin(self,sub,sort):
+    def prawin(self, sub, sort):
         """Praw-Based function for /r/prequelmemes."""
         """
            reddit is a PRAW instance we operate on;
@@ -65,10 +65,11 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = main.prawin(self,prequelmemes,top)
+            sub = "prequelmemes"
+            post = main.prawin(sub, top)
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
-                             post["img"],post["title"],post["id"]))
+                             post["img"], post["title"], post["id"]))
 
         # V provides !pie command.
         @client.command(pass_context=True)
@@ -87,7 +88,7 @@ class Dave:
         @subreddit.command()
         async def top(sub: str):
             print("!subreddit top")
-            post = main.prawin(self,sub,top)
+            post = main.prawin(sub, top)
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
