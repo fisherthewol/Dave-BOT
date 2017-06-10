@@ -74,7 +74,7 @@ class Dave:
         @client.command(pass_context=True)
         async def pie(ctx):
             print("!pie")
-            pie = feedparser.parse("https://www.youtube.com/user/tomwalker78")
+            pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await client.say(pie.entries[0]['link'])
 
         # V provides !subreddit command.
@@ -93,7 +93,7 @@ class Dave:
                              post["img"],post["title"],post["id"]))
 
 
-        client.run("")
+        client.run("MzIxNjgwNDExNDgwNjg2NTk0.DB1Q0g.oVVKQQHpdznXqjVhHN8J-cf3DA8")
 
 
 if __name__ == "__main__":
