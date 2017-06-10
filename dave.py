@@ -117,7 +117,7 @@ class Dave:
                              post["img"],post["title"],post["id"]))
 
         @subreddit.command()
-        async def rising(hot: str):
+        async def hot(sub: str):
             print("!subreddit hot")
             post = main.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
