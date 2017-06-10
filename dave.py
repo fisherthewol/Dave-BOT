@@ -95,11 +95,34 @@ class Dave:
         async def top(sub: str):
             """sub needs to be string otherwise it'll break."""
             print("!subreddit top")
-            post = main.prawin(sub, top)
+            post = main.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
 
+        @subreddit.command()
+        async def new(sub: str):
+            print("!subreddit new")
+            post = main.prawin(sub, "new")
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(
+                             post["img"],post["title"],post["id"]))
+
+        @subreddit.command()
+        async def rising(sub: str):
+            print("!subreddit rising")
+            post = main.prawin(sub, "rising")
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(
+                             post["img"],post["title"],post["id"]))
+
+        @subreddit.command()
+        async def rising(hot: str):
+            print("!subreddit hot")
+            post = main.prawin(sub, "hot")
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(
+                             post["img"],post["title"],post["id"]))
 
         client.run("")
 
