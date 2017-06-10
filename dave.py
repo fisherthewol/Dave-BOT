@@ -65,7 +65,7 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = main.prawin(prequelmemes, top)
+            post = main.prawin(self,prequelmemes,top)
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
@@ -87,7 +87,7 @@ class Dave:
         @subreddit.command()
         async def top(sub: str):
             print("!subreddit top")
-            post = main.prawin(sub,top)
+            post = main.prawin(self,sub,top)
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              post["img"],post["title"],post["id"]))
