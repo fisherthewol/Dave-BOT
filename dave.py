@@ -21,10 +21,10 @@ class Dave:
         reddit = praw.Reddit('prequelbot',
                              user_agent='davebot:v1.2:t3rr0r_f3rr3t')
         subreddit = reddit.subreddit(str(sub))
-        x = "subreddit.{}('day', limit=1)".format(sort)
-        exec("topsub = {}".format(x))
+        if sort == "top":
+            toppost = subreddit.top("day", limit=1)
         post = {"title": "", "img": "", "id": ""}
-        for submission in topsub:
+        for submission in toppost:
             post["title"] = str(submission.title)
             post["img"] = str(submission.url)
             post["id"] = str(submission.id)
@@ -66,7 +66,7 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = main.prawin("prequelmemes",top)
+            post = main.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                              post["img"], post["title"], post["id"]))
