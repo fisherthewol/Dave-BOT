@@ -10,6 +10,7 @@ bot_prefix = "!"
 global client
 client = commands.Bot(description=description, command_prefix=bot_prefix)
 
+
 class Dave:
     """Main class for BOT."""
     def prawin(self, sub, sort):
@@ -75,13 +76,14 @@ class Dave:
             post = main.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
-                             post["img"], post["title"], post["id"]))
+                              post["img"], post["title"], post["id"]))
 
         # V provides !pie command.
         @client.command(pass_context=True)
         async def pie(ctx):
             print("!pie")
-            pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?channel_id=UCO79NsDE5FpMowUH1YcBFcA")
+            pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
+                                   "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await client.say(pie.entries[0]['link'])
 
         # V provides !subreddit command group.
@@ -97,32 +99,32 @@ class Dave:
             print("!subreddit top")
             post = main.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
-                             "https://redd.it/{}\n".format(
-                             post["img"],post["title"],post["id"]))
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
 
         @subreddit.command()
         async def new(sub: str):
             print("!subreddit new")
             post = main.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
-                             "https://redd.it/{}\n".format(
-                             post["img"],post["title"],post["id"]))
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
 
         @subreddit.command()
         async def rising(sub: str):
             print("!subreddit rising")
             post = main.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
-                             "https://redd.it/{}\n".format(
-                             post["img"],post["title"],post["id"]))
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
 
         @subreddit.command()
         async def hot(sub: str):
             print("!subreddit hot")
             post = main.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
-                             "https://redd.it/{}\n".format(
-                             post["img"],post["title"],post["id"]))
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
 
         client.run("")
 
