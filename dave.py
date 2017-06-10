@@ -58,7 +58,7 @@ class Dave:
                              "/r/prequelmemes.\n"
                              "!pie -- get latest JPie Vid.\n
                              "!subreddit sort sub -- get top result from sort "
-                             " method of sub.n")
+                             " method of sub.\n")
 
         # V provides !news command.
         @client.command(pass_context=True)
