@@ -10,20 +10,28 @@ bot_prefix = "!"
 global client
 client = commands.Bot(description=description, command_prefix=bot_prefix)
 
+
 class Dave:
     """Main class for BOT."""
-    def prawin(self):
-        """Praw-Based function for /r/prequelmemes."""
-        """
-           reddit is a PRAW instance we operate on;
-           Pulls client_id & _secret from praw.ini.
+    def prawin(self, sub, sort):
+        """Praw-Based function, reads from reddit.
+           reddit is a PRAW instance we operate on; Pulls client_id & _secret
+           from praw.ini.
+           Always returns top/first post for given sort.
         """
         reddit = praw.Reddit('prequelbot',
-                             user_agent='davebot:v1.2:t3rr0r_f3rr3t')
-        subreddit = reddit.subreddit("prequelmemes")
-        topsub = subreddit.top("day", limit=1)
+                             user_agent='davebot:v1.3:t3rr0r_f3rr3t')
+        subreddit = reddit.subreddit(str(sub))
+        if sort == "top":
+            toppost = subreddit.top("day", limit=1)
+        elif sort == "new":
+            toppost = subreddit.new(limit=1)
+        elif sort == "rising":
+            toppost = subreddit.rising(limit=1)
+        elif sort == "hot":
+            toppost = subreddit.hot(limit=1)
         post = {"title": "", "img": "", "id": ""}
-        for submission in topsub:
+        for submission in toppost:
             post["title"] = str(submission.title)
             post["img"] = str(submission.url)
             post["id"] = str(submission.id)
@@ -31,6 +39,7 @@ class Dave:
 
     def discout(self):
         """Provides discord output."""
+
         # V provides output on Successful Launch.
         @client.event
         async def on_ready():
@@ -45,7 +54,9 @@ class Dave:
             await client.say("\nAvailible commands:\n"
                              "!bothelp -- What you're seeing now.\n"
                              "!news -- See top news stories now.\n"
-                             "!prequel -- See top post from /r/prequelmemes.\n")
+                             "!prequel -- See day's top post from "
+                             "/r/prequelmemes.\n"
+                             "!pie -- get latest JPie Vid.\n")
 
         # V provides !news command.
         @client.command(pass_context=True)
@@ -62,10 +73,58 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = main.prawin()
+            post = main.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
-                             post["img"],post["title"],post["id"]))
+                              post["img"], post["title"], post["id"]))
+
+        # V provides !pie command.
+        @client.command(pass_context=True)
+        async def pie(ctx):
+            print("!pie")
+            pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
+                                   "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
+            await client.say(pie.entries[0]['link'])
+
+        # V provides !subreddit command group.
+        @client.group(pass_context=True)
+        async def subreddit(ctx):
+            print("!subreddit")
+            if ctx.invoked_subcommand is None:
+                await client.say("Invalid subreddit; try again.")
+
+        @subreddit.command()
+        async def top(sub: str):
+            """sub needs to be string otherwise it'll break."""
+            print("!subreddit top")
+            post = main.prawin(sub, "top")
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
+
+        @subreddit.command()
+        async def new(sub: str):
+            print("!subreddit new")
+            post = main.prawin(sub, "new")
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
+
+        @subreddit.command()
+        async def rising(sub: str):
+            print("!subreddit rising")
+            post = main.prawin(sub, "rising")
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
+
+        @subreddit.command()
+        async def hot(sub: str):
+            print("!subreddit hot")
+            post = main.prawin(sub, "hot")
+            await client.say("Image: {}\nTitle = {}\nComments = "
+                             "https://redd.it/{}\n".format(post["img"],
+                             post["title"], post["id"]))
 
         client.run("")
 

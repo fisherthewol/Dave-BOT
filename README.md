@@ -12,9 +12,9 @@ Login Successful
 Name: **
 ID: **
 ```  
-Insert the number given as ```ID``` into https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0, then open it in a browser  
-For the ~~reddit function~~ bot to work, you need to create a reddit app on reddit and create a praw.ini with the details from that; otherwise the file will fail on parsing.  
-See https://praw.readthedocs.io/en/latest/ for more details.
+Insert the number given as ```ID``` into https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0, then open it in a browser where you are logged in as someone who can add bots to your server.  
+For the ~~reddit function~~ **bot** to work, you need to create a reddit app on reddit and create a praw.ini with the details from that; otherwise the file will fail on parsing. You also need to change the ```user_agent``` variable to something else.  
+See https://praw.readthedocs.io/en/latest/ for more details on PRAW usage.
 *****
 ### Adding Commands  
 Find the main file (currently dave.py), add a  
