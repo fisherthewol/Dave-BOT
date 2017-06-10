@@ -54,9 +54,11 @@ class Dave:
             await client.say("\nAvailible commands:\n"
                              "!bothelp -- What you're seeing now.\n"
                              "!news -- See top news stories now.\n"
-                             "!prequel -- See day's top post from "
+                             "!prequel -- See theday's top post (so far) from "
                              "/r/prequelmemes.\n"
-                             "!pie -- get latest JPie Vid.\n")
+                             "!pie -- get latest JPie Vid.\n
+                             "!subreddit sort sub -- get top result from sort "
+                             " method of sub.n")
 
         # V provides !news command.
         @client.command(pass_context=True)
