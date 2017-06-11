@@ -56,7 +56,7 @@ class Dave:
                              "!news -- See top news stories now.\n"
                              "!prequel -- See theday's top post (so far) from "
                              "/r/prequelmemes.\n"
-                             "!pie -- get latest JPie Vid.\n
+                             "!pie -- get latest JPie Vid.\n"
                              "!subreddit sort sub -- get top result from sort "
                              " method of sub.\n")
 
