@@ -38,7 +38,9 @@ class Dave:
         return post
 
     def discout(self):
-        """Provides discord output."""
+        """Provides discord output. Could be called main(), but not now so as
+           to provide future compatability.
+        """
 
         # V provides output on Successful Launch.
         @client.event
@@ -97,7 +99,7 @@ class Dave:
 
         @subreddit.command()
         async def top(sub: str):
-            """sub needs to be string otherwise it'll break."""
+            # ^ sub needs to be string, or prawin() breaks.
             print("!subreddit top")
             post = main.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
@@ -128,6 +130,7 @@ class Dave:
                              "https://redd.it/{}\n".format(post["img"],
                              post["title"], post["id"]))
 
+        # V ALWAYS REMOVE THIS BEFORE COMMITTING PLEASE.
         client.run("")
 
 
