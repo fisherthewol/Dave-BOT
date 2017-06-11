@@ -115,7 +115,11 @@ class Dave:
             await client.say("\nHost Uptime: {}"
                              "\nPython Version: {}\n"
                              "\nPython Compiler: {}"
-                             "\nDistro: {};v{}")
+                             "\nDistro: {};v{}".format(uptime,
+                                                       version,
+                                                       compi,
+                                                       lindistn,
+                                                       lindistv))
 
         # V provides !subreddit command group.
         @client.group(pass_context=True)
