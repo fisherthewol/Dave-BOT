@@ -37,6 +37,15 @@ class Dave:
             post["id"] = str(submission.id)
         return post
 
+
+    def uptimeFunc(self):
+        from datetime import timedelta
+        with open("/proc/uptime", "r") as f:
+            uptime_seconds = float(f.readline().split()[0])
+            uptime_string = str(timedelta(seconds = uptime_seconds))
+        return uptime_string
+
+
     def discout(self):
         """Provides discord output."""
 
@@ -58,7 +67,8 @@ class Dave:
                              "/r/prequelmemes.\n"
                              "!pie -- get latest JPie Vid.\n"
                              "!subreddit sort sub -- get top result from sort "
-                             " method of sub.\n")
+                             " method of sub.\n"
+                             "!dave -- get bot stats.")
 
         # V provides !news command.
         @client.command(pass_context=True)
@@ -87,6 +97,24 @@ class Dave:
             pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
                                    "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await client.say(pie.entries[0]['link'])
+
+        # V provides !dave command.
+        @client.command(pass_context=True)
+        async def dave(ctx):
+            print("!dave")
+            """PRESUMES SYSTEM IS LINUX; WILL BREAK IF NOT."""
+            import platform
+            uptime = main.uptimeFunc()
+            version = platform.python_version()
+            compi = platform.python_compiler()
+            # next 3 lines will be depreceated in py3.7; find alternative?
+            lindist = platform.linux_distribution()
+            lindistn = lindist[0]
+            lindistv = lindist[1]
+            await client.say("\nHost Uptime: {}"
+                             "\nPython Version: {}\n"
+                             "\nPython Compiler: {}"
+                             "\nDistro: {};v{}")
 
         # V provides !subreddit command group.
         @client.group(pass_context=True)
