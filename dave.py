@@ -39,6 +39,7 @@ class Dave:
 
 
     def uptimeFunc(self):
+        """PRESUMES SYSTEM IS LINUX; WILL BREAK IF NOT."""
         from datetime import timedelta
         with open("/proc/uptime", "r") as f:
             uptime_seconds = float(f.readline().split()[0])
