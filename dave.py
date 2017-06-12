@@ -144,7 +144,7 @@ class Dave:
         async def add(feed: str):
             print("!fparse add")
             with open("feeds.txt", "a") as ffile:
-                ffile.write("\n{}".format(feed))
+                ffile.write("{}\n".format(feed))
 
         # V provides !subreddit command group.
         @client.group(pass_context=True)

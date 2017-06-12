@@ -12,23 +12,29 @@ You can use our copy of Dave-BOT. We take no responsibility for any issues arisi
 
 ### Create your own instance.
 1. Clone the master banch of the repo into your server.  
-2. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me), and create a user on it. Copy the  user token and set it as a string inside ```client.run("")``` in dave.py  
-3. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
-4. Create a ```praw.ini``` file and fill it in with the details; EG:
+2. Install packages:  
+```
+pip3 install feedparser
+pip3 install praw
+pip3 install -U discord.py
+```
+3. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me), and create a user on it. Copy the  user token and set it as a string inside ```client.run("")``` in dave.py  
+4. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
+5. Create a ```praw.ini``` file and fill it in with the details; EG:
 ```
 [prequelbot]
 client_id=ID
 client_secret=secret
 ```
 You can see https://praw.readthedocs.io/en/latest/ for more details.  
-5. Run the file. When it starts, it should output
+6. Run the file. When it starts, it should output
 ```
 Login Successful
 Name: **
 ID: **
 ```  
-6. Insert the ```ID``` it gices you as ID in https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0  
-7. That will allow you to add the bot to any servers where you have permission to.
+7. Insert the ```ID``` it gices you as ID in https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0  
+8. That will allow you to add the bot to any servers where you have permission to.
 
 ## Development  
 ### Contributing  
