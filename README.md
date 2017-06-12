@@ -35,7 +35,7 @@ ID: **
 Create a fork of the master branch for your own personal development. If you think you've made a significant contribution to the main code, open a pull request.  
 If the code in your pull request is **too** incompatible with the master branch, we'll close it and ask you to open an issue with details that we can then work around.  
 If you want to add a (singular) command, open an issue with the title beginning in !command. If you want to add a group of commands, use !group.  
-Incentive to contribute: we'll add you to the contributors on the repo.  
+Incentive to contribute: we'll add you to the contributors on the repo! Meaning you can contribute more!  
 ### Syntax  
 We use soft tabs (4 spaces), and try to stick close to PEP8.  
 ### Adding commands  
