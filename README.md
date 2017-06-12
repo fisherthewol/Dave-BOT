@@ -1,9 +1,6 @@
 # Dave-BOT
 A Discord bot based on Discord.py.  
 For our server, but could work for other servers.  
-[Use our Instance](https://github.com/EyelessJonny/Dave-BOT/blob/master/README.md/Usingtheinstanceonourserver)  
-[Create your own Instace](https://github.com/EyelessJonny/Dave-BOT/blob/master/README.md/Createyourowninstance)  
-[Development](https://github.com/EyelessJonny/Dave-BOT/blob/master/README.md/DDevelopment)
 ## Quickstart  
 The following is a quickstart guide to getting the bot running.  
 ### Using the instance on our server.  
