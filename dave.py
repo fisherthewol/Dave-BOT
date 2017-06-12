@@ -37,15 +37,13 @@ class Dave:
             post["id"] = str(submission.id)
         return post
 
-
     def uptimeFunc(self):
         """PRESUMES SYSTEM IS LINUX; WILL BREAK IF NOT."""
         from datetime import timedelta
         with open("/proc/uptime", "r") as f:
             uptime_seconds = float(f.readline().split()[0])
-            uptime_string = str(timedelta(seconds = uptime_seconds))
+            uptime_string = str(timedelta(seconds=uptime_seconds))
         return uptime_string
-
 
     def discout(self):
         """Provides discord output."""
@@ -64,8 +62,8 @@ class Dave:
             await client.say("\nAvailible commands:"
                              "\n!bothelp -- What you're seeing now."
                              "\n!news -- See top news stories now."
-                             "\n!prequel -- See theday's top post (so far) from "
-                             "/r/prequelmemes."
+                             "\n!prequel -- See theday's top post (so far) "
+                             "from /r/prequelmemes."
                              "\n!pie -- get latest JPie Vid."
                              "\n!subreddit -- see !subreddit help."
                              "\n!dave -- get bot stats."
@@ -119,7 +117,7 @@ class Dave:
                                                            version,
                                                            compi,
                                                            lindistn,
-                                                           lindistv)))
+                                                           lindistv))
             else:
                 await client.say("\nHost incompatible with this function.\n")
 
@@ -145,7 +143,7 @@ class Dave:
         @fparse.command()
         async def add(feed: str):
             print("!fparse add")
-            with open("feeds.txt","a") as ffile:
+            with open("feeds.txt", "a") as ffile:
                 ffile.write("\n{}".format(feed))
 
         # V provides !subreddit command group.
@@ -157,8 +155,8 @@ class Dave:
 
         @subreddit.command()
         async def help(ctx):
-		    print("!subreddit help")
-			await client.say("\n!subreddit help:"
+            print("!subreddit help")
+            await client.say("\n!subreddit help:"
                              "\nSyntax: ```!subreddit sort sub```"
                              "\n```sort is reddit sort type:"
                              "\n-top\n-new\n-rising\n-hot"
@@ -166,14 +164,15 @@ class Dave:
                              "```Invalid subreddit; try again.``` if an error"
                              "is thrown.\n")
 
-		@subreddit.command()
+        @subreddit.command()
         async def top(sub: str):
             """sub needs to be string otherwise it'll break."""
             print("!subreddit top")
             post = main.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
-                             post["title"], post["id"]))
+                                                           post["title"],
+                                                           post["id"]))
 
         @subreddit.command()
         async def new(sub: str):
@@ -181,7 +180,8 @@ class Dave:
             post = main.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
-                             post["title"], post["id"]))
+                                                           post["title"],
+                                                           post["id"]))
 
         @subreddit.command()
         async def rising(sub: str):
@@ -189,7 +189,8 @@ class Dave:
             post = main.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
-                             post["title"], post["id"]))
+                                                           post["title"],
+                                                           post["id"]))
 
         @subreddit.command()
         async def hot(sub: str):
@@ -197,7 +198,8 @@ class Dave:
             post = main.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
-                             post["title"], post["id"]))
+                                                           post["title"],
+                                                           post["id"]))
 
         client.run("")
 
