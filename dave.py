@@ -61,15 +61,15 @@ class Dave:
         @client.command(pass_context=True)
         async def bothelp(ctx):
             print("!bothelp")
-            await client.say("\nAvailible commands:\n"
-                             "!bothelp -- What you're seeing now.\n"
-                             "!news -- See top news stories now.\n"
-                             "!prequel -- See theday's top post (so far) from "
-                             "/r/prequelmemes.\n"
-                             "!pie -- get latest JPie Vid.\n"
-                             "!subreddit sort sub -- get top result from sort "
-                             " method of sub.\n"
-                             "!dave -- get bot stats.")
+            await client.say("\nAvailible commands:"
+                             "\n!bothelp -- What you're seeing now."
+                             "\n!news -- See top news stories now."
+                             "\n!prequel -- See theday's top post (so far) from "
+                             "/r/prequelmemes."
+                             "\n!pie -- get latest JPie Vid."
+                             "\n!subreddit -- see !subreddit help."
+                             "\n!dave -- get bot stats."
+                             "\n!fparse -- see !fparse help.")
 
         # V provides !news command.
         @client.command(pass_context=True)
@@ -103,23 +103,50 @@ class Dave:
         @client.command(pass_context=True)
         async def dave(ctx):
             print("!dave")
-            """PRESUMES SYSTEM IS LINUX; WILL BREAK IF NOT."""
             import platform
-            uptime = main.uptimeFunc()
-            version = platform.python_version()
-            compi = platform.python_compiler()
-            # next 3 lines will be depreceated in py3.7; find alternative?
-            lindist = platform.linux_distribution()
-            lindistn = lindist[0]
-            lindistv = lindist[1]
-            await client.say("\nHost Uptime: {}"
-                             "\nPython Version: {}\n"
-                             "\nPython Compiler: {}"
-                             "\nDistro: {};v{}".format(uptime,
-                                                       version,
-                                                       compi,
-                                                       lindistn,
-                                                       lindistv))
+            if "Linux" is in platform.system():
+                uptime = main.uptimeFunc()
+                version = platform.python_version()
+                compi = platform.python_compiler()
+                # next 3 lines will be depreceated in py3.7; find alternative?
+                lindist = platform.linux_distribution()
+                lindistn = lindist[0]
+                lindistv = lindist[1]
+                await client.say("\nHost Uptime: {}"
+                                 "\nPython Version: {}\n"
+                                 "\nPython Compiler: {}"
+                                 "\nDistro: {};v{}".format(uptime,
+                                                           version,
+                                                           compi,
+                                                           lindistn,
+                                                           lindistv)))
+            else:
+                await client.say("\nHost incompatible with this function.\n")
+
+        # V provides !fparse.
+        @client.group(pass_context=True)
+        async def fparse(ctx):
+            print("!fparse")
+            if ctx.invoked_subcommand is None:
+                with open("feeds.txt", "r") as f:
+                    lines = f.readlines()
+                    for item in lines:
+                        feed = feedparser.parse(str(lines[item]))
+                        await client.say(feed.entries[0]['link'])
+
+        @fparse.command()
+        async def help(ctx):
+            print("!fparse help")
+            await client.say("\nSyntax:"
+                             "\n!fparse: pulls feeds from file and links top "
+                             "post."
+                             "\n!fparse add str: adds str to feeds file.\n")
+
+        @fparse.command()
+        async def add(feed: str):
+            print("!fparse add")
+            with open("feeds.txt","a") as ffile:
+                ffile.write("\n{}".format(feed))
 
         # V provides !subreddit command group.
         @client.group(pass_context=True)
@@ -129,6 +156,17 @@ class Dave:
                 await client.say("Invalid subreddit; try again.")
 
         @subreddit.command()
+        async def help(ctx):
+		    print("!subreddit help")
+			await client.say("\n!subreddit help:"
+                             "\nSyntax: ```!subreddit sort sub```"
+                             "\n```sort is reddit sort type:"
+                             "\n-top\n-new\n-rising\n-hot"
+                             "\n sub is any valid subreddit; should return "
+                             "```Invalid subreddit; try again.``` if an error"
+                             "is thrown.\n")
+
+		@subreddit.command()
         async def top(sub: str):
             """sub needs to be string otherwise it'll break."""
             print("!subreddit top")
