@@ -131,7 +131,8 @@ class Dave:
                 with open("feeds.txt", "r") as f:
                     lines = f.readlines()
                     for item in lines:
-                        feed = feedparser.parse(str(lines[item]))
+                        cfeed = lines[item]
+                        feed = feedparser.parse(str(cfeed))
                         await client.say(feed.entries[0]['link'])
 
         @fparse.command()
