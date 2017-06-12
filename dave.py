@@ -104,7 +104,7 @@ class Dave:
         async def dave(ctx):
             print("!dave")
             import platform
-            if "Linux" is in platform.system():
+            if "Linux" in platform.system():
                 uptime = main.uptimeFunc()
                 version = platform.python_version()
                 compi = platform.python_compiler()
