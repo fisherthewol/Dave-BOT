@@ -24,7 +24,7 @@ pip3 install -U discord.py
 ```
 [prequelbot]
 client_id=ID
-client_secret=secret
+client_secret=SECRET
 ```
 You can see https://praw.readthedocs.io/en/latest/ for more details.  
 6. Run the file. When it starts, it should output
