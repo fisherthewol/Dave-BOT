@@ -23,22 +23,22 @@ class Dave:
                              user_agent='davebot:v1.3:t3rr0r_f3rr3t')
         subreddit = reddit.subreddit(str(sub))
         if sort == "top":
-            toppost = subreddit.top("day", limit=1)
+            postsort = subreddit.top("day", limit=1)
         elif sort == "new":
-            toppost = subreddit.new(limit=1)
+            postsort = subreddit.new(limit=1)
         elif sort == "rising":
-            toppost = subreddit.rising(limit=1)
+            postsort = subreddit.rising(limit=1)
         elif sort == "hot":
-            toppost = subreddit.hot(limit=1)
+            postsort = subreddit.hot(limit=1)
         post = {"title": "", "img": "", "id": ""}
-        for submission in toppost:
+        for submission in postsort:
             post["title"] = str(submission.title)
             post["img"] = str(submission.url)
             post["id"] = str(submission.id)
         return post
 
     def uptimeFunc(self):
-        """PRESUMES SYSTEM IS LINUX; WILL BREAK IF NOT."""
+        """Returns host uptime nicely. Breaks if not *nix."""
         from datetime import timedelta
         with open("/proc/uptime", "r") as f:
             uptime_seconds = float(f.readline().split()[0])
@@ -122,32 +122,6 @@ class Dave:
                                                            lindistv))
             else:
                 await client.say("\nHost incompatible with this function.\n")
-
-        # V provides !fparse.
-        @client.group(pass_context=True)
-        async def fparse(ctx):
-            print("!fparse")
-            if ctx.invoked_subcommand is None:
-                with open("feeds.txt", "r") as f:
-                    lines = f.readlines()
-                    for item in lines:
-                        cfeed = lines[item]
-                        feed = feedparser.parse(str(cfeed))
-                        await client.say(feed.entries[0]['link'])
-
-        @fparse.command()
-        async def help(ctx):
-            print("!fparse help")
-            await client.say("\nSyntax:"
-                             "\n!fparse: pulls feeds from file and links top "
-                             "post."
-                             "\n!fparse add str: adds str to feeds file.\n")
-
-        @fparse.command()
-        async def add(feed: str):
-            print("!fparse add")
-            with open("feeds.txt", "a") as ffile:
-                ffile.write("{}\n".format(feed))
 
         # V provides !subreddit command group.
         @client.group(pass_context=True)
