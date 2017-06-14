@@ -11,14 +11,14 @@ You can use our copy of Dave-BOT. We take no responsibility for any issues arisi
 4. Enjoy!  
 
 ### Create your own instance.
-1. Clone the master banch of the repo into your server.  
+1. Clone the master branch of the repo into your server.  
 2. Install packages:  
 ```
 pip3 install feedparser
 pip3 install praw
 pip3 install -U discord.py
 ```
-3. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me), and create a user on it. Copy the  user token and set it as a string inside ```client.run("")``` in dave.py  
+3. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me), and create a user on it. Copy the  user token and set it as the string in ```client.run("string")``` in dave.py  
 4. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
 5. Create a ```praw.ini``` file and fill it in with the details; EG:
 ```
@@ -39,8 +39,9 @@ ID: **
 ## Development  
 ### Contributing  
 Create a fork of the master branch for your own personal development. If you think you've made a significant contribution to the main code, open a pull request.  
-If the code in your pull request is **too** incompatible with the master branch, we'll close it and ask you to open an issue with details that we can then work around.  
+If the code in your pull request is **too** incompatible with the master branch - IE, you've modified the core too much from the original - then we'll close it and ask you to open an issue with details that we can then work around.  
 If you want to add a (singular) command, open an issue with the title beginning in !command. If you want to add a group of commands, use !group.  
+If you find a bug, check if there's not already an issue open for it, then open one with !bug, giving as much useful detail as possible - we'll want a traceback, but not what you had for lunch.  
 Incentive to contribute: we'll add you to the contributors on the repo! Meaning you can contribute more!  
 ### Syntax  
 We use soft tabs (4 spaces), and try to stick close to PEP8.  
