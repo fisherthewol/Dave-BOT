@@ -13,6 +13,9 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 class Dave:
     """Main class for BOT."""
+    def __init__(self, code):
+        self.code = code
+
     def prawin(self, sub, sort):
         """Praw-Based function, reads from reddit.
            reddit is a PRAW instance we operate on; Pulls client_id & _secret
@@ -178,11 +181,11 @@ class Dave:
                                                            post["title"],
                                                            post["id"]))
 
-        # V ALWAYS REMOVE THIS BEFORE COMMITTING PLEASE.
-        client.run("")
+        client.run(str(self.code))
 
 
 if __name__ == "__main__":
-    print("Main File; discout is being called.")
-    main = Dave()
+    clientcode = str(input("Input client code:\n"))
+    print("\nMain File; discout is being called.")
+    main = Dave(clientcode)
     main.discout()
