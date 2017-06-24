@@ -6,7 +6,7 @@ The following is a quickstart guide to getting the bot running.
 ### Using the instance on our server.  
 You can use our copy of Dave-BOT. We take no responsibility for any issues arising out of your use of our service to the maximum legal extent.  
 1. Make sure you can add bots to your discord.
-2. Visit [the bot add link](https://discordapp.com/oauth2/authorize?client_id=321704542406443009&scope=bot&permissions=0).  
+2. Visit [this bot add link](https://discordapp.com/oauth2/authorize?client_id=321704542406443009&scope=bot&permissions=0).  
 3. Select the server you want to add dave to.  
 4. Enjoy!  
 
@@ -18,7 +18,7 @@ pip3 install feedparser
 pip3 install praw
 pip3 install -U discord.py
 ```
-3. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me), and create a user on it. Copy the  user token and set it as the string in ```client.run("string")``` in dave.py  
+3. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me). Copy it the app id/token.
 4. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
 5. Create a ```praw.ini``` file and fill it in with the details; EG:
 ```
@@ -27,13 +27,13 @@ client_id=ID
 client_secret=SECRET
 ```
 You can see https://praw.readthedocs.io/en/latest/ for more details.  
-6. Run the file. When it starts, it should output
+6. Run the file. When it starts, it will ask for the app id from earlier. When entered it should output
 ```
 Login Successful
 Name: **
 ID: **
 ```  
-7. Insert the ```ID``` it gices you as ID in https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0  
+7. Insert the ```ID``` it gives you as ID in https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0  
 8. That will allow you to add the bot to any servers where you have permission to.
 
 ## Development  
