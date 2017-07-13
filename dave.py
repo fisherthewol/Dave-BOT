@@ -186,6 +186,10 @@ class Dave:
 
 if __name__ == "__main__":
     clientcode = str(input("Input client code:\n"))
-    print("\nMain File; discout is being called.")
-    main = Dave(clientcode)
-    main.discout()
+    if clientcode:
+        print("\nMain File; discout is being called.")
+        main = Dave(clientcode)
+        main.discout()
+    else:
+        raise SystemExit("Error: Empty client code; "
+                         "restart file and try again.")
