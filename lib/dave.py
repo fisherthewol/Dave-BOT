@@ -4,7 +4,7 @@ from discord.ext import commands
 
 logging.basicConfig(level=logging.WARNING)
 
-# Sets up discord stuff.
+# Set up discord vars.
 description = "This is a WIP bot to work discord. Use !bothelp."
 bot_prefix = "!"
 global client
