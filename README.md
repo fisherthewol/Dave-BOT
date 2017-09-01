@@ -4,7 +4,7 @@ For our server, but could work for other servers.
 ## Quickstart  
 The following is a quickstart guide to getting the bot running.  
 ### Using the instance on our server.  
-You can use our copy of Dave-BOT. We take no responsibility for any issues arising out of your use of our service to the maximum legal extent.  
+You can use our copy of Dave-BOT. We take no responsibility for any issues arising out of your use of our service to the maximum legal extent, and there is no guarantee that it will be available.  
 1. Make sure you can add bots to your discord.
 2. Visit [this bot add link](https://discordapp.com/oauth2/authorize?client_id=321704542406443009&scope=bot&permissions=0).  
 3. Select the server you want to add dave to.  
@@ -27,7 +27,7 @@ client_id=ID
 client_secret=SECRET
 ```
 You can see https://praw.readthedocs.io/en/latest/ for more details.  
-6. Run the file. When it starts, it will ask for the app id from earlier. When entered it should output
+6. Call the file using ```python3 clientcode``` where clientcode is the token generated in step 3. It should produce the following output:
 ```
 Login Successful
 Name: **
@@ -41,7 +41,7 @@ ID: **
 Create a fork of the master branch for your own personal development. If you think you've made a significant contribution to the main code, open a pull request.  
 If the code in your pull request is **too** incompatible with the master branch - IE, you've modified the core too much from the original - then we'll close it and ask you to open an issue with details that we can then work around.  
 If you want to add a (singular) command, open an issue with the title beginning in !command. If you want to add a group of commands, use !group.  
-If you find a bug, check if there's not already an issue open for it, then open one with !bug, giving as much useful detail as possible - we'll want a traceback, but not what you had for lunch.  
+If you find a bug, check if there's not already an issue open for it, then open one with !bug, giving as much useful detail as possible - we'll want a traceback if you have one, but not what you had for lunch.  
 Incentive to contribute: we'll add you to the contributors on the repo! Meaning you can contribute more!  
 ### Syntax  
 We use soft tabs (4 spaces), and try to stick close to PEP8.  
