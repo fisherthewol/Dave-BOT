@@ -12,7 +12,7 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 
 class Dave:
-    """self class for BOT."""
+    """Main class for BOT."""
     def __init__(self, code):
         self.code = code
 
@@ -49,7 +49,7 @@ class Dave:
         return uptime_string
 
     def discout(self):
-        """Provides discord output. Could be called self(), but not now so as
+        """Provides discord output. Could be called main(), but not now so as
            to provide future compatability.
         """
 
