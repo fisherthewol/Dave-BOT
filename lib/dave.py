@@ -12,7 +12,7 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 
 class Dave:
-    """Main class for BOT."""
+    """self class for BOT."""
     def __init__(self, code):
         self.code = code
 
@@ -49,7 +49,7 @@ class Dave:
         return uptime_string
 
     def discout(self):
-        """Provides discord output. Could be called main(), but not now so as
+        """Provides discord output. Could be called self(), but not now so as
            to provide future compatability.
         """
 
@@ -78,9 +78,9 @@ class Dave:
         @client.command(pass_context=True)
         async def news(ctx):
             print("!news")
-            bbc = feedparser.parse("https://www.reddit.com/domain/bbc.com/"
+            bbc = feedparser.parse("https://www.reddit.com/doself/bbc.com/"
                                    "top/.rss")
-            game = feedparser.parse("https://www.gameinformer.com/b/mainfeed"
+            game = feedparser.parse("https://www.gameinformer.com/b/selffeed"
                                     ".aspx?Tags=feature")
             await client.say(bbc.entries[0]['link'])
             await client.say(game.entries[0]['link'])
@@ -89,7 +89,7 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = main.prawin("prequelmemes", "top")
+            post = self.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                               post["img"], post["title"], post["id"]))
@@ -108,7 +108,7 @@ class Dave:
             print("!dave")
             import platform
             if "Linux" in platform.system():
-                uptime = main.uptimeFunc()
+                uptime = self.uptimeFunc()
                 version = platform.python_version()
                 compi = platform.python_compiler()
                 # next 3 lines will be depreceated in py3.7; find alternative?
@@ -148,7 +148,7 @@ class Dave:
         async def top(sub: str):
             # ^ sub needs to be string, or prawin() breaks.
             print("!subreddit top")
-            post = main.prawin(sub, "top")
+            post = self.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -157,7 +157,7 @@ class Dave:
         @subreddit.command()
         async def new(sub: str):
             print("!subreddit new")
-            post = main.prawin(sub, "new")
+            post = self.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -166,7 +166,7 @@ class Dave:
         @subreddit.command()
         async def rising(sub: str):
             print("!subreddit rising")
-            post = main.prawin(sub, "rising")
+            post = self.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -175,7 +175,7 @@ class Dave:
         @subreddit.command()
         async def hot(sub: str):
             print("!subreddit hot")
-            post = main.prawin(sub, "hot")
+            post = self.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
