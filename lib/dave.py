@@ -4,7 +4,7 @@ from discord.ext import commands
 
 logging.basicConfig(level=logging.WARNING)
 
-# Sets up discord stuff.
+# Set up discord vars.
 description = "This is a WIP bot to work discord. Use !bothelp."
 bot_prefix = "!"
 global client
@@ -67,21 +67,20 @@ class Dave:
             await client.say("\nAvailible commands:"
                              "\n!bothelp -- What you're seeing now."
                              "\n!news -- See top news stories now."
-                             "\n!prequel -- See theday's top post (so far) "
+                             "\n!prequel -- See the day's top post (so far) "
                              "from /r/prequelmemes."
                              "\n!pie -- get latest JPie Vid."
-                             "\n!subreddit -- see !subreddit help."
-                             "\n!dave -- get bot stats."
-                             "\n!fparse -- see !fparse help.")
+                             "\n!subreddit -- see !sbrthp."
+                             "\n!dave -- get bot stats.")
 
         # V provides !news command.
         @client.command(pass_context=True)
         async def news(ctx):
             print("!news")
-            bbc = feedparser.parse("https://www.reddit.com/domain/bbc.com/"
-                                   "top/.rss")
-            game = feedparser.parse("https://www.gameinformer.com/b/mainfeed"
-                                    ".aspx?Tags=feature")
+            bbc = feedparser.parse("http://feeds.bbci.co.uk/news/world/europe"
+                                   "/rss.xml")
+            game = feedparser.parse("https://www.gameinformer.com/b/main"
+                                    "feed.aspx?Tags=feature")
             await client.say(bbc.entries[0]['link'])
             await client.say(game.entries[0]['link'])
 
@@ -89,7 +88,7 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = main.prawin("prequelmemes", "top")
+            post = self.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                               post["img"], post["title"], post["id"]))
@@ -108,7 +107,7 @@ class Dave:
             print("!dave")
             import platform
             if "Linux" in platform.system():
-                uptime = main.uptimeFunc()
+                uptime = self.uptimeFunc()
                 version = platform.python_version()
                 compi = platform.python_compiler()
                 # next 3 lines will be depreceated in py3.7; find alternative?
@@ -126,6 +125,19 @@ class Dave:
             else:
                 await client.say("\nHost incompatible with this function.\n")
 
+        # V provides !sbrthp
+        @client.command(pass_context=True)
+        async def sbrthp(ctx):
+            print("!sbrthp")
+            await client.say("\n!subreddit help: "
+                             "\nSyntax: ```!subreddit sort sub```"
+                             "where ```sort``` is reddit sort type:\n"
+                             "```-top\n-new\n-rising\n-hot```"
+                             "```sub``` is any valid subreddit.\n"
+                             "Command should return "
+                             "```Invalid subreddit; try again.``` "
+                             "if an error is thrown.\n")
+
         # V provides !subreddit command group.
         @client.group(pass_context=True)
         async def subreddit(ctx):
@@ -134,21 +146,10 @@ class Dave:
                 await client.say("Invalid subreddit; try again.")
 
         @subreddit.command()
-        async def help(ctx):
-            print("!subreddit help")
-            await client.say("\n!subreddit help:"
-                             "\nSyntax: ```!subreddit sort sub```"
-                             "\n```sort is reddit sort type:"
-                             "\n-top\n-new\n-rising\n-hot"
-                             "\n sub is any valid subreddit; should return "
-                             "```Invalid subreddit; try again.``` if an error"
-                             "is thrown.\n")
-
-        @subreddit.command()
         async def top(sub: str):
             # ^ sub needs to be string, or prawin() breaks.
             print("!subreddit top")
-            post = main.prawin(sub, "top")
+            post = self.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -157,7 +158,7 @@ class Dave:
         @subreddit.command()
         async def new(sub: str):
             print("!subreddit new")
-            post = main.prawin(sub, "new")
+            post = self.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -166,7 +167,7 @@ class Dave:
         @subreddit.command()
         async def rising(sub: str):
             print("!subreddit rising")
-            post = main.prawin(sub, "rising")
+            post = self.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -175,7 +176,7 @@ class Dave:
         @subreddit.command()
         async def hot(sub: str):
             print("!subreddit hot")
-            post = main.prawin(sub, "hot")
+            post = self.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
