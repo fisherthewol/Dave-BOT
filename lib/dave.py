@@ -71,17 +71,16 @@ class Dave:
                              "from /r/prequelmemes."
                              "\n!pie -- get latest JPie Vid."
                              "\n!subreddit -- see !subreddit help."
-                             "\n!dave -- get bot stats."
-                             "\n!fparse -- see !fparse help.")
+                             "\n!dave -- get bot stats.")
 
         # V provides !news command.
         @client.command(pass_context=True)
         async def news(ctx):
             print("!news")
-            bbc = feedparser.parse("https://www.reddit.com/doself/bbc.com/"
-                                   "top/.rss")
-            game = feedparser.parse("https://www.gameinformer.com/b/selffeed"
-                                    ".aspx?Tags=feature")
+            bbc = feedparser.parse("http://feeds.bbci.co.uk/news/world/europe"
+                                   "/rss.xml")
+            game = feedparser.parse("https://www.gameinformer.com/b/main"
+                                    "feed.aspx?Tags=feature")
             await client.say(bbc.entries[0]['link'])
             await client.say(game.entries[0]['link'])
 
