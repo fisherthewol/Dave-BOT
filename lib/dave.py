@@ -67,10 +67,10 @@ class Dave:
             await client.say("\nAvailible commands:"
                              "\n!bothelp -- What you're seeing now."
                              "\n!news -- See top news stories now."
-                             "\n!prequel -- See theday's top post (so far) "
+                             "\n!prequel -- See the day's top post (so far) "
                              "from /r/prequelmemes."
                              "\n!pie -- get latest JPie Vid."
-                             "\n!subreddit -- see !subreddit help."
+                             "\n!subreddit -- see !sbrthp."
                              "\n!dave -- get bot stats.")
 
         # V provides !news command.
@@ -125,23 +125,25 @@ class Dave:
             else:
                 await client.say("\nHost incompatible with this function.\n")
 
+        # V provides !sbrthp
+        @client.command(pass_context=True)
+        async def sbrthp(ctx):
+            print("!sbrthp")
+            await client.say("\n!subreddit help: "
+                             "\nSyntax: ```!subreddit sort sub```"
+                             "where ```sort``` is reddit sort type:\n"
+                             "```-top\n-new\n-rising\n-hot```"
+                             "```sub``` is any valid subreddit.\n"
+                             "Command should return "
+                             "```Invalid subreddit; try again.``` "
+                             "if an error is thrown.\n")
+
         # V provides !subreddit command group.
         @client.group(pass_context=True)
         async def subreddit(ctx):
             print("!subreddit")
             if ctx.invoked_subcommand is None:
                 await client.say("Invalid subreddit; try again.")
-
-        @subreddit.command()
-        async def help(ctx):
-            print("!subreddit help")
-            await client.say("\n!subreddit help:"
-                             "\nSyntax: ```!subreddit sort sub```"
-                             "\n```sort is reddit sort type:"
-                             "\n-top\n-new\n-rising\n-hot"
-                             "\n sub is any valid subreddit; should return "
-                             "```Invalid subreddit; try again.``` if an error"
-                             "is thrown.\n")
 
         @subreddit.command()
         async def top(sub: str):
