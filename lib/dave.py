@@ -19,7 +19,7 @@ class Dave:
     def feedlist(self, fl="file/feeds.dat"):
         with open(fl, "r") as fle:
             enlst = fle.readlines()
-        return enlst
+        return [x.strip() for x in enlst]
 
     def prawin(self, sub, sort):
         """Praw-Based function, reads from reddit.
@@ -83,10 +83,9 @@ class Dave:
         async def news(ctx):
             print("!news")
             sauce = self.feedlist()
-            bbc = sauce[0]
-            game = sauce[1]
-            await client.say(bbc.entries[0]['link'])
-            await client.say(game.entries[0]['link'])
+            for it in sauce:
+                loc = feedparser.parse(it)
+                await client.say(loc.entries[0]["link"])
 
         # V provides !prequel command.
         @client.command(pass_context=True)
