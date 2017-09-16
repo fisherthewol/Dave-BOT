@@ -12,7 +12,7 @@ if __name__ == "__main__":
             main = bot.Dave(clientcode)
             main.discout()
         else:
-            raise SystemExit("Error: Empty client code; "
+            raise SystemExit("Error: Errenous client code; "
                              "restart file and try again.")
     else:
         raise SystemExit("Usage:\npython3 main.py clientcode\nwhere "
