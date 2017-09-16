@@ -16,6 +16,11 @@ class Dave:
     def __init__(self, code):
         self.code = code
 
+    def feedlist(self, fl="file/feeds.dat"):
+        with open(fl, "r") as fle:
+            enlst = fle.readlines()
+        return enlst
+
     def prawin(self, sub, sort):
         """Praw-Based function, reads from reddit.
            reddit is a PRAW instance we operate on; Pulls client_id & _secret
@@ -23,7 +28,7 @@ class Dave:
            Always returns top/first post for given sort.
         """
         reddit = praw.Reddit('prequelbot',
-                             user_agent='davebot:v1.3:t3rr0r_f3rr3t')
+                             user_agent='davebot:v104:t3rr0r_f3rr3t')
         subreddit = reddit.subreddit(str(sub))
         if sort == "top":
             postsort = subreddit.top("day", limit=1)
@@ -77,10 +82,9 @@ class Dave:
         @client.command(pass_context=True)
         async def news(ctx):
             print("!news")
-            bbc = feedparser.parse("http://feeds.bbci.co.uk/news/world/europe"
-                                   "/rss.xml")
-            game = feedparser.parse("https://www.gameinformer.com/b/main"
-                                    "feed.aspx?Tags=feature")
+            sauce = self.feedlist()
+            bbc = sauce[0]
+            game = sauce[1]
             await client.say(bbc.entries[0]['link'])
             await client.say(game.entries[0]['link'])
 

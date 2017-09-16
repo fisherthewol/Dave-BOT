@@ -101,4 +101,5 @@ ENV/
 
 # project ignores
 *.txt
-*.ini
+
+mypraw\.ini
