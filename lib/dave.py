@@ -1,6 +1,7 @@
-import discord, feedparser, praw  # Need installing.
+import discord, feedparser  # Need installing.
 import logging  # Builtins.
 from discord.ext import commands
+import reddit
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -20,30 +21,6 @@ class Dave:
         with open(fl, "r") as fle:
             enlst = fle.readlines()
         return [x.strip() for x in enlst]
-
-    def prawin(self, sub, sort):
-        """Praw-Based function, reads from reddit.
-           reddit is a PRAW instance we operate on; Pulls client_id & _secret
-           from praw.ini.
-           Always returns top/first post for given sort.
-        """
-        reddit = praw.Reddit('prequelbot',
-                             user_agent='davebot:v104:t3rr0r_f3rr3t')
-        subreddit = reddit.subreddit(str(sub))
-        if sort == "top":
-            postsort = subreddit.top("day", limit=1)
-        elif sort == "new":
-            postsort = subreddit.new(limit=1)
-        elif sort == "rising":
-            postsort = subreddit.rising(limit=1)
-        elif sort == "hot":
-            postsort = subreddit.hot(limit=1)
-        post = {"title": "", "img": "", "id": ""}
-        for submission in postsort:
-            post["title"] = str(submission.title)
-            post["img"] = str(submission.url)
-            post["id"] = str(submission.id)
-        return post
 
     def uptimeFunc(self):
         """Returns host uptime nicely. Breaks if not *nix."""
@@ -91,7 +68,7 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             print("!prequel")
-            post = self.prawin("prequelmemes", "top")
+            post = reddit.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                               post["img"], post["title"], post["id"]))
@@ -152,7 +129,7 @@ class Dave:
         async def top(sub: str):
             # ^ sub needs to be string, or prawin() breaks.
             print("!subreddit top")
-            post = self.prawin(sub, "top")
+            post = reddit.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -161,7 +138,7 @@ class Dave:
         @subreddit.command()
         async def new(sub: str):
             print("!subreddit new")
-            post = self.prawin(sub, "new")
+            post = reddit.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -170,7 +147,7 @@ class Dave:
         @subreddit.command()
         async def rising(sub: str):
             print("!subreddit rising")
-            post = self.prawin(sub, "rising")
+            post = reddit.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -179,7 +156,7 @@ class Dave:
         @subreddit.command()
         async def hot(sub: str):
             print("!subreddit hot")
-            post = self.prawin(sub, "hot")
+            post = reddit.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
