@@ -14,6 +14,18 @@ if __name__ == "__main__":
         else:
             raise SystemExit("Error: Errenous client code; "
                              "restart file and try again.")
+    elif len(args) == 3:
+        clientcode = args[1]
+        dwd = args[2]
+        if clientcode:
+            print("\nNote, regex checking hasn't been implemented - invalid "
+                  "client codes error out one stage later.")
+            print("\nMain File; discout is being called.")
+            main = bot.Dave(clientcode, dwd)
+            main.discout()
+        else:
+            raise SystemExit("Error: Errenous client code; "
+                             "restart file and try again.")
     else:
         raise SystemExit("Usage:\npython3 main.py clientcode\nwhere "
                          "clientcode is the discord bot clientcode")
