@@ -2,6 +2,7 @@ import discord, feedparser  # Need installing.
 import logging  # Builtins.
 from discord.ext import commands
 import reddit
+import os
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -14,10 +15,11 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 class Dave:
     """Main class for BOT."""
-    def __init__(self, code):
+    def __init__(self, code, wd=os.getcwd()):
         self.code = code
+        self.wd = wd
 
-    def feedlist(self, fl="file/feeds.dat"):
+    def feedlist(self, fl="{}/file/feeds.dat".format(self.wd):
         with open(fl, "r") as fle:
             enlst = fle.readlines()
         return [x.strip() for x in enlst]
