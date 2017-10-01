@@ -19,7 +19,7 @@ class Dave:
         self.code = code
         self.wd = wd
 
-    def feedlist(self, fl="{}/file/feeds.dat".format(self.wd):
+    def feedlist(self, fl="{}/file/feeds.dat".format(self.wd)):
         with open(fl, "r") as fle:
             enlst = fle.readlines()
         return [x.strip() for x in enlst]
