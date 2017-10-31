@@ -15,14 +15,14 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 class Dave:
     """Main class for BOT."""
-    def __init__(self, code, wd=os.getcwd()):
+    def __init__(self, code):
         self.code = code
-        self.wd = wd
+        os.chdir("/home/fisher/Dave-Bot")
 
-    def feedlist(self, fl="{}/file/feeds.dat".format(self.wd)):
+    def feedlist(self, fl="file/feeds.dat"):
         with open(fl, "r") as fle:
             enlst = fle.readlines()
-        return [x.strip() for x in enlst]
+        return [x.split() for x in enlst]
 
     def uptimeFunc(self):
         """Returns host uptime nicely. Breaks if not *nix."""
@@ -120,16 +120,16 @@ class Dave:
                              "```Invalid subreddit; try again.``` "
                              "if an error is thrown.\n")
 
-        # V provides !subreddit command group.
         @client.group(pass_context=True)
         async def subreddit(ctx):
+            """Provides !subreddit group of cmds."""
             print("!subreddit")
             if ctx.invoked_subcommand is None:
-                await client.say("Invalid subreddit; try again.")
+                await client.say("Invalid subreddit; see !sbrthp.")
 
         @subreddit.command()
         async def top(sub: str):
-            # ^ sub needs to be string, or prawin() breaks.
+            """sub needs to be string, or prawin() breaks."""
             print("!subreddit top")
             post = reddit.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
