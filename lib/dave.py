@@ -15,9 +15,9 @@ client = commands.Bot(description=description, command_prefix=bot_prefix)
 
 class Dave:
     """Main class for BOT."""
-    def __init__(self, code):
+    def __init__(self, code, cddir="/home/fisher/Dave-BOT"):
         self.code = code
-        os.chdir("/home/fisher/Dave-BOT")
+        os.chdir(str(cddir))
 
     def feedlist(self, fl="file/feeds.dat"):
         with open(fl, "r") as fle:
@@ -63,8 +63,8 @@ class Dave:
             print("!news")
             sauce = self.feedlist()
             for it in sauce:
-                loc = feedparser.parse(it)
-                await client.say(loc.entries[0]["link"])
+                loc = feedparser.parse(it[0])
+                await client.say(loc)
 
         # V provides !prequel command.
         @client.command(pass_context=True)
