@@ -1,7 +1,7 @@
 import discord, feedparser  # Need installing.
 import logging  # Builtins.
 from discord.ext import commands
-import reddit
+import lib.reddit
 import os
 
 logging.basicConfig(level=logging.WARNING)
