@@ -17,7 +17,7 @@ class Dave:
     """Main class for BOT."""
     def __init__(self, code):
         self.code = code
-        os.chdir("/home/fisher/Dave-Bot")
+        os.chdir("/home/fisher/Dave-BOT")
 
     def feedlist(self, fl="file/feeds.dat"):
         with open(fl, "r") as fle:
