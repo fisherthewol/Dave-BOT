@@ -1,9 +1,7 @@
 import discord, feedparser  # Need installing.
 from discord.ext import commands
-import logging, os, platform  # Builtins.
-from Dave-BOT import redditclient
-
-logging.basicConfig(level=logging.WARNING)
+import os, platform  # Builtins.
+from DaveBOT import redditclient
 
 # Set up discord vars.
 class Dave:
@@ -13,7 +11,8 @@ class Dave:
         self.description = "This is a WIP bot to work discord. Use !bothelp."
         self.bot_prefix = "!"
         global client
-        client = commands.Bot(description=description, command_prefix=bot_prefix)
+        client = commands.Bot(description=self.description,
+                              command_prefix=self.bot_prefix)
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
@@ -103,7 +102,7 @@ class Dave:
                 await client.say("\nHost not linux; this feature coming soon.\n")
 
         @client.command(pass_context=True)
-        async def sbrthp(ctx):
+        async def subhelp(ctx):
             print("!subhelp")
             await client.say("\n!subreddit help: "
                              "\nSyntax: ```!subreddit sort sub```"
@@ -119,7 +118,7 @@ class Dave:
             """Provides !subreddit group of cmds."""
             print("!subreddit")
             if ctx.invoked_subcommand is None:
-                await client.say("Invalid subreddit; see !sbrthp.")
+                await client.say("Invalid subreddit; see !subhelp.")
 
         @subreddit.command()
         async def top(sub: str):
