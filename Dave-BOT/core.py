@@ -1,52 +1,47 @@
 import discord, feedparser  # Need installing.
-import logging  # Builtins.
 from discord.ext import commands
-import lib.reddit
-import os
+import logging, os, platform  # Builtins.
+from Dave-BOT import redditclient
 
 logging.basicConfig(level=logging.WARNING)
 
 # Set up discord vars.
-description = "This is a WIP bot to work discord. Use !bothelp."
-bot_prefix = "!"
-global client
-client = commands.Bot(description=description, command_prefix=bot_prefix)
-
-
 class Dave:
     """Main class for BOT."""
-    def __init__(self, code, cddir="/home/fisher/Dave-BOT"):
+    def __init__(self, code):
         self.code = code
-        os.chdir(str(cddir))
-
-    def feedlist(self, fl="file/feeds.dat"):
-        with open(fl, "r") as fle:
-            enlst = fle.readlines()
-        return [x.split() for x in enlst]
+        self.description = "This is a WIP bot to work discord. Use !bothelp."
+        self.bot_prefix = "!"
+        global client
+        client = commands.Bot(description=description, command_prefix=bot_prefix)
 
     def uptimeFunc(self):
-        """Returns host uptime nicely. Breaks if not *nix."""
-        from datetime import timedelta
-        with open("/proc/uptime", "r") as f:
-            uptime_seconds = float(f.readline().split()[0])
-            uptime_string = str(timedelta(seconds=uptime_seconds))
-        return uptime_string
+        """Returns host uptime nicely."""
+        if "Linux" in platform.system():
+            from datetime import timedelta
+            with open("/proc/uptime", "r") as f:
+                uptime_seconds = float(f.readline().split()[0])
+                uptime_string = str(timedelta(seconds=uptime_seconds))
+            return uptime_string
+        else:
+            return "incomp host."
+
 
     def discout(self):
         """Provides discord output. Could be called main(), but not now so as
            to provide future compatability.
         """
 
-        # V provides output on Successful Launch.
         @client.event
         async def on_ready():
+            """Outputs on successful launch."""
             print("Login Successful")
             print("Name : {}" .format(client.user.name))
             print("ID : {}" .format(client.user.id))
 
-        # V provides !bothelp command.
         @client.command(pass_context=True)
         async def bothelp(ctx):
+            """!bothelp, gives help on how to use the bot."""
             print("!bothelp")
             await client.say("\nAvailible commands:"
                              "\n!bothelp -- What you're seeing now."
@@ -54,41 +49,41 @@ class Dave:
                              "\n!prequel -- See the day's top post (so far) "
                              "from /r/prequelmemes."
                              "\n!pie -- get latest JPie Vid."
-                             "\n!subreddit -- see !sbrthp."
+                             "\n!subreddit -- see !subhelp."
                              "\n!dave -- get bot stats.")
 
-        # V provides !news command.
         @client.command(pass_context=True)
         async def news(ctx):
+            """!news, returns top news from bbc and gameinformer."""
             print("!news")
-            sauce = self.feedlist()
-            for it in sauce:
-                loc = feedparser.parse(it[0])
-                await client.say(loc)
+            bbc = feedparser.parse("https://feeds.bbci.co.uk/news/world/"
+                                   "europe/rss.xml")
+            game = feedparser.parse("https://www.gameinformer.com/b/"
+                                    "mainfeed.aspx?Tags=feature")
+            await client.say(bbc.entries[0]["link"])
+            await client.say(game.entries[0]["link"])
 
-        # V provides !prequel command.
         @client.command(pass_context=True)
         async def prequel(ctx):
+            """Gives top post from /r/prequelmemes."""
             print("!prequel")
-            post = reddit.prawin("prequelmemes", "top")
+            post = redditclient.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
                               post["img"], post["title"], post["id"]))
 
-        # V provides !pie command.
         @client.command(pass_context=True)
         async def pie(ctx):
+            """Gives latest Jonathan Pie."""
             print("!pie")
             pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
                                    "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await client.say(pie.entries[0]['link'])
 
-        # V provides !dave command.
         @client.command(pass_context=True)
         async def dave(ctx):
             print("!dave")
-            import platform
-            if "Linux" in platform.system():
+            if "linux" in platform.system().lower():
                 uptime = self.uptimeFunc()
                 version = platform.python_version()
                 compi = platform.python_compiler()
@@ -105,12 +100,11 @@ class Dave:
                                                            lindistn,
                                                            lindistv))
             else:
-                await client.say("\nHost incompatible with this function.\n")
+                await client.say("\nHost not linux; this feature coming soon.\n")
 
-        # V provides !sbrthp
         @client.command(pass_context=True)
         async def sbrthp(ctx):
-            print("!sbrthp")
+            print("!subhelp")
             await client.say("\n!subreddit help: "
                              "\nSyntax: ```!subreddit sort sub```"
                              "where ```sort``` is reddit sort type:\n"
@@ -131,7 +125,7 @@ class Dave:
         async def top(sub: str):
             """sub needs to be string, or prawin() breaks."""
             print("!subreddit top")
-            post = reddit.prawin(sub, "top")
+            post = redditclient.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -140,7 +134,7 @@ class Dave:
         @subreddit.command()
         async def new(sub: str):
             print("!subreddit new")
-            post = reddit.prawin(sub, "new")
+            post = redditclient.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -149,7 +143,7 @@ class Dave:
         @subreddit.command()
         async def rising(sub: str):
             print("!subreddit rising")
-            post = reddit.prawin(sub, "rising")
+            post = redditclient.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -158,7 +152,7 @@ class Dave:
         @subreddit.command()
         async def hot(sub: str):
             print("!subreddit hot")
-            post = reddit.prawin(sub, "hot")
+            post = redditclient.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
@@ -168,11 +162,4 @@ class Dave:
 
 
 if __name__ == "__main__":
-    clientcode = str(input("Input client code:\n"))
-    if clientcode:
-        print("\nMain File; discout is being called.")
-        main = Dave(clientcode)
-        main.discout()
-    else:
-        raise SystemExit("Error: Empty client code; "
-                         "restart file and try again.")
+    raise SystemExit("This is an import file, don't run directly.")
