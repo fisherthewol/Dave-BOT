@@ -6,8 +6,8 @@ def prawin(sub, sort):
        from praw.ini.
        Always returns top/first post for given sort.
     """
-    reddit = praw.Reddit('prequelbot',
-                         user_agent='davebot:v104:t3rr0r_f3rr3t')
+    reddit = praw.Reddit("preqbot",
+                         user_agent="davebot:v104:t3rr0r_f3rr3t")
     subreddit = reddit.subreddit(str(sub))
     if sort == "top":
         postsort = subreddit.top("day", limit=1)
