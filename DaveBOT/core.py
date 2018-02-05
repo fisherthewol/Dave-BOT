@@ -2,7 +2,7 @@ import discord, feedparser  # Need installing.
 from discord.ext import commands
 import os, platform, logging  # Builtins.
 from logging.handlers import RotatingFileHandler
-from DaveBOT import redditclient
+import .redditclient
 
 
 class Dave:
@@ -53,11 +53,12 @@ class Dave:
             print("Login Successful")
             print("Name : {}" .format(client.user.name))
             print("ID : {}" .format(client.user.id))
+            self.logger.info("Successful client launch.")
 
         @client.command(pass_context=True)
         async def bothelp(ctx):
             """!bothelp, gives help on how to use the bot."""
-            print("!bothelp")
+            self.logger.info("!bothelp called.")
             await client.say("\nAvailible commands:"
                              "\n!bothelp -- What you're seeing now."
                              "\n!news -- See top news stories now."
@@ -70,7 +71,7 @@ class Dave:
         @client.command(pass_context=True)
         async def news(ctx):
             """!news, returns top news from bbc and gameinformer."""
-            print("!news")
+            self.logger.info("!news called.")
             bbc = feedparser.parse("https://feeds.bbci.co.uk/news/world/"
                                    "europe/rss.xml")
             game = feedparser.parse("https://www.gameinformer.com/b/"
@@ -81,7 +82,7 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             """Gives top post from /r/prequelmemes."""
-            print("!prequel")
+            self.logger.info("!prequel called.")
             post = redditclient.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
@@ -90,14 +91,14 @@ class Dave:
         @client.command(pass_context=True)
         async def pie(ctx):
             """Gives latest Jonathan Pie."""
-            print("!pie")
+            self.logger.info("!pie called.")
             pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
                                    "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await client.say(pie.entries[0]['link'])
 
         @client.command(pass_context=True)
         async def dave(ctx):
-            print("!dave")
+            self.logger.info("!dave called.")
             if "linux" in platform.system().lower():
                 uptime = self.uptimeFunc()
                 version = platform.python_version()
@@ -115,11 +116,12 @@ class Dave:
                                                            lindistn,
                                                            lindistv))
             else:
+                self.logger.warning("Host not linux, !dave is not supported.")
                 await client.say("\nHost not linux; this feature coming soon.\n")
 
         @client.command(pass_context=True)
         async def subhelp(ctx):
-            print("!subhelp")
+            self.logger.info("!subhelp called.")
             await client.say("\n!subreddit help: "
                              "\nSyntax: ```!subreddit sort sub```"
                              "where ```sort``` is reddit sort type:\n"
@@ -132,14 +134,14 @@ class Dave:
         @client.group(pass_context=True)
         async def subreddit(ctx):
             """Provides !subreddit group of cmds."""
-            print("!subreddit")
+            self.logger.info("!subreddit called.")
             if ctx.invoked_subcommand is None:
                 await client.say("Invalid subreddit; see !subhelp.")
 
         @subreddit.command()
         async def top(sub: str):
             """sub needs to be string, or prawin() breaks."""
-            print("!subreddit top")
+            self.logger.info("!subreddit top called.")
             post = redditclient.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -148,7 +150,7 @@ class Dave:
 
         @subreddit.command()
         async def new(sub: str):
-            print("!subreddit new")
+            self.logger.info("!subreddit new called.")
             post = redditclient.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -157,7 +159,7 @@ class Dave:
 
         @subreddit.command()
         async def rising(sub: str):
-            print("!subreddit rising")
+            self.logger.info("!subreddit rising called.")
             post = redditclient.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -166,7 +168,7 @@ class Dave:
 
         @subreddit.command()
         async def hot(sub: str):
-            print("!subreddit hot")
+            self.logger.info("!subreddit hot called.")
             post = redditclient.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -177,4 +179,4 @@ class Dave:
 
 
 if __name__ == "__main__":
-    raise SystemExit("This is an import file, don't run directly.")
+    raise SystemExit("This is an import file, do not run directly.")
