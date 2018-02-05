@@ -2,7 +2,7 @@ import discord, feedparser  # Need installing.
 from discord.ext import commands
 import os, platform, logging  # Builtins.
 from logging.handlers import RotatingFileHandler
-import .redditclient
+from DaveBOT import redditclient
 
 
 class Dave:
