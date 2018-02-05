@@ -7,13 +7,16 @@ from DaveBOT import redditclient
 
 class Dave:
     """Main class for BOT."""
-    def __init__(self, code):
+    def __init__(self, code, loglevel=logging.WARNING):
         self.code = code
         self.description = "This is a WIP bot to work discord. Use !bothelp."
         self.bot_prefix = "!"
         global client
-        client = commands.Bot(description=self.description,
-                              command_prefix=self.bot_prefix)
+        client = commands.Bot(command_prefix=self.bot_prefix,
+                              description=self.description)
+        self.setupLogging(loglevel)
+
+    def setupLogging(self, loglev):
         if not os.path.exists("logs"):
             os.mkdir("logs")
         self.logger = logging.getLogger(__name__)
@@ -24,6 +27,8 @@ class Dave:
             "%(asctime)s %(levelname)s: %(message)s"
             " [in %(pathname)s:%(lineno)d]"))
         self.logger.addHandler(rot)
+        self.logger.setLevel(loglev)
+        self.logger.info("Logging is setup.")
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
@@ -34,8 +39,8 @@ class Dave:
                 uptime_string = str(timedelta(seconds=uptime_seconds))
             return uptime_string
         else:
+            self.logger.warning("Host is not linux, uptimeFunc not supported.")
             return "incomp host."
-
 
     def discout(self):
         """Provides discord output. Could be called main(), but not now so as
