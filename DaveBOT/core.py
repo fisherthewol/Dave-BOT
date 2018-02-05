@@ -1,9 +1,10 @@
 import discord, feedparser  # Need installing.
 from discord.ext import commands
-import os, platform  # Builtins.
+import os, platform, logging  # Builtins.
+from logging.handlers import RotatingFileHandler
 from DaveBOT import redditclient
 
-# Set up discord vars.
+
 class Dave:
     """Main class for BOT."""
     def __init__(self, code):
@@ -13,6 +14,16 @@ class Dave:
         global client
         client = commands.Bot(description=self.description,
                               command_prefix=self.bot_prefix)
+        if not os.path.exists("logs"):
+            os.mkdir("logs")
+        self.logger = logging.getLogger(__name__)
+        rot = RotatingFileHandler("logs/dave.log",
+                                  maxBytes=10240,
+                                  backupCount=10)
+        rot.setFormatter(logging.Formatter(
+            "%(asctime)s %(levelname)s: %(message)s"
+            " [in %(pathname)s:%(lineno)d]"))
+        self.logger.addHandler(rot)
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
