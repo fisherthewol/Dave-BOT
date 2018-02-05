@@ -11,30 +11,38 @@ You can use our copy of Dave-BOT. We take no responsibility for any issues arisi
 4. Enjoy!  
 
 ### Create your own instance.
+*nb: commands presume debian; if you're using rpm then use the relevent commands.*
 1. Clone the master branch of the repo into your server.  
-2. Install packages:  
+2. Setup a virtualenv and activate it:  
+```
+# if not already installed:
+sudo apt install virtualenv
+virtualenv venv
+. venv/bin/activate
+```
+3. Install packages:  
 ```
 pip3 install feedparser
 pip3 install praw
 pip3 install -U discord.py
 ```
-3. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me). Copy it the app id/token.
-4. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
-5. Create a ```praw.ini``` file and fill it in with the details; EG:
+4. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me). Copy it the app id/token.
+5. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
+6. Create a ```praw.ini``` file and fill it in with the details; EG:
 ```
-[prequelbot]
+[preqbot]
 client_id=ID
 client_secret=SECRET
 ```
 You can see https://praw.readthedocs.io/en/latest/ for more details.  
-6. Call the file using ```python3 clientcode``` where clientcode is the token generated in step 3. It should produce the following output:
+7. Call the file using ```python3 main.py clientcode``` where clientcode is the token generated in step 3. It should produce the following output:
 ```
 Login Successful
 Name: **
 ID: **
 ```  
-7. Insert the ```ID``` it gives you as ID in https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0  
-8. That will allow you to add the bot to any servers where you have permission to.
+8. Insert the ```ID``` it gives you as ID in https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0  
+9. That will allow you to add the bot to any servers where you have permission to do so.
 
 ## Development  
 ### Contributing  
@@ -53,7 +61,7 @@ async def cmd(ctx):
     stuff
 ```   
 where ```cmd``` is your command to put after !, and ```stuff``` is what to do when that happens.   
-```stuff``` can be anything, we recommend using ```await client.say(string)``` for a basic thing.  
+```stuff``` can be anything; try starting with ```await client.say(string)```.  
 For example:  
 ```
 @client.command(pass_context=True)
