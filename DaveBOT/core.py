@@ -1,18 +1,34 @@
 import discord, feedparser  # Need installing.
 from discord.ext import commands
-import os, platform  # Builtins.
+import os, platform, logging  # Builtins.
+from logging.handlers import RotatingFileHandler
 from DaveBOT import redditclient
 
-# Set up discord vars.
+
 class Dave:
     """Main class for BOT."""
-    def __init__(self, code):
+    def __init__(self, code, loglevel=logging.WARNING):
         self.code = code
         self.description = "This is a WIP bot to work discord. Use !bothelp."
         self.bot_prefix = "!"
         global client
-        client = commands.Bot(description=self.description,
-                              command_prefix=self.bot_prefix)
+        client = commands.Bot(command_prefix=self.bot_prefix,
+                              description=self.description)
+        self.setupLogging(loglevel)
+
+    def setupLogging(self, loglev):
+        if not os.path.exists("logs"):
+            os.mkdir("logs")
+        self.logger = logging.getLogger(__name__)
+        rot = RotatingFileHandler("logs/dave.log",
+                                  maxBytes=10240,
+                                  backupCount=10)
+        rot.setFormatter(logging.Formatter(
+            "%(asctime)s %(levelname)s: %(message)s"
+            " [in %(pathname)s:%(lineno)d]"))
+        self.logger.addHandler(rot)
+        self.logger.setLevel(loglev)
+        self.logger.info("Logging is setup.")
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
@@ -23,8 +39,8 @@ class Dave:
                 uptime_string = str(timedelta(seconds=uptime_seconds))
             return uptime_string
         else:
+            self.logger.warning("Host is not linux, uptimeFunc not supported.")
             return "incomp host."
-
 
     def discout(self):
         """Provides discord output. Could be called main(), but not now so as
@@ -37,11 +53,12 @@ class Dave:
             print("Login Successful")
             print("Name : {}" .format(client.user.name))
             print("ID : {}" .format(client.user.id))
+            self.logger.info("Successful client launch.")
 
         @client.command(pass_context=True)
         async def bothelp(ctx):
             """!bothelp, gives help on how to use the bot."""
-            print("!bothelp")
+            self.logger.info("!bothelp called.")
             await client.say("\nAvailible commands:"
                              "\n!bothelp -- What you're seeing now."
                              "\n!news -- See top news stories now."
@@ -54,7 +71,7 @@ class Dave:
         @client.command(pass_context=True)
         async def news(ctx):
             """!news, returns top news from bbc and gameinformer."""
-            print("!news")
+            self.logger.info("!news called.")
             bbc = feedparser.parse("https://feeds.bbci.co.uk/news/world/"
                                    "europe/rss.xml")
             game = feedparser.parse("https://www.gameinformer.com/b/"
@@ -65,7 +82,7 @@ class Dave:
         @client.command(pass_context=True)
         async def prequel(ctx):
             """Gives top post from /r/prequelmemes."""
-            print("!prequel")
+            self.logger.info("!prequel called.")
             post = redditclient.prawin("prequelmemes", "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(
@@ -74,14 +91,14 @@ class Dave:
         @client.command(pass_context=True)
         async def pie(ctx):
             """Gives latest Jonathan Pie."""
-            print("!pie")
+            self.logger.info("!pie called.")
             pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
                                    "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await client.say(pie.entries[0]['link'])
 
         @client.command(pass_context=True)
         async def dave(ctx):
-            print("!dave")
+            self.logger.info("!dave called.")
             if "linux" in platform.system().lower():
                 uptime = self.uptimeFunc()
                 version = platform.python_version()
@@ -99,11 +116,12 @@ class Dave:
                                                            lindistn,
                                                            lindistv))
             else:
+                self.logger.warning("Host not linux, !dave is not supported.")
                 await client.say("\nHost not linux; this feature coming soon.\n")
 
         @client.command(pass_context=True)
         async def subhelp(ctx):
-            print("!subhelp")
+            self.logger.info("!subhelp called.")
             await client.say("\n!subreddit help: "
                              "\nSyntax: ```!subreddit sort sub```"
                              "where ```sort``` is reddit sort type:\n"
@@ -116,14 +134,14 @@ class Dave:
         @client.group(pass_context=True)
         async def subreddit(ctx):
             """Provides !subreddit group of cmds."""
-            print("!subreddit")
+            self.logger.info("!subreddit called.")
             if ctx.invoked_subcommand is None:
                 await client.say("Invalid subreddit; see !subhelp.")
 
         @subreddit.command()
         async def top(sub: str):
             """sub needs to be string, or prawin() breaks."""
-            print("!subreddit top")
+            self.logger.info("!subreddit top called.")
             post = redditclient.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -132,7 +150,7 @@ class Dave:
 
         @subreddit.command()
         async def new(sub: str):
-            print("!subreddit new")
+            self.logger.info("!subreddit new called.")
             post = redditclient.prawin(sub, "new")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -141,7 +159,7 @@ class Dave:
 
         @subreddit.command()
         async def rising(sub: str):
-            print("!subreddit rising")
+            self.logger.info("!subreddit rising called.")
             post = redditclient.prawin(sub, "rising")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -150,7 +168,7 @@ class Dave:
 
         @subreddit.command()
         async def hot(sub: str):
-            print("!subreddit hot")
+            self.logger.info("!subreddit hot called.")
             post = redditclient.prawin(sub, "hot")
             await client.say("Image: {}\nTitle = {}\nComments = "
                              "https://redd.it/{}\n".format(post["img"],
@@ -161,4 +179,4 @@ class Dave:
 
 
 if __name__ == "__main__":
-    raise SystemExit("This is an import file, don't run directly.")
+    raise SystemExit("This is an import file, do not run directly.")
