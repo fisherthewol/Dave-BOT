@@ -1,9 +1,19 @@
-import sys, logging
+import os, sys, logging
 
 
 if __name__ == "__main__":
     args = sys.argv
-    if len(args) == 2:
+    numberofargs = len(args)
+    if numberofargs == 1:
+        if (os.environ.get("clientcode") is None) or \
+           (os.environ.get("client_id") is None) or \
+           (os.environ.get("client_secret") is None):
+            raise SystemExit("Error, environvar(s) not set")
+        else:
+            import DaveBOT.core as bot
+            client = bot.Dave(os.environ.get("clientcode"))
+            client.discout()
+    elif numberofargs == 2:
         import DaveBOT.core as bot
         clientcode = args[1]
         if clientcode:
@@ -12,7 +22,7 @@ if __name__ == "__main__":
             client.discout()
         else:
             raise SystemExit("Error: Empty client code. Try again.")
-    elif len(args) == 3:
+    elif numberofargs == 3:
         import DaveBOT.core as bot
         clientcode = args[1]
         loglevels = {"debug": logging.DEBUG,
