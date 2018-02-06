@@ -103,3 +103,5 @@ ENV/
 *.txt
 
 mypraw\.ini
+
+env\.list
