@@ -8,7 +8,11 @@ if __name__ == "__main__":
         if (os.environ.get("clientcode") is None) or \
            (os.environ.get("client_id") is None) or \
            (os.environ.get("client_secret") is None):
-            raise SystemExit("Error, environvar(s) not set")
+            raise SystemExit("Error, environvar(s) not set. "
+                             "Set them or follow the following usage:\n\n"
+                             "Usage:\npython3 main.py clientcode loglevel\nwhere"
+                             " clientcode is the discord bot clientcode, and\n"
+                             "loglevel is a valid log level (default is INFO).")
         else:
             import DaveBOT.core as bot
             client = bot.Dave(os.environ.get("clientcode"))
@@ -41,4 +45,6 @@ if __name__ == "__main__":
     else:
         raise SystemExit("Usage:\npython3 main.py clientcode loglevel\nwhere "
                          "clientcode is the discord bot clientcode, and\n"
-                         "loglevel is a valid log level (default is INFO).")
+                         "loglevel is a valid log level (default is INFO).\n"
+                         "Also, this should never print; if it does, please "
+                         "get in touch with the developers.")
