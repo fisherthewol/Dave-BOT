@@ -1,3 +1,4 @@
+import os
 import praw
 
 def prawin(sub, sort):
@@ -6,8 +7,14 @@ def prawin(sub, sort):
        from praw.ini.
        Always returns top/first post for given sort.
     """
-    reddit = praw.Reddit("preqbot",
-                         user_agent="davebot:v104:t3rr0r_f3rr3t")
+    environvariables = os.environ
+    if os.environ.get("client_id") is None:
+        reddit = praw.Reddit("preqbot",
+                             user_agent="davebot:v104:t3rr0r_f3rr3t")
+    else:
+        reddit = praw.Reddit(client_id=environvariables["client_id"],
+                             client_secret=environvariables["client_secret"],
+                             user_agent="davebot:v104:t3rr0r_f3rr3t")
     subreddit = reddit.subreddit(str(sub))
     if sort == "top":
         postsort = subreddit.top("day", limit=1)
