@@ -17,16 +17,12 @@ class Dave:
         self.setupLogging(loglevel)
 
     def setupLogging(self, loglev):
-        if not os.path.exists("logs"):
-            os.mkdir("logs")
         self.logger = logging.getLogger(__name__)
-        rot = RotatingFileHandler("logs/dave.log",
-                                  maxBytes=10240,
-                                  backupCount=10)
-        rot.setFormatter(logging.Formatter(
+        handle = logging.StreamHandler()
+        handle.setFormatter(logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s"
             " [in %(pathname)s:%(lineno)d]"))
-        self.logger.addHandler(rot)
+        self.logger.addHandler(handlers)
         self.logger.setLevel(loglev)
         self.logger.info("Logging is setup.")
 
@@ -50,9 +46,9 @@ class Dave:
         @client.event
         async def on_ready():
             """Outputs on successful launch."""
-            print("Login Successful")
-            print("Name : {}" .format(client.user.name))
-            print("ID : {}" .format(client.user.id))
+            self.logger.warning("Login Successful")
+            self.logger.warning("Name : {}" .format(client.user.name))
+            self.logger.warning("ID : {}" .format(client.user.id))
             self.logger.info("Successful client launch.")
 
         @client.command(pass_context=True)
