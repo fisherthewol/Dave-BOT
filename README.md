@@ -1,6 +1,5 @@
 # Dave-BOT
-A Discord bot based on Discord.py.  
-For our server, but could work for other servers.  
+A Discord bot based on Discord.py.   
 ## Quickstart  
 The following is a quickstart guide to getting the bot running.  
 ### Using the instance on our server:  
@@ -47,7 +46,7 @@ pip3 install -U discord.py
 ```
 4. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me). Copy the app id/token.
 5. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
-6. Create a ```praw.ini``` file and fill it in with the details; EG:
+6. Create a ```praw.ini``` file in the root directory and fill in the details:
 ```
 [preqbot]
 client_id=ID
