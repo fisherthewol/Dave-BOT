@@ -26,7 +26,8 @@ client_secret=SECRET HERE
 clientcode=CODE HERE
 ```
 - Run with ```sudo docker run -d --env-file env.list dave:master```  
-- To stop, ```sudo docker stop <name>``` where <name> is the container name/id.
+- Get your ID by running ```sudo docker logs <name>``` where <name> is the container name/id; insert it as ```ID``` into https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0; this allows you to add it to any servers where you are allowed to do so.  
+- To stop, ```sudo docker stop <name>```  
 
 #### Raw python:  
 *nb: commands presume debian/apt; if you're using rpm then use the relevant commands.*
