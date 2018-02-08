@@ -15,6 +15,10 @@ class Dave:
         client = commands.Bot(command_prefix=self.bot_prefix,
                               description=self.description)
         self.setupLogging(loglevel)
+        if "Linux" in platform.system():
+            self.host_is_Linux = True
+        else:
+            self.host_is_Linux = False
 
     def setupLogging(self, loglev):
         self.logger = logging.getLogger(__name__)
@@ -22,13 +26,13 @@ class Dave:
         handle.setFormatter(logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s"
             " [in %(pathname)s:%(lineno)d]"))
-        self.logger.addHandler(handlers)
+        self.logger.addHandler(handle)
         self.logger.setLevel(loglev)
         self.logger.info("Logging is setup.")
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
-        if "Linux" in platform.system():
+        if self.host_is_Linux:
             from datetime import timedelta
             with open("/proc/uptime", "r") as f:
                 uptime_seconds = float(f.readline().split()[0])
@@ -39,10 +43,7 @@ class Dave:
             return "incomp host."
 
     def discout(self):
-        """Provides discord output. Could be called main(), but not now so as
-           to provide future compatability.
-        """
-
+        """Discord functions and client running."""
         @client.event
         async def on_ready():
             """Outputs on successful launch."""
@@ -95,7 +96,7 @@ class Dave:
         @client.command(pass_context=True)
         async def dave(ctx):
             self.logger.info("!dave called.")
-            if "linux" in platform.system().lower():
+            if self.host_is_Linux:
                 uptime = self.uptimeFunc()
                 version = platform.python_version()
                 compi = platform.python_compiler()
@@ -113,7 +114,7 @@ class Dave:
                                                            lindistv))
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
-                await client.say("\nHost not linux; this feature coming soon.\n")
+                await client.say("Host !=linux; feature coming soon(tm).\n")
 
         @client.command(pass_context=True)
         async def subhelp(ctx):
