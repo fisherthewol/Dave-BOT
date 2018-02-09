@@ -1,6 +1,5 @@
 # Dave-BOT
-A Discord bot based on Discord.py.  
-For our server, but could work for other servers.  
+A Discord bot based on Discord.py.   
 ## Quickstart  
 The following is a quickstart guide to getting the bot running.  
 ### Using the instance on our server:  
@@ -26,7 +25,8 @@ client_secret=SECRET HERE
 clientcode=CODE HERE
 ```
 - Run with ```sudo docker run -d --env-file env.list dave:master```  
-- To stop, ```sudo docker stop <name>``` where <name> is the container name/id.
+- Get your ID by running ```sudo docker logs <name>``` where <name> is the container name/id; insert it as ```ID``` into https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0; this allows you to add it to any servers where you are allowed to do so.  
+- To stop, ```sudo docker stop <name>```  
 
 #### Raw python:  
 *nb: commands presume debian/apt; if you're using rpm then use the relevant commands.*
@@ -46,7 +46,7 @@ pip3 install -U discord.py
 ```
 4. Generate a new app at the [discord website](https://discordapp.com/developers/applications/me). Copy the app id/token.
 5. Visit [reddit's dev centre](https://reddit.com/prefs/apps/) to create an app (we recommend using personal use script) and grab the client_id and client_secret.  
-6. Create a ```praw.ini``` file and fill it in with the details; EG:
+6. Create a ```praw.ini``` file in the root directory and fill in the details:
 ```
 [preqbot]
 client_id=ID
