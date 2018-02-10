@@ -1,7 +1,6 @@
 import discord, feedparser  # Need installing.
 from discord.ext import commands
 import os, platform, logging  # Builtins.
-from logging.handlers import RotatingFileHandler
 from DaveBOT import redditclient
 
 
@@ -51,6 +50,7 @@ class Dave:
             self.logger.warning("Name : {}" .format(client.user.name))
             self.logger.warning("ID : {}" .format(client.user.id))
             self.logger.info("Successful client launch.")
+            await client.change_presence(game=discord.Game(name="Use !bothelp"))
 
         @client.command(pass_context=True)
         async def bothelp(ctx):
