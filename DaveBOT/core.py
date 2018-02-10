@@ -4,6 +4,8 @@ import feedparser
 import os
 import platform
 import logging
+import sys
+import signal
 from DaveBOT import redditclient
 
 
@@ -22,6 +24,10 @@ class Dave:
         else:
             self.host_is_Linux = False
 
+    def sigler(self, signal, frame):
+        self.logger.critical("SIGTERM RECIEVED, ENDING!")
+        sys.exit("SIGTERM recieved, ending.")
+
     def setupLogging(self, loglev):
         self.logger = logging.getLogger(__name__)
         handle = logging.StreamHandler()
@@ -31,6 +37,7 @@ class Dave:
         self.logger.addHandler(handle)
         self.logger.setLevel(loglev)
         self.logger.info("Logging is setup.")
+        signal.signal(signal.SIGTERM, self.sigler)
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""

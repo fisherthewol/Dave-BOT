@@ -4,7 +4,7 @@ import logging
 
 
 usagestring = """Usage:\npython3 main.py clientcode loglevel\nwhere clientcode
-is the discord bot clientcode, and\n loglevel is a valid log level
+is the discord bot clientcode, and\nloglevel is a valid log level
 (default is WARNING)."""
 
 
