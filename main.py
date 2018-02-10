@@ -1,4 +1,6 @@
-import os, sys, logging
+import os
+import sys
+import logging
 
 
 usagestring = """Usage:\npython3 main.py clientcode loglevel\nwhere clientcode
@@ -21,13 +23,13 @@ def findLogLevel(logleveltofind):
 def startFromEnviron():
     if os.environ.get("clientcode") is None:
         sys.exit("Error, discord client code not set. Set your "
-                         "environ, or:\n{}".format(usagestring))
+                 "environ, or:\n{}".format(usagestring))
     elif os.environ.get("client_id") is None:
         sys.exit("Error, reddit client_id not set. Set your "
-                         "environ, or:\n{}".format(usagestring))
+                 "environ, or:\n{}".format(usagestring))
     elif os.environ.get("client_secret") is None:
         sys.exit("Error, reddit client_secret not set. Set your "
-                         "environ, or:\n{}".format(usagestring))
+                 "environ, or:\n{}".format(usagestring))
     elif os.environ.get("loglevel") is None:
         leveltoPass = logging.WARNING
     else:
@@ -64,10 +66,10 @@ def main():
         startWithClientAndLog(args)
     else:
         sys.exit("Usage:\npython3 main.py clientcode loglevel\nwhere "
-                         "clientcode is the discord bot clientcode, and\n"
-                         "loglevel is a valid log level (default is INFO).\n"
-                         "Also, this should never print; if it does, please "
-                         "get in touch with the developers.")
+                 "clientcode is the discord bot clientcode, and\n"
+                 "loglevel is a valid log level (default is INFO).\n"
+                 "Also, this should never print; if it does, please "
+                 "get in touch with the developers.")
 
 
 if __name__ == "__main__":
