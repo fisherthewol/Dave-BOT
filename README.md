@@ -13,7 +13,7 @@ You can use our copy of Dave-BOT. We take no responsibility for any issues arisi
 This app will build into a docker container:
 - Get your [discord clientcode](https://discordapp.com/developers/applications/me) and [reddit client_id and _secret](https://reddit.com/prefs/apps/) (we recommend using a personal user script).  
 - Download and install docker.  
-- Clone the master branch of this repo.  
+- Clone the master branch/get the source of the latest release of the repo.  
 - cd into the top level of the repo (Usually ```cd Dave-BOT```).  
 - Build with ```sudo docker build -t dave:master .```  
 - Create a file called env.list and put your client_id, client_secret, and discord client code into it:  

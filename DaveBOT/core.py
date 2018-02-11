@@ -1,7 +1,11 @@
-import discord, feedparser  # Need installing.
+import discord
 from discord.ext import commands
-import os, platform, logging  # Builtins.
-from logging.handlers import RotatingFileHandler
+import feedparser
+import os
+import platform
+import logging
+import sys
+import signal
 from DaveBOT import redditclient
 
 
@@ -9,7 +13,7 @@ class Dave:
     """Main class for BOT."""
     def __init__(self, code, loglevel=logging.WARNING):
         self.code = code
-        self.description = "This is a WIP bot to work discord. Use !bothelp."
+        self.description = "Use !bothelp."
         self.bot_prefix = "!"
         global client
         client = commands.Bot(command_prefix=self.bot_prefix,
@@ -20,6 +24,10 @@ class Dave:
         else:
             self.host_is_Linux = False
 
+    def sigler(self, signal, frame):
+        self.logger.critical("SIGTERM recieved, ending.")
+        sys.exit("SIGTERM recieved, ending.")
+
     def setupLogging(self, loglev):
         self.logger = logging.getLogger(__name__)
         handle = logging.StreamHandler()
@@ -29,6 +37,7 @@ class Dave:
         self.logger.addHandler(handle)
         self.logger.setLevel(loglev)
         self.logger.info("Logging is setup.")
+        signal.signal(signal.SIGTERM, self.sigler)
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
@@ -51,6 +60,7 @@ class Dave:
             self.logger.warning("Name : {}" .format(client.user.name))
             self.logger.warning("ID : {}" .format(client.user.id))
             self.logger.info("Successful client launch.")
+            await client.change_presence(game=discord.Game(name="!bothelp"))
 
         @client.command(pass_context=True)
         async def bothelp(ctx):

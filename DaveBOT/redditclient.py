@@ -1,6 +1,7 @@
 import os
 import praw
 
+
 def prawin(sub, sort):
     """Praw-Based function, reads from reddit.
        reddit is a PRAW instance we operate on; Pulls client_id & _secret
