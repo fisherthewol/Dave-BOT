@@ -3,7 +3,7 @@ import sys
 import logging
 
 
-usagestring = """Usage:\npython3 main.py clientcode loglevel\nwhere clientcode
+usagestring = """Usage:\npython3 main.py clientcode (loglevel)\nwhere clientcode
 is the discord bot clientcode, and\nloglevel is a valid log level
 (default is WARNING)."""
 
@@ -17,7 +17,7 @@ def findLogLevel(logleveltofind):
     if logleveltofind.lower() in loglevels:
         return loglevels[logleveltofind.lower()]
     else:
-        return logging.WARNING
+        return None
 
 
 def startFromEnviron():
@@ -36,16 +36,29 @@ def startFromEnviron():
         leveltoPass = findLogLevel(os.environ.get("loglevel"))
 
     import DaveBOT.core as bot
-    botclient = bot.Dave(os.environ.get("clientcode"), leveltoPass)
+    if leveltoPass is None:
+        botclient = bot.Dave(os.environ.get("clientcode"))
+    else:
+        botclient = bot.Dave(os.environ.get("clientcode"), leveltoPass)
     botclient.discout()
 
 
-def startWithClientArg(sysargs):
-    clientcode = sysargs[1]
-    import DaveBOT.core as bot
-    botclient = bot.Dave(clientcode)
-    botclient.discout()
-
+def startWithoneArg(sysargs):
+    onearg = sysargs[1]
+    if findLogLevel(onearg) is None:
+        # Arg is not log level, so clientcode.
+        import DaveBOT.core as bot
+        botclient = bot.Dave(onearg)
+        botclient.discout()
+    else:
+        # Arg is log level, so try environ for clientcode.
+        if os.environ.get("clientcode") is None:
+            sys.exit("Error, discord client code not set. Set your "
+                     "environ, or:\n{}".format(usagestring))
+        else:
+            import DaveBOT.core as bot
+            botclient = bot.Dave(clientcode, findLogLevel(onearg))
+            botclient.discout()
 
 def startWithClientAndLog(sysargs):
     clientcode = sysargs[1]
@@ -67,9 +80,7 @@ def main():
     else:
         sys.exit("Usage:\npython3 main.py clientcode loglevel\nwhere "
                  "clientcode is the discord bot clientcode, and\n"
-                 "loglevel is a valid log level (default is INFO).\n"
-                 "Also, this should never print; if it does, please "
-                 "get in touch with the developers.")
+                 "loglevel is a valid log level (default is INFO).\n")
 
 
 if __name__ == "__main__":

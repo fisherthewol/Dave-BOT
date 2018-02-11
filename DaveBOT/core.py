@@ -13,7 +13,7 @@ class Dave:
     """Main class for BOT."""
     def __init__(self, code, loglevel=logging.WARNING):
         self.code = code
-        self.description = "This is a WIP bot to work discord. Use !bothelp."
+        self.description = "Use !bothelp."
         self.bot_prefix = "!"
         global client
         client = commands.Bot(command_prefix=self.bot_prefix,
@@ -25,7 +25,7 @@ class Dave:
             self.host_is_Linux = False
 
     def sigler(self, signal, frame):
-        self.logger.critical("SIGTERM RECIEVED, ENDING!")
+        self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 
     def setupLogging(self, loglev):
