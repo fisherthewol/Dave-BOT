@@ -4,6 +4,8 @@ import feedparser
 import os
 import platform
 import logging
+import logging.handlers
+import queue
 import sys
 import signal
 from DaveBOT import redditclient
@@ -23,21 +25,28 @@ class Dave:
             self.host_is_Linux = True
         else:
             self.host_is_Linux = False
+        signal.signal(signal.SIGTERM, self.sigler)
 
     def sigler(self, signal, frame):
+        """Set the response to sigterm."""
         self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 
     def setupLogging(self, loglev):
+        """Sets up logging"""
+        # Setup queue and queue handler:
+        que = queue.Queue(-1)
+        queue_handler = logging.handlers.QueueHandler(que)
         self.logger = logging.getLogger(__name__)
-        handle = logging.StreamHandler()
-        handle.setFormatter(logging.Formatter(
+        self.logger.addHandler(queue_handler)
+        # Setup listener:
+        streamhandle = logging.StreamHandler()
+        streamhandle.setFormatter(logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s"
             " [in %(pathname)s:%(lineno)d]"))
-        self.logger.addHandler(handle)
-        self.logger.setLevel(loglev)
-        self.logger.info("Logging is setup.")
-        signal.signal(signal.SIGTERM, self.sigler)
+        listener = logging.handlers.QueueListener(que, streamhandle)
+        listener.start()
+        self.logger.warning("Logging setup.")
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
