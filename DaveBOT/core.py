@@ -4,6 +4,8 @@ import feedparser
 import os
 import platform
 import logging
+import logging.handlers
+import queue
 import sys
 import signal
 from DaveBOT import redditclient
@@ -13,7 +15,7 @@ class Dave:
     """Main class for BOT."""
     def __init__(self, code, loglevel=logging.WARNING):
         self.code = code
-        self.description = "Use !bothelp."
+        self.description = "Dave the Bot! Use !help."
         self.bot_prefix = "!"
         global client
         client = commands.Bot(command_prefix=self.bot_prefix,
@@ -23,21 +25,28 @@ class Dave:
             self.host_is_Linux = True
         else:
             self.host_is_Linux = False
+        signal.signal(signal.SIGTERM, self.sigler)
 
     def sigler(self, signal, frame):
+        """Set the response to sigterm."""
         self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 
     def setupLogging(self, loglev):
+        """Sets up logging"""
+        # Setup queue and queue handler:
+        que = queue.Queue(-1)
+        queue_handler = logging.handlers.QueueHandler(que)
         self.logger = logging.getLogger(__name__)
-        handle = logging.StreamHandler()
-        handle.setFormatter(logging.Formatter(
+        self.logger.addHandler(queue_handler)
+        # Setup listener:
+        streamhandle = logging.StreamHandler()
+        streamhandle.setFormatter(logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s"
             " [in %(pathname)s:%(lineno)d]"))
-        self.logger.addHandler(handle)
-        self.logger.setLevel(loglev)
-        self.logger.info("Logging is setup.")
-        signal.signal(signal.SIGTERM, self.sigler)
+        listener = logging.handlers.QueueListener(que, streamhandle)
+        listener.start()
+        self.logger.warning("Logging setup.")
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
@@ -60,31 +69,20 @@ class Dave:
             self.logger.warning("Name : {}" .format(client.user.name))
             self.logger.warning("ID : {}" .format(client.user.id))
             self.logger.info("Successful client launch.")
-            await client.change_presence(game=discord.Game(name="!bothelp"))
-
-        @client.command(pass_context=True)
-        async def bothelp(ctx):
-            """!bothelp, gives help on how to use the bot."""
-            self.logger.info("!bothelp called.")
-            await client.say("\nAvailible commands:"
-                             "\n!bothelp -- What you're seeing now."
-                             "\n!news -- See top news stories now."
-                             "\n!prequel -- See the day's top post (so far) "
-                             "from /r/prequelmemes."
-                             "\n!pie -- get latest JPie Vid."
-                             "\n!subreddit -- see !subhelp."
-                             "\n!dave -- get bot stats.")
+            await client.change_presence(game=discord.Game(name="Use !help"))
 
         @client.command(pass_context=True)
         async def news(ctx):
-            """!news, returns top news from bbc and gameinformer."""
+            """Returns top news from bbc and gameinformer."""
             self.logger.info("!news called.")
+            bbcmsg = await client.say("Fetching bbc news...")
+            gmimsg = await client.say("Fetching gameinformer news...")
             bbc = feedparser.parse("https://feeds.bbci.co.uk/news/world/"
                                    "europe/rss.xml")
             game = feedparser.parse("https://www.gameinformer.com/b/"
                                     "mainfeed.aspx?Tags=feature")
-            await client.say(bbc.entries[0]["link"])
-            await client.say(game.entries[0]["link"])
+            await client.edit_message(bbcmsg, bbc.entries[0]["link"])
+            await client.edit_message(gmimsg, game.entries[0]["link"])
 
         @client.command(pass_context=True)
         async def prequel(ctx):
@@ -128,6 +126,7 @@ class Dave:
 
         @client.command(pass_context=True)
         async def subhelp(ctx):
+            """Gives help on using !subreddit."""
             self.logger.info("!subhelp called.")
             await client.say("\n!subreddit help: "
                              "\nSyntax: ```!subreddit sort sub```"
@@ -140,14 +139,14 @@ class Dave:
 
         @client.group(pass_context=True)
         async def subreddit(ctx):
-            """Provides !subreddit group of cmds."""
+            """Provides !subreddit group of cmds; see !subhelp."""
             self.logger.info("!subreddit called.")
             if ctx.invoked_subcommand is None:
                 await client.say("Invalid subreddit; see !subhelp.")
 
         @subreddit.command()
         async def top(sub: str):
-            """sub needs to be string, or prawin() breaks."""
+            """Sub needs to be string, or prawin() breaks."""
             self.logger.info("!subreddit top called.")
             post = redditclient.prawin(sub, "top")
             await client.say("Image: {}\nTitle = {}\nComments = "

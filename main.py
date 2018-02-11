@@ -3,9 +3,9 @@ import sys
 import logging
 
 
-usagestring = """Usage:\npython3 main.py clientcode (loglevel)\nwhere clientcode
-is the discord bot clientcode, and\nloglevel is a valid log level
-(default is WARNING)."""
+usagestring = ("Usage:\npython3 main.py clientcode (loglevel)\nwhere "
+               "clientcode is the discord bot clientcode, and\n"
+               "loglevel is a valid log level (default is WARNING).")
 
 
 def findLogLevel(logleveltofind):
@@ -57,7 +57,8 @@ def startWithoneArg(sysargs):
                      "environ, or:\n{}".format(usagestring))
         else:
             import DaveBOT.core as bot
-            botclient = bot.Dave(clientcode, findLogLevel(onearg))
+            botclient = bot.Dave(os.environ.get("clientcode"),
+                                 findLogLevel(onearg))
             botclient.discout()
 
 def startWithClientAndLog(sysargs):
@@ -74,7 +75,7 @@ def main():
     if numberofargs == 1:
         startFromEnviron()
     elif numberofargs == 2:
-        startWithClientArg(args)
+        startWithoneArg(args)
     elif numberofargs == 3:
         startWithClientAndLog(args)
     else:
