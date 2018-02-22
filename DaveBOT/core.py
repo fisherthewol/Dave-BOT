@@ -95,11 +95,12 @@ class Dave:
 
         @client.command(pass_context=True)
         async def pie(ctx):
-            """Gives latest Jonathan Pie."""
+            """Gives latest Jonathan Pie Video."""
             self.logger.info("!pie called.")
+            piemsg = await client.say("Fetching video.")
             pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
                                    "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
-            await client.say(pie.entries[0]['link'])
+            await client.edit_message(piemsg, pie.entries[0]['link'])
 
         @client.command(pass_context=True)
         async def dave(ctx):
@@ -180,6 +181,37 @@ class Dave:
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
                                                            post["id"]))
+
+        @client.group(pass_context=True)
+        async def weather(ctx):
+            """Provides !weather; see !weather help."""
+            self.logger.info("!weather called.")
+            if ctx.invoked_subcommand is None:
+                await client.say("Invalid !weather command; see !weather help.")
+
+        @weather.command()
+        async def help():
+            self.logger.info("!weather help called.")
+            await client.say("\nPossible !weather commands:"
+                             "\n-!weather city:"
+                             "\n--Use\n"
+                             "```!weather city <cityname>,<countrycode>```"
+                             "\n  where <city> is a city, and <countrycode>"
+                             "is a valid ISO 3166-1 alpha-2 code."
+                             "\n-!weather id:"
+                             "\n--Use\n"
+                             "```!weather id <id>```"
+                             "\n  where <id> is a valid city id from "
+                             "http://bulk.openweathermap.org/sample/city.list.json.gz"
+                             "\n-!weather latlon:"
+                             "\n--Use\n"
+                             "```!weather latlon <latitude>,<longitude>```"
+                             "\n  where <latitude> & <longitude> are "
+                             "valid latitude and longitude."
+                             "\n-!weather zip:"
+                             "\n--Use\n"
+                             "```!weather zip <zipcode>```"
+                             "\n  where <zipcode> is a valid US zipcode.")
 
         client.run(str(self.code))
 
