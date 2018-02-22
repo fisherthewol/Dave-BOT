@@ -8,13 +8,14 @@ import logging.handlers
 import queue
 import sys
 import signal
-from DaveBOT import redditclient
+from DaveBOT import redditclient, owmaw
 
 
 class Dave:
-    """Main class for BOT."""
+    """Main class for Bot."""
     def __init__(self, code, loglevel=logging.WARNING):
         self.code = code
+        self.weather = owmaw.weather()
         self.description = "Dave the Bot! Use !help."
         self.bot_prefix = "!"
         global client
@@ -212,6 +213,37 @@ class Dave:
                              "\n--Use\n"
                              "```!weather zip <zipcode>```"
                              "\n  where <zipcode> is a valid US zipcode.")
+
+        @weather.command()
+        async def city(citcun: str):
+            self.logger.info("!weather city called.")
+            wthrmsg = await client.say("Fetching weather...")
+            sngs = citcun.split(",")
+            retjs = self.weather.by_cityname(sngs[0], sngs[1])
+            if retjs["cod"] == "404":
+                await client.edit_message(wthrmsg, "Error: Location not found.")
+            else:
+                city = retjs["name"]
+                coun = retjs["sys"]["country"]
+                cond = self.weather.retcond(str(retjs["weather"][0]["id"]))
+                temp = retjs["main"]["temp"] - 273.15
+                temp = round(temp, 2)
+                humd = retjs["main"]["humidity"]
+                pres = retjs["main"]["pressure"]
+                sped = retjs["wind"]["speed"]
+                await client.edit_message(wthrmsg,
+                                          "Weather in {}, {}:"
+                                          "\nConditions: {}"
+                                          "\nTemp: {} °C"
+                                          "\nHumidity: {}%"
+                                          "\nPressure: {}hPa"
+                                          "\nWind Speed: {}m/s".format(city,
+                                                                       coun,
+                                                                       cond,
+                                                                       temp,
+                                                                       humd,
+                                                                       pres,
+                                                                       sped))
 
         client.run(str(self.code))
 

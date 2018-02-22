@@ -30,6 +30,9 @@ def startFromEnviron():
     elif os.environ.get("client_secret") is None:
         sys.exit("Error, reddit client_secret not set. Set your "
                  "environ, or:\n{}".format(usagestring))
+    elif os.environ.get("weather") is None:
+        sys.exit("Error, weather api key not set. Set your "
+                 "environ, or:\n{}".format(usagestring))
     elif os.environ.get("loglevel") is None:
         leveltoPass = logging.WARNING
     else:
