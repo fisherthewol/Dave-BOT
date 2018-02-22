@@ -235,15 +235,15 @@ class Dave:
                                           "Weather in {}, {}:"
                                           "\nConditions: {}"
                                           "\nTemp: {} °C"
-                                          "\nHumidity: {}%"
-                                          "\nPressure: {}hPa"
-                                          "\nWind Speed: {}m/s".format(city,
-                                                                       coun,
-                                                                       cond,
-                                                                       temp,
-                                                                       humd,
-                                                                       pres,
-                                                                       sped))
+                                          "\nHumidity: {} %"
+                                          "\nPressure: {} hPa"
+                                          "\nWind Speed: {} m/s".format(city,
+                                                                        coun,
+                                                                        cond,
+                                                                        temp,
+                                                                        humd,
+                                                                        pres,
+                                                                        sped))
 
         client.run(str(self.code))
 
