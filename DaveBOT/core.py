@@ -61,6 +61,28 @@ class Dave:
             self.logger.warning("Host is not linux, uptimeFunc not supported.")
             return "incomp host."
 
+    def wtherStrFrmttr(self, jsontoformat):
+        city = jsontoformat["name"]
+        coun = jsontoformat["sys"]["country"]
+        cond = self.weather.retcond(str(jsontoformat["weather"][0]["id"]))
+        temp = jsontoformat["main"]["temp"] - 273.15
+        temp = round(temp, 2)
+        humd = jsontoformat["main"]["humidity"]
+        pres = jsontoformat["main"]["pressure"]
+        sped = jsontoformat["wind"]["speed"]
+        return ("Weather in {}, {}:"
+                "\nConditions: {}"
+                "\nTemp: {} °C"
+                "\nHumidity: {} %"
+                "\nPressure: {} hPa"
+                "\nWind Speed: {} m/s".format(city,
+                                              coun,
+                                              cond,
+                                              temp,
+                                              humd,
+                                              pres,
+                                              sped))
+
     def discout(self):
         """Discord functions and client running."""
         @client.event
@@ -223,27 +245,7 @@ class Dave:
             if retjs["cod"] == "404":
                 await client.edit_message(wthrmsg, "Error: Location not found.")
             else:
-                city = retjs["name"]
-                coun = retjs["sys"]["country"]
-                cond = self.weather.retcond(str(retjs["weather"][0]["id"]))
-                temp = retjs["main"]["temp"] - 273.15
-                temp = round(temp, 2)
-                humd = retjs["main"]["humidity"]
-                pres = retjs["main"]["pressure"]
-                sped = retjs["wind"]["speed"]
-                await client.edit_message(wthrmsg,
-                                          "Weather in {}, {}:"
-                                          "\nConditions: {}"
-                                          "\nTemp: {} °C"
-                                          "\nHumidity: {} %"
-                                          "\nPressure: {} hPa"
-                                          "\nWind Speed: {} m/s".format(city,
-                                                                        coun,
-                                                                        cond,
-                                                                        temp,
-                                                                        humd,
-                                                                        pres,
-                                                                        sped))
+                await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
 
         @weather.command()
         async def id(cityid: int):
@@ -253,27 +255,7 @@ class Dave:
             if retjs["cod"] == "404":
                 await client.edit_message(wthrmsg, "Error: City not found.")
             else:
-                city = retjs["name"]
-                coun = retjs["sys"]["country"]
-                cond = self.weather.retcond(str(retjs["weather"][0]["id"]))
-                temp = retjs["main"]["temp"] - 273.15
-                temp = round(temp, 2)
-                humd = retjs["main"]["humidity"]
-                pres = retjs["main"]["pressure"]
-                sped = retjs["wind"]["speed"]
-                await client.edit_message(wthrmsg,
-                                          "Weather in {}, {}:"
-                                          "\nConditions: {}"
-                                          "\nTemp: {} °C"
-                                          "\nHumidity: {} %"
-                                          "\nPressure: {} hPa"
-                                          "\nWind Speed: {} m/s".format(city,
-                                                                        coun,
-                                                                        cond,
-                                                                        temp,
-                                                                        humd,
-                                                                        pres,
-                                                                        sped))
+                await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
 
         client.run(str(self.code))
 
