@@ -226,11 +226,6 @@ class Dave:
                              "```!weather id <id>```"
                              "\n  where <id> is a valid city id from "
                              "http://bulk.openweathermap.org/sample/city.list.json.gz"
-                             "\n-!weather latlon:"
-                             "\n--Use\n"
-                             "```!weather latlon <latitude>,<longitude>```"
-                             "\n  where <latitude> & <longitude> are "
-                             "valid latitude and longitude."
                              "\n-!weather zip:"
                              "\n--Use\n"
                              "```!weather zip <zipcode>```"
@@ -254,6 +249,19 @@ class Dave:
             retjs = self.weather.by_id(cityid)
             if retjs["cod"] == "404":
                 await client.edit_message(wthrmsg, "Error: City not found.")
+            else:
+                await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
+
+        @weather.command()
+        async def zip(zipcode: int):
+            self.logger.info("!weather id called.")
+            wthrmsg = await client.say("Fetching weather...")
+            try:
+                retjs = self.weather.by_zip(zipcode)
+            except ValueError as e:
+                await client.edit_message(wthrmsg, "Error: {}".format(e))
+            if retjs["cod"] == "404":
+                await client.edit_message(wthrmsg, "Error: Zip not found.")
             else:
                 await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
 

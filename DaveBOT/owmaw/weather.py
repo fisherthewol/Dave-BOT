@@ -11,7 +11,6 @@ class weather:
         self.baseurl = "https://api.openweathermap.org/data/2.5/weather?"
         self.nameurl = self.baseurl + "q={},{}&appid=" + self.key
         self.idurl = self.baseurl + "id={}&appid=" + self.key
-        self.latlonurl = self.baseurl + "lat={}&lon={}&appid=" + self.key
         self.zipurl = self.baseurl + "zip={},us&appid=" + self.key
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
         with open("DaveBOT/owmaw/cond.json") as op:
@@ -36,13 +35,8 @@ class weather:
         r = requests.get(self.idurl.format(cityid))
         return r.json()
 
-    def by_latlon(self, latitude, longitude):
-        """Returns based on latitude and longitude."""
-        r = requests.get(self.latlonurl.format(latitude, longitude))
-        return r.json()
-
     def by_zip(self, zipcode):
-        if self.regcomp.match(zipcode):
+        if self.regcomp.match(str(zipcode)):
             r = requests.get(self.zipurl.format(zipcode))
             return r.json()
         else:

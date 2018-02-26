@@ -28,3 +28,5 @@ clientcode=CODE HERE
 
 For running without docker, see docs/sansdocker.md  
 For development and contributing, see docs/CONTRIBUTING.md  
+
+DaveBOT/owmaw/cond.json is credited to [tbranyen](https://gist.github.com/tbranyen/62d974681dea8ee0caa1#file-icons-json)
