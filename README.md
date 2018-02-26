@@ -16,11 +16,12 @@ This app will build into a docker container:
 - Clone the master branch/get the source of the latest release of the repo.  
 - cd into the top level of the repo (Usually ```cd Dave-BOT```).  
 - Build with ```sudo docker build -t dave:master .```  
-- Create a file called env.list and put your client_id, client_secret, and discord client code into it:  
+- Create a file called env.list and put your client_id, client_secret, discord client code and openweathermap key into it:  
 ```
 client_id=ID HERE
 client_secret=SECRET HERE
 clientcode=CODE HERE
+weather=KEY HERE
 ```
 - Run with ```sudo docker run -d --env-file env.list dave:master```  
 - Get your ID by running ```sudo docker logs <name>``` where <name> is the container name/id; insert it as ```ID``` into https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0; this allows you to add it to any servers where you are allowed to do so.  
