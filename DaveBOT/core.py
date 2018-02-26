@@ -8,13 +8,14 @@ import logging.handlers
 import queue
 import sys
 import signal
-from DaveBOT import redditclient
+from DaveBOT import redditclient, owmaw
 
 
 class Dave:
-    """Main class for BOT."""
+    """Main class for Bot."""
     def __init__(self, code, loglevel=logging.WARNING):
         self.code = code
+        self.weather = owmaw.weather()
         self.description = "Dave the Bot! Use !help."
         self.bot_prefix = "!"
         global client
@@ -60,6 +61,28 @@ class Dave:
             self.logger.warning("Host is not linux, uptimeFunc not supported.")
             return "incomp host."
 
+    def wtherStrFrmttr(self, jsontoformat):
+        city = jsontoformat["name"]
+        coun = jsontoformat["sys"]["country"]
+        cond = self.weather.retcond(str(jsontoformat["weather"][0]["id"]))
+        temp = jsontoformat["main"]["temp"] - 273.15
+        temp = round(temp, 2)
+        humd = jsontoformat["main"]["humidity"]
+        pres = jsontoformat["main"]["pressure"]
+        sped = jsontoformat["wind"]["speed"]
+        return ("Weather in {}, {}:"
+                "\nConditions: {}"
+                "\nTemp: {} °C"
+                "\nHumidity: {} %"
+                "\nPressure: {} hPa"
+                "\nWind Speed: {} m/s".format(city,
+                                              coun,
+                                              cond,
+                                              temp,
+                                              humd,
+                                              pres,
+                                              sped))
+
     def discout(self):
         """Discord functions and client running."""
         @client.event
@@ -95,11 +118,12 @@ class Dave:
 
         @client.command(pass_context=True)
         async def pie(ctx):
-            """Gives latest Jonathan Pie."""
+            """Gives latest Jonathan Pie Video."""
             self.logger.info("!pie called.")
+            piemsg = await client.say("Fetching video.")
             pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
                                    "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
-            await client.say(pie.entries[0]['link'])
+            await client.edit_message(piemsg, pie.entries[0]['link'])
 
         @client.command(pass_context=True)
         async def dave(ctx):
@@ -180,6 +204,66 @@ class Dave:
                              "https://redd.it/{}\n".format(post["img"],
                                                            post["title"],
                                                            post["id"]))
+
+        @client.group(pass_context=True)
+        async def weather(ctx):
+            """Provides !weather; see !weather help."""
+            self.logger.info("!weather called.")
+            if ctx.invoked_subcommand is None:
+                await client.say("Invalid !weather command; see !weather help.")
+
+        @weather.command()
+        async def help():
+            self.logger.info("!weather help called.")
+            await client.say("\nPossible !weather commands:"
+                             "\n-!weather city:"
+                             "\n--Use\n"
+                             "```!weather city <cityname>,<countrycode>```"
+                             "\n  where <city> is a city, and <countrycode>"
+                             "is a valid ISO 3166-1 alpha-2 code."
+                             "\n-!weather id:"
+                             "\n--Use\n"
+                             "```!weather id <id>```"
+                             "\n  where <id> is a valid city id from "
+                             "http://bulk.openweathermap.org/sample/city.list.json.gz"
+                             "\n-!weather zip:"
+                             "\n--Use\n"
+                             "```!weather zip <zipcode>```"
+                             "\n  where <zipcode> is a valid US zipcode.")
+
+        @weather.command()
+        async def city(citcun: str):
+            self.logger.info("!weather city called.")
+            wthrmsg = await client.say("Fetching weather...")
+            sngs = citcun.split(",")
+            retjs = self.weather.by_cityname(sngs[0], sngs[1])
+            if retjs["cod"] == "404":
+                await client.edit_message(wthrmsg, "Error: Location not found.")
+            else:
+                await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
+
+        @weather.command()
+        async def id(cityid: int):
+            self.logger.info("!weather id called.")
+            wthrmsg = await client.say("Fetching weather...")
+            retjs = self.weather.by_id(cityid)
+            if retjs["cod"] == "404":
+                await client.edit_message(wthrmsg, "Error: City not found.")
+            else:
+                await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
+
+        @weather.command()
+        async def zip(zipcode: int):
+            self.logger.info("!weather id called.")
+            wthrmsg = await client.say("Fetching weather...")
+            try:
+                retjs = self.weather.by_zip(zipcode)
+            except ValueError as e:
+                await client.edit_message(wthrmsg, "Error: {}".format(e))
+            if retjs["cod"] == "404":
+                await client.edit_message(wthrmsg, "Error: Zip not found.")
+            else:
+                await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
 
         client.run(str(self.code))
 
