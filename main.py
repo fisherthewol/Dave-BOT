@@ -1,90 +1,48 @@
-import os
-import sys
+import argparse
 import logging
+import os
 
 
-usagestring = ("Usage:\npython3 main.py clientcode (loglevel)\nwhere "
-               "clientcode is the discord bot clientcode, and\n"
-               "loglevel is a valid log level (default is WARNING).")
-
-
-def findLogLevel(logleveltofind):
+def findLogLevel(leveltofind):
     loglevels = {"debug": logging.DEBUG,
                  "info": logging.INFO,
                  "warning": logging.WARNING,
                  "error": logging.ERROR,
                  "critical": logging.CRITICAL}
-    if logleveltofind.lower() in loglevels:
-        return loglevels[logleveltofind.lower()]
+    if leveltofind.lower() in loglevels:
+        return loglevels[leveltofind.lower()]
     else:
         return None
 
 
-def startFromEnviron():
-    if os.environ.get("clientcode") is None:
-        sys.exit("Error, discord client code not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("client_id") is None:
-        sys.exit("Error, reddit client_id not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("client_secret") is None:
-        sys.exit("Error, reddit client_secret not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("weather") is None:
-        sys.exit("Error, weather api key not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("loglevel") is None:
-        leveltoPass = logging.WARNING
-    else:
-        leveltoPass = findLogLevel(os.environ.get("loglevel"))
-
-    import DaveBOT.core as bot
-    if leveltoPass is None:
-        botclient = bot.Dave(os.environ.get("clientcode"))
-    else:
-        botclient = bot.Dave(os.environ.get("clientcode"), leveltoPass)
-    botclient.discout()
-
-
-def startWithoneArg(sysargs):
-    onearg = sysargs[1]
-    if findLogLevel(onearg) is None:
-        # Arg is not log level, so clientcode.
-        import DaveBOT.core as bot
-        botclient = bot.Dave(onearg)
-        botclient.discout()
-    else:
-        # Arg is log level, so try environ for clientcode.
-        if os.environ.get("clientcode") is None:
-            sys.exit("Error, discord client code not set. Set your "
-                     "environ, or:\n{}".format(usagestring))
-        else:
-            import DaveBOT.core as bot
-            botclient = bot.Dave(os.environ.get("clientcode"),
-                                 findLogLevel(onearg))
-            botclient.discout()
-
-def startWithClientAndLog(sysargs):
-    clientcode = sysargs[1]
-    leveltoPass = findLogLevel(sysargs[2])
-    import DaveBOT.core as bot
-    botclient = bot.Dave(clientcode, leveltoPass)
-    botclient.discout()
-
-
 def main():
-    args = sys.argv
-    numberofargs = len(args)
-    if numberofargs == 1:
-        startFromEnviron()
-    elif numberofargs == 2:
-        startWithoneArg(args)
-    elif numberofargs == 3:
-        startWithClientAndLog(args)
-    else:
-        sys.exit("Usage:\npython3 main.py clientcode loglevel\nwhere "
-                 "clientcode is the discord bot clientcode, and\n"
-                 "loglevel is a valid log level (default is INFO).\n")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-cc",
+                        "--clientcode",
+                        help="client code for discord code.",
+                        type=str)
+    parser.add_argument("-rid",
+                        "--reddit_id",
+                        help="reddit client id",
+                        type=str)
+    parser.add_argument("-rsc",
+                        "--reddit_sc",
+                        help="reddit client secret",
+                        type=str)
+    parser.add_argument("-l",
+                        "--loglevel",
+                        help="change loglevel",
+                        type=str)
+    args = parser.parse_args()
+
+    if args.clientcode is None:
+        cctopass = os.environ.get("clientcode")
+        if cctopass is None:
+            raise RuntimeError("Empty clientcode: Not passed by env or cli.")
+        else:
+            import DaveBOT.core as core
+            davebot = core.Dave(cctopass)
+            davebot.discout()
 
 
 if __name__ == "__main__":
