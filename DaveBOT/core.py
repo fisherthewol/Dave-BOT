@@ -1,14 +1,14 @@
-import discord
-from discord.ext import commands
-import feedparser
-import os
-import platform
 import logging
 import logging.handlers
+import platform
 import queue
-import sys
 import signal
-from DaveBOT import redditclient, owmaw
+import sys
+
+import discord
+import feedparser
+from DaveBOT import owmaw, redditclient
+from discord.ext import commands
 
 
 class Dave:
@@ -210,7 +210,7 @@ class Dave:
             """Provides !weather; see !weather help."""
             self.logger.info("!weather called.")
             if ctx.invoked_subcommand is None:
-                await client.say("Invalid !weather command; see !weather help.")
+                await client.say("Invalid command; see !weather help.")
 
         @weather.command()
         async def help():
@@ -238,7 +238,7 @@ class Dave:
             sngs = citcun.split(",")
             retjs = self.weather.by_cityname(sngs[0], sngs[1])
             if retjs["cod"] == "404":
-                await client.edit_message(wthrmsg, "Error: Location not found.")
+                await client.edit_message(wthrmsg, "Error; Location not found.")
             else:
                 await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
 
