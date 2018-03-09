@@ -38,11 +38,13 @@ def main():
     if args.clientcode is None:
         cctopass = os.environ.get("clientcode")
         if cctopass is None:
+            print("Empty clientcode: Not passed by env or cli.")
+            parser.print_help()
             raise RuntimeError("Empty clientcode: Not passed by env or cli.")
         else:
-            import DaveBOT.core as core
-            davebot = core.Dave(cctopass)
-            davebot.discout()
+            # import DaveBOT.core as core
+            # davebot = core.Dave(cctopass)
+            # davebot.discout()
 
 
 if __name__ == "__main__":
