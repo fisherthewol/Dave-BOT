@@ -1,5 +1,5 @@
 # Dave-BOT
-A Discord bot based on Discord.py.   
+A Discord bot based on [Discord.py](https://github.com/Rapptz/discord.py).   
 ## Quickstart  
 The following is a quickstart guide to getting the bot running.  
 ### Using the instance on our server:  
