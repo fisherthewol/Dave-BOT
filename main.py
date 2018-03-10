@@ -30,6 +30,11 @@ def main():
                         "--clientcode",
                         help="client code for discord code.",
                         type=str)
+    parser.add_argument("-l",
+                        "--loglevel",
+                        help="change loglevel; valid levels are debug,"
+                             " info, warning, error, critical.",
+                        type=str)
     parser.add_argument("-rid",
                         "--reddit_id",
                         help="reddit client id",
@@ -38,10 +43,9 @@ def main():
                         "--reddit_sc",
                         help="reddit client secret",
                         type=str)
-    parser.add_argument("-l",
-                        "--loglevel",
-                        help="change loglevel; valid levels are debug,"
-                             " info, warning, error, critical.",
+    parser.add_argument("-w",
+                        "--weather",
+                        help="api key for openweathermap.org",
                         type=str)
     args = parser.parse_args()
 
@@ -51,11 +55,33 @@ def main():
     else:
         cc = os.environ.get("clientcode")
         if cc:
-            logger.warning("clientcode found: {}".format(args.clientcode))
+            logger.warning("clientcode found: {}".format(cc))
         else:
             logger.critical("Empty clientcode: Not passed by env or cli.")
             parser.print_help()
             raise RuntimeError("Empty clientcode: Not passed by env or cli.")
+
+    if args.loglevel:
+        logger.warning("Loglevel found, working out what it is...")
+        ll = findLogLevel(args.loglevel)
+        if ll:
+            logger.warning("Loglevel is {}".format(str(ll)))
+        else:
+            logger.error("Loglevel invalid, using default.")
+            ll = logging.WARNING
+    else:
+        ll = os.environ.get("loglevel")
+        if ll:
+            logger.warning("Loglevel found, working out what it is...")
+            ll = findLogLevel(ll)
+            if ll:
+                logger.warning("Loglevel is {}".format(str(ll)))
+            else:
+                logger.error("Loglevel invalid, using default.")
+                ll = logging.WARNING
+        else:
+            logger.warning("Loglevel not passed or in env, using default.")
+            ll = logging.WARNING
 
     if args.reddit_id:
         logger.warning("reddit_id found: {}".format(args.reddit_id))
@@ -83,29 +109,21 @@ def main():
                 logger.warning("reddit_sc not found, not enabling reddit.")
                 rsc = False
 
-    if args.loglevel:
-        logger.warning("Loglevel found, working out what it is...")
-        ll = findLogLevel(args.loglevel)
-        if ll:
-            logger.warning("Loglevel is {}".format(str(ll)))
-        else:
-            logger.error("Loglevel invalid, using default.")
-            ll = logging.WARNING
+    if args.weather:
+        logger.warning("Weather found: {} , "
+                       "enabling weather.".format(args.weather))
+        wk = args.weather
     else:
-        ll = os.environ.get("loglevel")
-        if ll:
-            logger.warning("Loglevel found, working out what it is...")
-            ll = findLogLevel(ll)
-            if ll:
-                logger.warning("Loglevel is {}".format(str(ll)))
-            else:
-                logger.error("Loglevel invalid, using default.")
-                ll = logging.WARNING
+        wk = os.environ.get("weather")
+        if wk:
+            logger.warning("Weather found: {} , "
+                           "enabling weather.".format(wk))
         else:
-            logger.warning("Loglevel not passed or in env, using default.")
-            ll = logging.WARNING
+            logger.warning("Weather not found, not enabling.")
+            wk = False
 
-    logger.warning("Variables found: {},{},{},{}".format(cc, rid, rsc, ll))
+    logger.warning("Variables found: {},{},{},{},{}".format(cc, ll,
+                                                            rid, rsc, wk))
 
 
 if __name__ == "__main__":
