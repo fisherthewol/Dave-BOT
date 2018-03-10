@@ -40,32 +40,72 @@ def main():
                         type=str)
     parser.add_argument("-l",
                         "--loglevel",
-                        help="change loglevel",
+                        help="change loglevel; valid levels are debug,"
+                             " info, warning, error, critical.",
                         type=str)
     args = parser.parse_args()
 
-    if args.clientcode is None:
+    if args.clientcode:
+        logger.warning("clientcode found: {}".format(args.clientcode))
+        cc = args.clientcode
+    else:
         cc = os.environ.get("clientcode")
-        if cc is None:
+        if cc:
+            logger.warning("clientcode found: {}".format(args.clientcode))
+        else:
             logger.critical("Empty clientcode: Not passed by env or cli.")
             parser.print_help()
             raise RuntimeError("Empty clientcode: Not passed by env or cli.")
-        else:
-            logger.warning("clientcode found")
-    else:
-        logger.warning("clientcode found")
-        cc = args.clientcode
 
-    if args.reddit_id is None:
-        rid = os.environ.get("reddit_id")
-        if rid is None:
-            logger.warning("reddit_id not found, not enabling reddit")
-            rid = False
-        else:
-            logger.warning("reddit_id found")
-    else:
-        logger.warning("reddit_id found")
+    if args.reddit_id:
+        logger.warning("reddit_id found: {}".format(args.reddit_id))
         rid = args.reddit_id
+    else:
+        rid = os.environ.get("reddit_id")
+        if rid:
+            logger.warning("reddit_id found: {}".format(rid))
+        else:
+            logger.warning("reddit_id not found, not enabling reddit.")
+            rid = False
+            rsc = False
+
+    if rid:
+        if args.reddit_sc:
+            logger.warning("reddit_sc found: {} , "
+                           "enabling reddit.".format(args.reddit_sc))
+            rsc = args.reddit_sc
+        else:
+            rsc = os.environ.get("reddit_sc")
+            if rsc:
+                logger.warning("reddit_sc found {} , "
+                               "enabling reddit.".format(args.reddit_sc))
+            else:
+                logger.warning("reddit_sc not found, not enabling reddit.")
+                rsc = False
+
+    if args.loglevel:
+        logger.warning("Loglevel found, working out what it is...")
+        ll = findLogLevel(args.loglevel)
+        if ll:
+            logger.warning("Loglevel is {}".format(str(ll)))
+        else:
+            logger.error("Loglevel invalid, using default.")
+            ll = logging.WARNING
+    else:
+        ll = os.environ.get("loglevel")
+        if ll:
+            logger.warning("Loglevel found, working out what it is...")
+            ll = findLogLevel(ll)
+            if ll:
+                logger.warning("Loglevel is {}".format(str(ll)))
+            else:
+                logger.error("Loglevel invalid, using default.")
+                ll = logging.WARNING
+        else:
+            logger.warning("Loglevel not passed or in env, using default.")
+            ll = logging.WARNING
+
+    logger.warning("Variables found: {},{},{},{}".format(cc, rid, rsc, ll))
 
 
 if __name__ == "__main__":
