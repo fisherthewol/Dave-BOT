@@ -1,5 +1,6 @@
 import argparse
 import logging
+import logging.handlers
 import os
 
 
@@ -16,6 +17,14 @@ def findLogLevel(leveltofind):
 
 
 def main():
+    streamhandle = logging.StreamHandler()
+    streamhandle.setFormatter(logging.Formatter(
+        "%(asctime)s %(levelname)s: %(message)s"
+        " [in %(pathname)s:%(lineno)d]"))
+    logger = logging.getLogger(__name__)
+    logger.addHandler(streamhandle)
+    logger.warning("Logging has been setup.")
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-cc",
                         "--clientcode",
@@ -36,15 +45,27 @@ def main():
     args = parser.parse_args()
 
     if args.clientcode is None:
-        cctopass = os.environ.get("clientcode")
-        if cctopass is None:
-            print("Empty clientcode: Not passed by env or cli.")
+        cc = os.environ.get("clientcode")
+        if cc is None:
+            logger.critical("Empty clientcode: Not passed by env or cli.")
             parser.print_help()
             raise RuntimeError("Empty clientcode: Not passed by env or cli.")
         else:
-            # import DaveBOT.core as core
-            # davebot = core.Dave(cctopass)
-            # davebot.discout()
+            logger.warning("clientcode found")
+    else:
+        logger.warning("clientcode found")
+        cc = args.clientcode
+
+    if args.reddit_id is None:
+        rid = os.environ.get("reddit_id")
+        if rid is None:
+            logger.warning("reddit_id not found, not enabling reddit")
+            rid = False
+        else:
+            logger.warning("reddit_id found")
+    else:
+        logger.warning("reddit_id found")
+        rid = args.reddit_id
 
 
 if __name__ == "__main__":
