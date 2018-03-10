@@ -13,7 +13,7 @@ from discord.ext import commands
 
 class Dave:
     """Main class for Bot."""
-    def __init__(self, code, loglevel=logging.WARNING):
+    def __init__(self, code, loglevel, redid, redsc, wk):
         self.code = code
         self.weather = owmaw.weather()
         self.description = "Dave the Bot! Use !help."
@@ -238,7 +238,7 @@ class Dave:
             sngs = citcun.split(",")
             retjs = self.weather.by_cityname(sngs[0], sngs[1])
             if retjs["cod"] == "404":
-                await client.edit_message(wthrmsg, "Error; Location not found.")
+                await client.edit_message(wthrmsg, "Error; City not found.")
             else:
                 await client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
 
@@ -269,4 +269,4 @@ class Dave:
 
 
 if __name__ == "__main__":
-    raise SystemExit("This is an import file, do not run directly.")
+    raise sys.exit("This is an import file, please do not run directly.")

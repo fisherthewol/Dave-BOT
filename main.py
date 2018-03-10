@@ -3,6 +3,8 @@ import logging
 import logging.handlers
 import os
 
+from DaveBOT import core
+
 
 def findLogLevel(leveltofind):
     loglevels = {"debug": logging.DEBUG,
@@ -122,8 +124,8 @@ def main():
             logger.warning("Weather not found, not enabling.")
             wk = False
 
-    logger.warning("Variables found: {},{},{},{},{}".format(cc, ll,
-                                                            rid, rsc, wk))
+    bot = core.Dave(cc, ll, rid, rsc, wk)
+    bot.discout()
 
 
 if __name__ == "__main__":
