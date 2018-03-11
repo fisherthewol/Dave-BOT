@@ -7,17 +7,18 @@ import sys
 
 import discord
 import feedparser
-from DaveBOT import owmaw, redditclient
+from DaveBOT import owmaw, reddit
 from discord.ext import commands
 
 
 class Dave:
     """Main class for Bot."""
     def __init__(self, code, loglevel, redid, redsc, wk):
-        self.code = code
-        self.weather = owmaw.weather()
         self.bot_prefix = "!"
         self.client = commands.Bot(command_prefix=self.bot_prefix)
+        self.code = code
+        self.reddit = reddit.Reddit(redid, redsc, self.client)
+        self.weather = owmaw.weather()
         self.setupLogging(loglevel)
         if "Linux" in platform.system():
             self.host_is_Linux = True
@@ -108,7 +109,7 @@ class Dave:
         async def prequel(ctx):
             """Gives top post from /r/prequelmemes."""
             self.logger.info("!prequel called.")
-            post = redditclient.prawin("prequelmemes", "top")
+            post = self.reddit.prawin("prequelmemes", "top")
             await self.client.say("Image: {}\nTitle = {}\nComments = "
                                   "https://redd.it/{}\n".format(
                                    post["img"], post["title"], post["id"]))
@@ -167,9 +168,8 @@ class Dave:
 
         @subreddit.command()
         async def top(sub: str):
-            """Sub needs to be string, or prawin() breaks."""
             self.logger.info("!subreddit top called.")
-            post = redditclient.prawin(sub, "top")
+            post = self.reddit.prawin(sub, "top")
             await self.client.say("Image: {}\nTitle = {}\nComments = "
                                   "https://redd.it/{}\n".format(post["img"],
                                                                 post["title"],
@@ -178,7 +178,7 @@ class Dave:
         @subreddit.command()
         async def new(sub: str):
             self.logger.info("!subreddit new called.")
-            post = redditclient.prawin(sub, "new")
+            post = self.reddit.prawin(sub, "new")
             await self.client.say("Image: {}\nTitle = {}\nComments = "
                                   "https://redd.it/{}\n".format(post["img"],
                                                                 post["title"],
@@ -187,7 +187,7 @@ class Dave:
         @subreddit.command()
         async def rising(sub: str):
             self.logger.info("!subreddit rising called.")
-            post = redditclient.prawin(sub, "rising")
+            post = self.reddit.prawin(sub, "rising")
             await self.client.say("Image: {}\nTitle = {}\nComments = "
                                   "https://redd.it/{}\n".format(post["img"],
                                                                 post["title"],
@@ -196,7 +196,7 @@ class Dave:
         @subreddit.command()
         async def hot(sub: str):
             self.logger.info("!subreddit hot called.")
-            post = redditclient.prawin(sub, "hot")
+            post = self.reddit.prawin(sub, "hot")
             await self.client.say("Image: {}\nTitle = {}\nComments = "
                                   "https://redd.it/{}\n".format(post["img"],
                                                                 post["title"],
