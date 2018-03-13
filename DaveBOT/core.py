@@ -7,17 +7,17 @@ import sys
 
 import discord
 import feedparser
-from DaveBOT import owmaw, reddit
+from DaveBOT import owmaw
 from discord.ext import commands
 
 
 class Dave:
     """Main class for Bot."""
     def __init__(self, code, loglevel, redid, redsc, wk):
-        self.bot_prefix = "!"
-        self.client = commands.Bot(command_prefix=self.bot_prefix)
+        self.client = commands.Bot(command_prefix="!")
+        self.client.rid = redid
+        self.client.rsc = redsc
         self.code = code
-        self.reddit = reddit.Reddit(redid, redsc, self)
         self.weather = owmaw.weather()
         self.setupLogging(loglevel)
         if "Linux" in platform.system():
@@ -138,19 +138,6 @@ class Dave:
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
-
-        @self.client.command(pass_context=True)
-        async def subhelp(ctx):
-            """Gives help on using !subreddit."""
-            self.logger.info("!subhelp called.")
-            await self.client.say("\n!subreddit help: "
-                                  "\nSyntax: ```!subreddit sort sub```"
-                                  "where ```sort``` is reddit sort type:\n"
-                                  "```-top\n-new\n-rising\n-hot```"
-                                  "```sub``` is any valid subreddit.\n"
-                                  "Command should return "
-                                  "```Invalid subreddit; try again.``` "
-                                  "if an error is thrown.\n")
 
         @self.client.group(pass_context=True)
         async def weather(ctx):
