@@ -17,7 +17,7 @@ class Dave:
         self.bot_prefix = "!"
         self.client = commands.Bot(command_prefix=self.bot_prefix)
         self.code = code
-        self.reddit = reddit.Reddit(redid, redsc, self.client)
+        self.reddit = reddit.Reddit(redid, redsc, self)
         self.weather = owmaw.weather()
         self.setupLogging(loglevel)
         if "Linux" in platform.system():
@@ -45,7 +45,7 @@ class Dave:
             " [in %(pathname)s:%(lineno)d]"))
         listener = logging.handlers.QueueListener(que, streamhandle)
         listener.start()
-        self.logger.warning("Logging setup.")
+        self.logger.warning("Logging is setup.")
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
@@ -106,15 +106,6 @@ class Dave:
             await self.client.edit_message(gmimsg, game.entries[0]["link"])
 
         @self.client.command(pass_context=True)
-        async def prequel(ctx):
-            """Gives top post from /r/prequelmemes."""
-            self.logger.info("!prequel called.")
-            post = self.reddit.prawin("prequelmemes", "top")
-            await self.client.say("Image: {}\nTitle = {}\nComments = "
-                                  "https://redd.it/{}\n".format(
-                                   post["img"], post["title"], post["id"]))
-
-        @self.client.command(pass_context=True)
         async def pie(ctx):
             """Gives latest Jonathan Pie Video."""
             self.logger.info("!pie called.")
@@ -158,49 +149,6 @@ class Dave:
                                   "Command should return "
                                   "```Invalid subreddit; try again.``` "
                                   "if an error is thrown.\n")
-
-        @self.client.group(pass_context=True)
-        async def subreddit(ctx):
-            """Provides !subreddit group of cmds; see !subhelp."""
-            self.logger.info("!subreddit called.")
-            if ctx.invoked_subcommand is None:
-                await self.client.say("Invalid subreddit; see !subhelp.")
-
-        @subreddit.command()
-        async def top(sub: str):
-            self.logger.info("!subreddit top called.")
-            post = self.reddit.prawin(sub, "top")
-            await self.client.say("Image: {}\nTitle = {}\nComments = "
-                                  "https://redd.it/{}\n".format(post["img"],
-                                                                post["title"],
-                                                                post["id"]))
-
-        @subreddit.command()
-        async def new(sub: str):
-            self.logger.info("!subreddit new called.")
-            post = self.reddit.prawin(sub, "new")
-            await self.client.say("Image: {}\nTitle = {}\nComments = "
-                                  "https://redd.it/{}\n".format(post["img"],
-                                                                post["title"],
-                                                                post["id"]))
-
-        @subreddit.command()
-        async def rising(sub: str):
-            self.logger.info("!subreddit rising called.")
-            post = self.reddit.prawin(sub, "rising")
-            await self.client.say("Image: {}\nTitle = {}\nComments = "
-                                  "https://redd.it/{}\n".format(post["img"],
-                                                                post["title"],
-                                                                post["id"]))
-
-        @subreddit.command()
-        async def hot(sub: str):
-            self.logger.info("!subreddit hot called.")
-            post = self.reddit.prawin(sub, "hot")
-            await self.client.say("Image: {}\nTitle = {}\nComments = "
-                                  "https://redd.it/{}\n".format(post["img"],
-                                                                post["title"],
-                                                                post["id"]))
 
         @self.client.group(pass_context=True)
         async def weather(ctx):
