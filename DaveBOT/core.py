@@ -36,6 +36,7 @@ class Dave:
         # Setup queue and queue handler:
         que = queue.Queue(-1)
         queue_handler = logging.handlers.QueueHandler(que)
+        queue_handler.setLevel(loglev)
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(queue_handler)
         # Setup listener:
@@ -43,6 +44,7 @@ class Dave:
         streamhandle.setFormatter(logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s"
             " [in %(pathname)s:%(lineno)d]"))
+        streamhandle.setLevel(loglev)
         listener = logging.handlers.QueueListener(que, streamhandle)
         listener.start()
         self.logger.warning("Logging is setup.")
