@@ -15,9 +15,12 @@ class Dave:
     """Main class for Bot."""
     def __init__(self, code, loglevel, redid, redsc, wk):
         self.client = commands.Bot(command_prefix="!")
-        self.client.rid = redid
-        self.client.rsc = redsc
         self.code = code
+        self.cogs = []
+        if (redid and redsc):
+            self.client.rid = redid
+            self.client.rsc = redsc
+            self.cogs.append("cogs.reddit")
         self.weather = owmaw.weather()
         self.setupLogging(loglevel)
         if "Linux" in platform.system():
@@ -25,6 +28,15 @@ class Dave:
         else:
             self.host_is_Linux = False
         signal.signal(signal.SIGTERM, self.sigler)
+        # Load cogs:
+        for cog in self.cogs:
+            try:
+                self.client.load_extension(cog)
+            except Exception as e:
+                self.logger.critical("Failed load {}, exception {}".format(cog,
+                                                                           e))
+                sys.exit("Failed load {}, exception {}".format(cog,
+                                                               e))
 
     def sigler(self, signal, frame):
         """Set the response to sigterm."""
