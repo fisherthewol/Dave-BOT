@@ -20,7 +20,7 @@ class Dave:
         if (redid and redsc):
             self.client.rid = redid
             self.client.rsc = redsc
-            self.cogs.append("cogs.reddit")
+            self.cogs.append("DaveBOT.cogs.reddit")
         self.weather = owmaw.weather()
         self.setupLogging(loglevel)
         if "Linux" in platform.system():
@@ -28,6 +28,7 @@ class Dave:
         else:
             self.host_is_Linux = False
         signal.signal(signal.SIGTERM, self.sigler)
+
         # Load cogs:
         for cog in self.cogs:
             try:

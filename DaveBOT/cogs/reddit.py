@@ -1,4 +1,3 @@
-import discord
 import praw
 from discord.ext import commands
 
@@ -50,7 +49,7 @@ class Reddit():
 
     @subreddit.command()
     async def top(self, sub: str):
-        post = self.reddit.prawin(sub, "top")
+        post = self.prawin(sub, "top")
         await self.client.say("Image: {}\nTitle = {}\nComments = "
                               "https://redd.it/{}\n".format(post["img"],
                                                             post["title"],
@@ -58,8 +57,7 @@ class Reddit():
 
     @subreddit.command()
     async def new(self, sub: str):
-        self.logger.info("!subreddit new called.")
-        post = self.reddit.prawin(sub, "new")
+        post = self.prawin(sub, "new")
         await self.client.say("Image: {}\nTitle = {}\nComments = "
                               "https://redd.it/{}\n".format(post["img"],
                                                             post["title"],
@@ -67,8 +65,7 @@ class Reddit():
 
     @subreddit.command()
     async def rising(self, sub: str):
-        self.logger.info("!subreddit rising called.")
-        post = self.reddit.prawin(sub, "rising")
+        post = self.prawin(sub, "rising")
         await self.client.say("Image: {}\nTitle = {}\nComments = "
                               "https://redd.it/{}\n".format(post["img"],
                                                             post["title"],
@@ -76,8 +73,7 @@ class Reddit():
 
     @subreddit.command()
     async def hot(self, sub: str):
-        self.logger.info("!subreddit hot called.")
-        post = self.reddit.prawin(sub, "hot")
+        post = self.prawin(sub, "hot")
         await self.client.say("Image: {}\nTitle = {}\nComments = "
                               "https://redd.it/{}\n".format(post["img"],
                                                             post["title"],
@@ -86,8 +82,7 @@ class Reddit():
     @commands.command(pass_context=True)
     async def prequel(self, ctx):
         """Gives top post from /r/prequelmemes."""
-        self.logger.info("!prequel called.")
-        post = self.reddit.prawin("prequelmemes", "top")
+        post = self.prawin("prequelmemes", "top")
         await self.client.say("Image: {}\nTitle = {}\nComments = "
                               "https://redd.it/{}\n".format(
                                post["img"], post["title"], post["id"]))
