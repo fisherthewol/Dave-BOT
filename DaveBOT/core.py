@@ -7,7 +7,6 @@ import sys
 
 import discord
 import feedparser
-from DaveBOT import owmaw
 from discord.ext import commands
 
 
@@ -17,11 +16,15 @@ class Dave:
         self.client = commands.Bot(command_prefix="!")
         self.code = code
         self.cogs = []
+        # Enable reddit cog.
         if (redid and redsc):
             self.client.rid = redid
             self.client.rsc = redsc
             self.cogs.append("DaveBOT.cogs.reddit")
-        self.weather = owmaw.weather()
+        # Enable weather cog.
+        if wk:
+            self.client.wk = wk
+            self.cogs.append("DaveBOT.cogs.weather")
         self.setupLogging(loglevel)
         if "Linux" in platform.system():
             self.host_is_Linux = True
@@ -74,28 +77,6 @@ class Dave:
             self.logger.warning("Host is not linux, uptimeFunc not supported.")
             return "incomp host."
 
-    def wtherStrFrmttr(self, jsontoformat):
-        city = jsontoformat["name"]
-        coun = jsontoformat["sys"]["country"]
-        cond = self.weather.retcond(str(jsontoformat["weather"][0]["id"]))
-        temp = jsontoformat["main"]["temp"] - 273.15
-        temp = round(temp, 2)
-        humd = jsontoformat["main"]["humidity"]
-        pres = jsontoformat["main"]["pressure"]
-        sped = jsontoformat["wind"]["speed"]
-        return ("Weather in {}, {}:"
-                "\nConditions: {}"
-                "\nTemp: {} °C"
-                "\nHumidity: {} %"
-                "\nPressure: {} hPa"
-                "\nWind Speed: {} m/s".format(city,
-                                              coun,
-                                              cond,
-                                              temp,
-                                              humd,
-                                              pres,
-                                              sped))
-
     def discout(self):
         """Discord functions and client running."""
         @self.client.event
@@ -105,7 +86,7 @@ class Dave:
             self.logger.warning("Name : {}" .format(self.client.user.name))
             self.logger.warning("ID : {}" .format(self.client.user.id))
             self.logger.info("Successful self.client launch.")
-            await self.client.change_presence(game=discord.Game(name="Use !help"))
+            await self.client.change_presence(game=discord.Game(name="!help"))
 
         @self.client.command(pass_context=True)
         async def news(ctx):
@@ -151,73 +132,6 @@ class Dave:
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
-
-        @self.client.group(pass_context=True)
-        async def weather(ctx):
-            """Provides !weather; see !weather help."""
-            self.logger.info("!weather called.")
-            if ctx.invoked_subcommand is None:
-                await self.client.say("Invalid command; see !weather help.")
-
-        @weather.command()
-        async def help():
-            self.logger.info("!weather help called.")
-            await self.client.say("\nPossible !weather commands:"
-                                  "\n-!weather city:"
-                                  "\n--Use\n"
-                                  "```!weather city <cityname>,"
-                                  "<countrycode>```"
-                                  "\n  where <city> is a city, and "
-                                  "<countrycode>"
-                                  "is a valid ISO 3166-1 alpha-2 code."
-                                  "\n-!weather id:"
-                                  "\n--Use\n"
-                                  "```!weather id <id>```"
-                                  "\n  where <id> is a valid city id from "
-                                  "http://bulk.openweathermap.org/sample/"
-                                  "city.list.json.gz"
-                                  "\n-!weather zip:"
-                                  "\n--Use\n"
-                                  "```!weather zip <zipcode>```"
-                                  "\n  where <zipcode> is a valid US zipcode.")
-
-        @weather.command()
-        async def city(citcun: str):
-            self.logger.info("!weather city called.")
-            wthrmsg = await self.client.say("Fetching weather...")
-            sngs = citcun.split(",")
-            retjs = self.weather.by_cityname(sngs[0], sngs[1])
-            if retjs["cod"] == "404":
-                await self.client.edit_message(wthrmsg, "Error: "
-                                                        "City not found.")
-            else:
-                await self.client.edit_message(wthrmsg,
-                                               self.wtherStrFrmttr(retjs))
-
-        @weather.command()
-        async def id(cityid: int):
-            self.logger.info("!weather id called.")
-            wthrmsg = await self.client.say("Fetching weather...")
-            retjs = self.weather.by_id(cityid)
-            if retjs["cod"] == "404":
-                await self.client.edit_message(wthrmsg, "Error: "
-                                                        "City not found.")
-            else:
-                await self.client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
-
-        @weather.command()
-        async def zip(zipcode: int):
-            self.logger.info("!weather id called.")
-            wthrmsg = await self.client.say("Fetching weather...")
-            try:
-                retjs = self.weather.by_zip(zipcode)
-            except ValueError as e:
-                await self.client.edit_message(wthrmsg, "Error: {}".format(e))
-            if retjs["cod"] == "404":
-                await self.client.edit_message(wthrmsg, "Error: "
-                                                        " Zip not found.")
-            else:
-                await self.client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
 
         self.client.run(str(self.code))
 

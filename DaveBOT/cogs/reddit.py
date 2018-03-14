@@ -32,7 +32,7 @@ class Reddit():
 
     @commands.group(pass_context=True)
     async def subreddit(self, ctx):
-        """Provides !subreddit group of cmds; see !subreddit help."""
+        """Provides !subreddit cmds; see !subreddit help."""
         if ctx.invoked_subcommand is None:
             await self.client.say("Invalid subreddit; see !subreddit help.")
 
