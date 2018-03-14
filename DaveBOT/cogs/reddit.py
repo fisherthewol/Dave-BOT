@@ -9,6 +9,7 @@ class Reddit():
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
                                       user_agent="dave:v104:t3rr0r_f3rr3t")
+        self.fstr = "Image: {}\nTitle = {}\nComments = https://redd.it/{}\n"
 
     def prawin(self, sub, sort):
         """Praw-Based function, reads from reddit.
@@ -50,42 +51,38 @@ class Reddit():
     @subreddit.command()
     async def top(self, sub: str):
         post = self.prawin(sub, "top")
-        await self.client.say("Image: {}\nTitle = {}\nComments = "
-                              "https://redd.it/{}\n".format(post["img"],
-                                                            post["title"],
-                                                            post["id"]))
+        await self.client.say(self.fstr.format(post["img"],
+                                               post["title"],
+                                               post["id"]))
 
     @subreddit.command()
     async def new(self, sub: str):
         post = self.prawin(sub, "new")
-        await self.client.say("Image: {}\nTitle = {}\nComments = "
-                              "https://redd.it/{}\n".format(post["img"],
-                                                            post["title"],
-                                                            post["id"]))
+        await self.client.say(self.fstr.format(post["img"],
+                                               post["title"],
+                                               post["id"]))
 
     @subreddit.command()
     async def rising(self, sub: str):
         post = self.prawin(sub, "rising")
-        await self.client.say("Image: {}\nTitle = {}\nComments = "
-                              "https://redd.it/{}\n".format(post["img"],
-                                                            post["title"],
-                                                            post["id"]))
+        await self.client.say(self.fstr.format(post["img"],
+                                               post["title"],
+                                               post["id"]))
 
     @subreddit.command()
     async def hot(self, sub: str):
         post = self.prawin(sub, "hot")
-        await self.client.say("Image: {}\nTitle = {}\nComments = "
-                              "https://redd.it/{}\n".format(post["img"],
-                                                            post["title"],
-                                                            post["id"]))
+        await self.client.say(self.fstr.format(post["img"],
+                                               post["title"],
+                                               post["id"]))
 
     @commands.command(pass_context=True)
     async def prequel(self, ctx):
         """Gives top post from /r/prequelmemes."""
         post = self.prawin("prequelmemes", "top")
-        await self.client.say("Image: {}\nTitle = {}\nComments = "
-                              "https://redd.it/{}\n".format(
-                               post["img"], post["title"], post["id"]))
+        await self.client.say(self.fstr.format(post["img"],
+                                               post["title"],
+                                               post["id"]))
 
 
 def setup(bot):

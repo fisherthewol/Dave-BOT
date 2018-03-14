@@ -25,7 +25,7 @@ def main():
         " [in %(pathname)s:%(lineno)d]"))
     logger = logging.getLogger(__name__)
     logger.addHandler(streamhandle)
-    logger.warning("Logging has been setup.")
+    logger.warning("Logging setup in main.py")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-cc",

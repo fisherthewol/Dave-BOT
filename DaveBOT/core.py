@@ -30,7 +30,7 @@ class Dave:
             self.host_is_Linux = True
         else:
             self.host_is_Linux = False
-        signal.signal(signal.SIGTERM, self.sigler)
+        signal.signal(signal.SIGTERM, self.sigterm)
 
         # Load cogs:
         for cog in self.cogs:
@@ -42,7 +42,7 @@ class Dave:
                 sys.exit("Failed load {}, exception {}".format(cog,
                                                                e))
 
-    def sigler(self, signal, frame):
+    def sigterm(self, signal, frame):
         """Set the response to sigterm."""
         self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
@@ -63,7 +63,7 @@ class Dave:
         streamhandle.setLevel(loglev)
         listener = logging.handlers.QueueListener(que, streamhandle)
         listener.start()
-        self.logger.warning("Logging is setup.")
+        self.logger.warning("Logging setup in core.py")
 
     def uptimeFunc(self):
         """Returns host uptime nicely."""
