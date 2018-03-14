@@ -24,3 +24,13 @@ async def ping(ctx):
     await client.say("Pong!")
 ```  
 Adding this makes the bot reply "Pong!" to !ping in chat.  
+
+Alternatively, you can create a cog. Create a file under /DaveBOT/cogs/, for example, /DaveBOT/cogs/test.py  
+Then, inside of that, import discord.ext.commands (from discord.ext import commands), and write a class Test that takes one argument, bot, in the constructor:
+```
+from discord.ext import commands
+
+class Test:
+    def __init__(self, bot):
+        self.client = bot
+```
