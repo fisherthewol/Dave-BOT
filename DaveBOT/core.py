@@ -43,7 +43,7 @@ class Dave:
                                                                e))
 
     def sigterm(self, signal, frame):
-        """Set the response to sigterm."""
+        """Response to sigterm."""
         self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 

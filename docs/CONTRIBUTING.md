@@ -34,3 +34,30 @@ class Test:
     def __init__(self, bot):
         self.client = bot
 ```
+Then, create commands like this:
+```
+@commands.command()
+async def test(self, teststr: str):
+    await self.client.say("Test string was: {}".format(teststr))
+```
+Or groups like this:
+```
+@commands.group(pass_context=True)
+async def testGroup(self, ctx):
+    if ctx.invoked_subcommand is None:
+        await self.client.say("Invalid command.")
+
+@testGroup.command()
+async def help(self):
+...
+```
+Finally, outside of the class, you need to write a setup function:
+```
+def setup(bot):
+    bot.add_cog(Test(bot))
+```
+Then, add cog to the list of cogs to load in core.py
+```
+# Line 18:
+self.cogs = ["DaveBOT.cogs.test"]
+```
