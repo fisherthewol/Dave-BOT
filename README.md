@@ -1,5 +1,5 @@
 # Dave-BOT
-A Discord bot based on Discord.py.   
+A Discord bot based on [Discord.py](https://github.com/Rapptz/discord.py).   
 ## Quickstart  
 The following is a quickstart guide to getting the bot running.  
 ### Using the instance on our server:  
@@ -11,16 +11,17 @@ You can use our copy of Dave-BOT. We take no responsibility for any issues arisi
 
 ### Run your own: Docker:  
 This app will build into a docker container:
-- Get your [discord clientcode](https://discordapp.com/developers/applications/me) and [reddit client_id and _secret](https://reddit.com/prefs/apps/) (we recommend using a personal user script).  
+- Get your [discord clientcode](https://discordapp.com/developers/applications/me).
+- Optionally, get your [reddit client_id and _secret](https://reddit.com/prefs/apps/) (we recommend using a personal user script), and your [openweathermap api key](https://home.openweathermap.org/api_keys).  
 - Download and install docker.  
 - Clone the master branch/get the source of the latest release of the repo.  
 - cd into the top level of the repo (Usually ```cd Dave-BOT```).  
 - Build with ```sudo docker build -t dave:master .```  
-- Create a file called env.list and put your client_id, client_secret, discord client code and openweathermap key into it:  
+- Create a file called env.list and put your discord clientcode (and optional keys) in it:  
 ```
+clientcode=CODE HERE
 client_id=ID HERE
 client_secret=SECRET HERE
-clientcode=CODE HERE
 weather=KEY HERE
 ```
 - Run with ```sudo docker run -d --env-file env.list dave:master```  

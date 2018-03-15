@@ -1,90 +1,131 @@
-import os
-import sys
+import argparse
 import logging
+import logging.handlers
+import os
+
+from DaveBOT import core
 
 
-usagestring = ("Usage:\npython3 main.py clientcode (loglevel)\nwhere "
-               "clientcode is the discord bot clientcode, and\n"
-               "loglevel is a valid log level (default is WARNING).")
-
-
-def findLogLevel(logleveltofind):
+def findLogLevel(leveltofind):
     loglevels = {"debug": logging.DEBUG,
                  "info": logging.INFO,
                  "warning": logging.WARNING,
                  "error": logging.ERROR,
                  "critical": logging.CRITICAL}
-    if logleveltofind.lower() in loglevels:
-        return loglevels[logleveltofind.lower()]
+    if leveltofind.lower() in loglevels:
+        return loglevels[leveltofind.lower()]
     else:
         return None
 
 
-def startFromEnviron():
-    if os.environ.get("clientcode") is None:
-        sys.exit("Error, discord client code not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("client_id") is None:
-        sys.exit("Error, reddit client_id not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("client_secret") is None:
-        sys.exit("Error, reddit client_secret not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("weather") is None:
-        sys.exit("Error, weather api key not set. Set your "
-                 "environ, or:\n{}".format(usagestring))
-    elif os.environ.get("loglevel") is None:
-        leveltoPass = logging.WARNING
-    else:
-        leveltoPass = findLogLevel(os.environ.get("loglevel"))
-
-    import DaveBOT.core as bot
-    if leveltoPass is None:
-        botclient = bot.Dave(os.environ.get("clientcode"))
-    else:
-        botclient = bot.Dave(os.environ.get("clientcode"), leveltoPass)
-    botclient.discout()
-
-
-def startWithoneArg(sysargs):
-    onearg = sysargs[1]
-    if findLogLevel(onearg) is None:
-        # Arg is not log level, so clientcode.
-        import DaveBOT.core as bot
-        botclient = bot.Dave(onearg)
-        botclient.discout()
-    else:
-        # Arg is log level, so try environ for clientcode.
-        if os.environ.get("clientcode") is None:
-            sys.exit("Error, discord client code not set. Set your "
-                     "environ, or:\n{}".format(usagestring))
-        else:
-            import DaveBOT.core as bot
-            botclient = bot.Dave(os.environ.get("clientcode"),
-                                 findLogLevel(onearg))
-            botclient.discout()
-
-def startWithClientAndLog(sysargs):
-    clientcode = sysargs[1]
-    leveltoPass = findLogLevel(sysargs[2])
-    import DaveBOT.core as bot
-    botclient = bot.Dave(clientcode, leveltoPass)
-    botclient.discout()
-
-
 def main():
-    args = sys.argv
-    numberofargs = len(args)
-    if numberofargs == 1:
-        startFromEnviron()
-    elif numberofargs == 2:
-        startWithoneArg(args)
-    elif numberofargs == 3:
-        startWithClientAndLog(args)
+    streamhandle = logging.StreamHandler()
+    streamhandle.setFormatter(logging.Formatter(
+        "%(asctime)s %(levelname)s: %(message)s"
+        " [in %(pathname)s:%(lineno)d]"))
+    logger = logging.getLogger(__name__)
+    logger.addHandler(streamhandle)
+    logger.warning("Logging setup in main.py")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-cc",
+                        "--clientcode",
+                        help="client code for discord code.",
+                        type=str)
+    parser.add_argument("-l",
+                        "--loglevel",
+                        help="change loglevel; valid levels are debug,"
+                             " info, warning, error, critical.",
+                        type=str)
+    parser.add_argument("-rid",
+                        "--reddit_id",
+                        help="reddit client id",
+                        type=str)
+    parser.add_argument("-rsc",
+                        "--reddit_sc",
+                        help="reddit client secret",
+                        type=str)
+    parser.add_argument("-w",
+                        "--weather",
+                        help="api key for openweathermap.org",
+                        type=str)
+    args = parser.parse_args()
+
+    if args.clientcode:
+        logger.info("clientcode found: {}".format(args.clientcode))
+        cc = args.clientcode
     else:
-        sys.exit("Usage:\npython3 main.py clientcode loglevel\nwhere "
-                 "clientcode is the discord bot clientcode, and\n"
-                 "loglevel is a valid log level (default is INFO).\n")
+        cc = os.environ.get("clientcode")
+        if cc:
+            logger.info("clientcode found: {}".format(cc))
+        else:
+            logger.critical("Empty clientcode: Not passed by env or cli.")
+            parser.print_help()
+            raise RuntimeError("Empty clientcode: Not passed by env or cli.")
+
+    if args.loglevel:
+        logger.info("Loglevel found, working out what it is...")
+        ll = findLogLevel(args.loglevel)
+        if ll:
+            logger.info("Loglevel is {}".format(str(ll)))
+        else:
+            logger.error("Loglevel invalid, using default.")
+            ll = logging.WARNING
+    else:
+        ll = os.environ.get("loglevel")
+        if ll:
+            logger.info("Loglevel found, working out what it is...")
+            ll = findLogLevel(ll)
+            if ll:
+                logger.info("Loglevel is {}".format(str(ll)))
+            else:
+                logger.error("Loglevel invalid, using default.")
+                ll = logging.WARNING
+        else:
+            logger.warning("Loglevel not passed or in env, using default.")
+            ll = logging.WARNING
+
+    if args.reddit_id:
+        logger.info("reddit_id found: {}".format(args.reddit_id))
+        rid = args.reddit_id
+    else:
+        rid = os.environ.get("reddit_id")
+        if rid:
+            logger.info("reddit_id found: {}".format(rid))
+        else:
+            logger.warning("reddit_id not found, not enabling reddit.")
+            rid = False
+            rsc = False
+
+    if rid:
+        if args.reddit_sc:
+            logger.warning("reddit_sc found: {} , "
+                           "enabling reddit.".format(args.reddit_sc))
+            rsc = args.reddit_sc
+        else:
+            rsc = os.environ.get("reddit_sc")
+            if rsc:
+                logger.info("reddit_sc found {} , "
+                            "enabling reddit.".format(args.reddit_sc))
+            else:
+                logger.warning("reddit_sc not found, not enabling reddit.")
+                rsc = False
+
+    if args.weather:
+        logger.info("Weather found: {} , "
+                    "enabling weather.".format(args.weather))
+        wk = args.weather
+    else:
+        wk = os.environ.get("weather")
+        if wk:
+            logger.info("Weather found: {} , "
+                        "enabling weather.".format(wk))
+        else:
+            logger.warning("Weather not found, not enabling.")
+            wk = False
+
+    bot = core.Dave(cc, ll, rid, rsc, wk)
+    bot.discout()
 
 
 if __name__ == "__main__":
