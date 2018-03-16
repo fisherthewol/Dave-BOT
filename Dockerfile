@@ -2,7 +2,7 @@ FROM python:3
 
 WORKDIR /usr/src/DaveBOT
 
-RUN pip3 install --no-cache-dir feedparser praw discord.py
+RUN pip3 install --no-cache-dir discord.py requests praw feedparser
 
 ADD . /usr/src/DaveBOT
 
