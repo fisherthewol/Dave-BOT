@@ -2,7 +2,7 @@ import praw
 from discord.ext import commands
 
 
-class Reddit():
+class Reddit:
     """Class for reddit functions and commands."""
     def __init__(self, bot):
         self.client = bot

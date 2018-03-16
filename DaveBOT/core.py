@@ -15,7 +15,7 @@ class Dave:
     def __init__(self, code, loglevel, redid, redsc, wk):
         self.client = commands.Bot(command_prefix="!")
         self.code = code
-        self.cogs = []
+        self.cogs = ["DaveBOT.cogs.memes"]
         # Enable reddit cog.
         if (redid and redsc):
             self.client.rid = redid
