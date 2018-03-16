@@ -15,7 +15,7 @@ class Weather:
         self.idurl = self.baseurl + "id={}&appid=" + self.key
         self.zipurl = self.baseurl + "zip={},us&appid=" + self.key
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
-        with open("DaveBOT/cond.json") as op:
+        with open("data/cond.json") as op:
             cond = json.load(op)
         self.conditions = cond
 
