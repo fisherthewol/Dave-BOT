@@ -26,12 +26,7 @@ class Dave:
             self.client.wk = wk
             self.cogs.append("DaveBOT.cogs.weather")
         self.setupLogging(loglevel)
-        if "Linux" in platform.system():
-            self.host_is_Linux = True
-        else:
-            self.host_is_Linux = False
-        signal.signal(signal.SIGTERM, self.sigterm)
-
+        self.host_is_Linux = True if ("Linux" in platform.system()) else False
         # Load cogs:
         for cog in self.cogs:
             try:
@@ -41,6 +36,7 @@ class Dave:
                                                                            e))
                 sys.exit("Failed load {}, exception {}".format(cog,
                                                                e))
+        signal.signal(signal.SIGTERM, self.sigterm)
 
     def sigterm(self, signal, frame):
         """Response to sigterm."""
@@ -112,6 +108,7 @@ class Dave:
 
         @self.client.command(pass_context=True)
         async def dave(ctx):
+            """Provides data about Dave and the system it's running on."""
             self.logger.info("!dave called.")
             if self.host_is_Linux:
                 uptime = self.uptimeFunc()
