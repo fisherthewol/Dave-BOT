@@ -100,7 +100,6 @@ ENV/
 .mypy_cache/
 
 # project ignores
-*.txt
 
 mypraw\.ini
 

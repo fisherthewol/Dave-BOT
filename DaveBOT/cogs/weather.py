@@ -70,7 +70,7 @@ class Weather:
     async def weather(self, ctx):
         """Provides !weather cmds; see !weather help."""
         if ctx.invoked_subcommand is None:
-            await self.client.say("Invalid command; see !weather help.")
+            await self.client.say("Unrecognised command; see !weather help.")
 
     @weather.command()
     async def help(self):
