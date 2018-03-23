@@ -1,12 +1,13 @@
 from discord.ext import commands
+import json
 
 
 class Memes():
     """Meme commands."""
     def __init__(self, bot):
         self.client = bot
-        self.known = {"hams": ["data/hms.txt", "https://youtu.be/mkX3dO6KN54"],
-                      "can't": [0, "https://youtu.be/wKbU8B-QVZk"]}
+        with open("data/memes.json") as op:
+            self.known = json.load(op)
 
     @commands.group(pass_context=True)
     async def meme(self, ctx):

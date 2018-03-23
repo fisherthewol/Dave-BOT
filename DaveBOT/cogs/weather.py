@@ -16,30 +16,23 @@ class Weather:
         self.zipurl = self.baseurl + "zip={},us&appid=" + self.key
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
         with open("data/cond.json") as op:
-            cond = json.load(op)
-        self.conditions = cond
+            self.conditions = json.load(op)
 
-    def wtherStrFrmttr(self, jsontoformat):
-        city = jsontoformat["name"]
-        coun = jsontoformat["sys"]["country"]
-        cond = self.retcond(str(jsontoformat["weather"][0]["id"]))
-        temp = jsontoformat["main"]["temp"] - 273.15
-        temp = round(temp, 2)
-        humd = jsontoformat["main"]["humidity"]
-        pres = jsontoformat["main"]["pressure"]
-        sped = jsontoformat["wind"]["speed"]
+    def wSF(self, jtf):
+        cond = self.retcond(str(jtf["weather"][0]["id"]))
+        temp = jtf["main"]["temp"] - 273.15
         return ("Weather in {}, {}:"
                 "\nConditions: {}"
                 "\nTemp: {} °C"
                 "\nHumidity: {} %"
                 "\nPressure: {} hPa"
-                "\nWind Speed: {} m/s".format(city,
-                                              coun,
+                "\nWind Speed: {} m/s".format(jtf["name"],
+                                              jtf["sys"]["country"],
                                               cond,
-                                              temp,
-                                              humd,
-                                              pres,
-                                              sped))
+                                              round(temp, 2),
+                                              jtf["main"]["humidity"],
+                                              jtf["main"]["pressure"],
+                                              jtf["wind"]["speed"]))
 
     def retcond(self, conditionid):
         retval = ""
@@ -103,7 +96,7 @@ class Weather:
                                                     "City not found.")
         else:
             await self.client.edit_message(wthrmsg,
-                                           self.wtherStrFrmttr(retjs))
+                                           self.wSF(retjs))
 
     @weather.command()
     async def id(self, cityid: int):
@@ -113,7 +106,7 @@ class Weather:
             await self.client.edit_message(wthrmsg, "Error: "
                                                     "City not found.")
         else:
-            await self.client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
+            await self.client.edit_message(wthrmsg, self.wSF(retjs))
 
     @weather.command()
     async def zip(self, zipcode: int):
@@ -126,7 +119,7 @@ class Weather:
             await self.client.edit_message(wthrmsg, "Error: "
                                                     " Zip not found.")
         else:
-            await self.client.edit_message(wthrmsg, self.wtherStrFrmttr(retjs))
+            await self.client.edit_message(wthrmsg, self.wSF(retjs))
 
 
 def setup(bot):
