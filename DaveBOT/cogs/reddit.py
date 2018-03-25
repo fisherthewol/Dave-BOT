@@ -2,7 +2,7 @@ import praw
 from discord.ext import commands
 
 
-class Reddit():
+class Reddit:
     """Class for reddit functions and commands."""
     def __init__(self, bot):
         self.client = bot
@@ -35,7 +35,7 @@ class Reddit():
     async def subreddit(self, ctx):
         """Provides !subreddit cmds; see !subreddit help."""
         if ctx.invoked_subcommand is None:
-            await self.client.say("Invalid subreddit; see !subreddit help.")
+            await self.client.say("Unrecognised command; see !subreddit help.")
 
     @subreddit.command()
     async def help(self):
@@ -77,7 +77,7 @@ class Reddit():
                                                post["id"]))
 
     @commands.command(pass_context=True)
-    async def prequel(self, ctx):
+    async def prequel(self):
         """Gives top post from /r/prequelmemes."""
         post = self.prawin("prequelmemes", "top")
         await self.client.say(self.fstr.format(post["img"],
