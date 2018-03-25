@@ -19,7 +19,7 @@ class Memes():
     async def lst(self, ctx):
         """List all known memes. Usage: !meme lst"""
         await self.client.say("Listing memes:")
-        await self.client.say(str(self.known))
+        await self.client.say(", ".join(self.known.keys()))
 
     @meme.command(pass_context=True)
     async def f(self, ctx, name: str):
