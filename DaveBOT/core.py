@@ -15,33 +15,31 @@ class Dave:
     def __init__(self, code, loglevel, redid, redsc, wk):
         self.client = commands.Bot(command_prefix="!")
         self.code = code
-        self.cogs = ["DaveBOT.cogs.memes"]
-        # Enable reddit cog.
+        self.cogs = []
         if (redid and redsc):
+            # Enable reddit cog.
             self.client.rid = redid
             self.client.rsc = redsc
             self.cogs.append("DaveBOT.cogs.reddit")
-        # Enable weather cog.
         if wk:
+            # Enable weather cog.
             self.client.wk = wk
             self.cogs.append("DaveBOT.cogs.weather")
+        # enable meme cog
+        self.cogs.append("DaveBOT.cogs.memes")
+        self.loadcogs()
         self.setupLogging(loglevel)
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
-        # Load cogs:
+        signal.signal(signal.SIGTERM, self.sigterm)
+
+    def loadcogs(self):
+        """Load discordpy cogs."""
         for cog in self.cogs:
             try:
                 self.client.load_extension(cog)
             except Exception as e:
                 self.logger.critical("Failed load {}, exception {}".format(cog,
                                                                            e))
-                sys.exit("Failed load {}, exception {}".format(cog,
-                                                               e))
-        signal.signal(signal.SIGTERM, self.sigterm)
-
-    def sigterm(self, signal, frame):
-        """Response to sigterm."""
-        self.logger.critical("SIGTERM recieved, ending.")
-        sys.exit("SIGTERM recieved, ending.")
 
     def setupLogging(self, loglev):
         """Sets up logging"""
@@ -61,8 +59,13 @@ class Dave:
         listener.start()
         self.logger.warning("Logging setup in core.py")
 
+    def sigterm(self, signal, frame):
+        """Response to sigterm."""
+        self.logger.critical("SIGTERM recieved, ending.")
+        sys.exit("SIGTERM recieved, ending.")
+
     def uptimeFunc(self):
-        """Returns host uptime nicely."""
+        """Returns formatted host uptime."""
         if self.host_is_Linux:
             from datetime import timedelta
             with open("/proc/uptime", "r") as f:
@@ -83,28 +86,6 @@ class Dave:
             self.logger.warning("ID : {}" .format(self.client.user.id))
             self.logger.info("Successful self.client launch.")
             await self.client.change_presence(game=discord.Game(name="!help"))
-
-        @self.client.command(pass_context=True)
-        async def news(ctx):
-            """Returns top news from bbc and gameinformer."""
-            self.logger.info("!news called.")
-            bbcmsg = await self.client.say("Fetching bbc news...")
-            gmimsg = await self.client.say("Fetching gameinformer news...")
-            bbc = feedparser.parse("https://feeds.bbci.co.uk/news/world/"
-                                   "europe/rss.xml")
-            game = feedparser.parse("https://www.gameinformer.com/b/"
-                                    "mainfeed.aspx?Tags=feature")
-            await self.client.edit_message(bbcmsg, bbc.entries[0]["link"])
-            await self.client.edit_message(gmimsg, game.entries[0]["link"])
-
-        @self.client.command(pass_context=True)
-        async def pie(ctx):
-            """Gives latest Jonathan Pie Video."""
-            self.logger.info("!pie called.")
-            piemsg = await self.client.say("Fetching video.")
-            pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
-                                   "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
-            await self.client.edit_message(piemsg, pie.entries[0]['link'])
 
         @self.client.command(pass_context=True)
         async def dave(ctx):
@@ -129,6 +110,28 @@ class Dave:
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
+
+        @self.client.command(pass_context=True)
+        async def news(ctx):
+            """Returns top news from bbc and gameinformer."""
+            self.logger.info("!news called.")
+            bbcmsg = await self.client.say("Fetching bbc news...")
+            gmimsg = await self.client.say("Fetching gameinformer news...")
+            bbc = feedparser.parse("https://feeds.bbci.co.uk/news/world/"
+                                   "europe/rss.xml")
+            game = feedparser.parse("https://www.gameinformer.com/b/"
+                                    "mainfeed.aspx?Tags=feature")
+            await self.client.edit_message(bbcmsg, bbc.entries[0]["link"])
+            await self.client.edit_message(gmimsg, game.entries[0]["link"])
+
+        @self.client.command(pass_context=True)
+        async def pie(ctx):
+            """Replies with latest Jonathan Pie video"""
+            self.logger.info("!pie called.")
+            piemsg = await self.client.say("Fetching video.")
+            pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
+                                   "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
+            await self.client.edit_message(piemsg, pie.entries[0]['link'])
 
         self.client.run(str(self.code))
 
