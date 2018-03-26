@@ -25,16 +25,16 @@ def main():
         " [in %(pathname)s:%(lineno)d]"))
     logger = logging.getLogger(__name__)
     logger.addHandler(streamhandle)
-    logger.warning("Logging setup in main.py")
+    logger.warning("Logging is setup in main.py")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-cc",
                         "--clientcode",
-                        help="client code for discord code.",
+                        help="client code for discord.py",
                         type=str)
     parser.add_argument("-l",
                         "--loglevel",
-                        help="change loglevel; valid levels are debug,"
+                        help="change loglevel; valid levels are: debug,"
                              " info, warning, error, critical.",
                         type=str)
     parser.add_argument("-rid",

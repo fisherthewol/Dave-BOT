@@ -15,49 +15,72 @@ class Reddit:
         """Praw-Based function, reads from reddit.
            Always returns top/first post for given sort.
         """
-        # TODO: if subreddit.over18 << This is the check for 18+ subs.
         subreddit = self.prawclient.subreddit(str(sub))
+        prop = {"title": "", "img": "", "id": "", "adult": subreddit.over18}
         if sort == "top":
-            postsort = subreddit.top(time, limit=1)
+            posts = subreddit.top(time, limit=1)
         elif sort == "new":
-            postsort = subreddit.new(limit=1)
+            posts = subreddit.new(limit=1)
         elif sort == "rising":
-            postsort = subreddit.rising(limit=1)
+            posts = subreddit.rising(limit=1)
         elif sort == "hot":
-            postsort = subreddit.hot(limit=1)
-        post = {"title": "", "img": "", "id": ""}
-        for submission in postsort:
-            post["title"] = str(submission.title)
-            post["img"] = str(submission.url)
-            post["id"] = str(submission.id)
-        return post
+            posts = subreddit.hot(limit=1)
+        for post in posts:
+            prop["title"] = str(post.title)
+            prop["img"] = str(post.url)
+            prop["id"] = str(post.id)
+        return prop
 
-    @commands.command()
-    async def reddit(self, sub: str, sort: str):
+    @commands.command(pass_context=True)
+    async def reddit(self, ctx, sub: str, sort: str):
         """Gets first post in <sub>, sorted by <sort>.
            If sort is top, time limit is day.
            Valid sorts are:
            top, new, rising, hot.
+           If the subreddit is 18+, bot will not post in channels without
+           "nsfw" in their name.
         """
         msg = await self.client.say("Getting post.")
         post = self.prawin(sub, sort)
-        await self.client.edit_message(msg,
-                                       self.fstr.format(post["img"],
-                                                        post["title"],
-                                                        post["id"]))
+        if post["adult"]:
+            if "nsfw" in ctx.message.channel.name:
+                await self.client.edit_message(msg,
+                                               self.fstr.format(post["img"],
+                                                                post["title"],
+                                                                post["id"]))
+            else:
+                await self.client.edit_message(msg,
+                                               "E: NSFW sub but SFW channel.")
+        else:
+            await self.client.edit_message(msg,
+                                           self.fstr.format(post["img"],
+                                                            post["title"],
+                                                            post["id"]))
 
-    @commands.command()
-    async def top(self, sub: str, time: str):
+    @commands.command(pass_context=True)
+    async def top(self, ctx, sub: str, time: str):
         """Use for !reddit top but with time limit.
            Valid <time>:
            month, day, hour, week, all, year
+           If the subreddit is 18+, bot will not post in channels without
+           "nsfw" in their name.
         """
         msg = await self.client.say("Getting post...")
         post = self.prawin(sub, "top", time=time)
-        await self.client.edit_message(msg,
-                                       self.fstr.format(post["img"],
-                                                        post["title"],
-                                                        post["id"]))
+        if post["adult"]:
+            if "nsfw" in ctx.message.channel.name:
+                await self.client.edit_message(msg,
+                                               self.fstr.format(post["img"],
+                                                                post["title"],
+                                                                post["id"]))
+            else:
+                await self.client.edit_message(msg,
+                                               "E: NSFW sub but SFW channel.")
+        else:
+            await self.client.edit_message(msg,
+                                           self.fstr.format(post["img"],
+                                                            post["title"],
+                                                            post["id"]))
 
 
 def setup(bot):
