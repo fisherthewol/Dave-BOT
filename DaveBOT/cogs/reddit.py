@@ -31,6 +31,20 @@ class Reddit:
             prop["id"] = str(post.id)
         return prop
 
+    def nsfwGuard(self, post, channelname):
+        """Provides nsfw guard."""
+        if post["adult"]:
+            if "nsfw" in channelname:
+                return self.fstr.format(post["img"],
+                                        post["title"],
+                                        post["id"])
+            else:
+                return "E: Subreddit is NSFW, but command is from SFW channel."
+        else:
+            return self.fstr.format(post["img"],
+                                    post["title"],
+                                    post["id"])
+
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
         """Gets first post in <sub>, sorted by <sort>.
@@ -42,20 +56,8 @@ class Reddit:
         """
         msg = await self.client.say("Getting post.")
         post = self.prawin(sub, sort)
-        if post["adult"]:
-            if "nsfw" in ctx.message.channel.name:
-                await self.client.edit_message(msg,
-                                               self.fstr.format(post["img"],
-                                                                post["title"],
-                                                                post["id"]))
-            else:
-                await self.client.edit_message(msg,
-                                               "E: NSFW sub but SFW channel.")
-        else:
-            await self.client.edit_message(msg,
-                                           self.fstr.format(post["img"],
-                                                            post["title"],
-                                                            post["id"]))
+        reply = self.nsfwGuard(post, ctx.message.channel.name)
+        await self.client.edit_message(msg, reply)
 
     @commands.command(pass_context=True)
     async def top(self, ctx, sub: str, time: str):
@@ -67,20 +69,8 @@ class Reddit:
         """
         msg = await self.client.say("Getting post...")
         post = self.prawin(sub, "top", time=time)
-        if post["adult"]:
-            if "nsfw" in ctx.message.channel.name:
-                await self.client.edit_message(msg,
-                                               self.fstr.format(post["img"],
-                                                                post["title"],
-                                                                post["id"]))
-            else:
-                await self.client.edit_message(msg,
-                                               "E: NSFW sub but SFW channel.")
-        else:
-            await self.client.edit_message(msg,
-                                           self.fstr.format(post["img"],
-                                                            post["title"],
-                                                            post["id"]))
+        reply = self.nsfwGuard(post, ctx.message.channel.name)
+        await self.client.edit_message(msg, reply)
 
 
 def setup(bot):
