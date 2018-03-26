@@ -11,13 +11,14 @@ class Reddit:
                                       user_agent="dave:v104:t3rr0r_f3rr3t")
         self.fstr = "Image: {}\nTitle = {}\nComments = https://redd.it/{}\n"
 
-    def prawin(self, sub, sort):
+    def prawin(self, sub, sort, time="day"):
         """Praw-Based function, reads from reddit.
            Always returns top/first post for given sort.
         """
+        # TODO: if subreddit.over18 << This is the check for 18+ subs.
         subreddit = self.prawclient.subreddit(str(sub))
         if sort == "top":
-            postsort = subreddit.top("day", limit=1)
+            postsort = subreddit.top(time, limit=1)
         elif sort == "new":
             postsort = subreddit.new(limit=1)
         elif sort == "rising":
@@ -31,58 +32,32 @@ class Reddit:
             post["id"] = str(submission.id)
         return post
 
-    @commands.group(pass_context=True)
-    async def subreddit(self, ctx):
-        """Provides !subreddit cmds; see !subreddit help."""
-        if ctx.invoked_subcommand is None:
-            await self.client.say("Unrecognised command; see !subreddit help.")
+    @commands.command()
+    async def reddit(self, sub: str, sort: str):
+        """Gets first post in <sub>, sorted by <sort>.
+           If sort is top, time limit is day.
+           Valid sorts are:
+           top, new, rising, hot.
+        """
+        msg = await self.client.say("Getting post.")
+        post = self.prawin(sub, sort)
+        await self.client.edit_message(msg,
+                                       self.fstr.format(post["img"],
+                                                        post["title"],
+                                                        post["id"]))
 
-    @subreddit.command()
-    async def help(self):
-        await self.client.say("\n!subreddit help: "
-                              "\nSyntax: ```!subreddit sort sub```"
-                              "where ```sort``` is reddit sort type:\n"
-                              "```-top\n-new\n-rising\n-hot```"
-                              "```sub``` is any valid subreddit.\n"
-                              "Command should return "
-                              "```Invalid subreddit; try again.``` "
-                              "if an error is thrown.\n")
-
-    @subreddit.command()
-    async def top(self, sub: str):
-        post = self.prawin(sub, "top")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
-
-    @subreddit.command()
-    async def new(self, sub: str):
-        post = self.prawin(sub, "new")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
-
-    @subreddit.command()
-    async def rising(self, sub: str):
-        post = self.prawin(sub, "rising")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
-
-    @subreddit.command()
-    async def hot(self, sub: str):
-        post = self.prawin(sub, "hot")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
-
-    @commands.command(pass_context=True)
-    async def prequel(self):
-        """Gives top post from /r/prequelmemes."""
-        post = self.prawin("prequelmemes", "top")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
+    @commands.command()
+    async def top(self, sub: str, time: str):
+        """Use for !reddit top but with time limit.
+           Valid <time>:
+           month, day, hour, week, all, year
+        """
+        msg = await self.client.say("Getting post...")
+        post = self.prawin(sub, "top", time=time)
+        await self.client.edit_message(msg,
+                                       self.fstr.format(post["img"],
+                                                        post["title"],
+                                                        post["id"]))
 
 
 def setup(bot):
