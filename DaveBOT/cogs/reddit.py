@@ -8,7 +8,7 @@ class Reddit:
         self.client = bot
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
-                                      user_agent="dave:v104:t3rr0r_f3rr3t")
+                                      user_agent="dave:testing:t3rr0r_f3rr3t")
         self.fstr = "Image: {}\nTitle = {}\nComments = https://redd.it/{}\n"
 
     def prawin(self, sub, sort, time="day"):
@@ -55,8 +55,14 @@ class Reddit:
            "nsfw" in their name.
         """
         msg = await self.client.say("Getting post.")
-        post = self.prawin(sub, sort)
-        reply = self.nsfwGuard(post, ctx.message.channel.name)
+        post = await self.client.loop.run_in_executor(None,
+                                                      self.prawin,
+                                                      sub,
+                                                      sort)
+        reply = await self.client.loop.run_in_executor(None,
+                                                       self.nsfwGuard,
+                                                       post,
+                                                       ctx.message.channel.name)
         await self.client.edit_message(msg, reply)
 
     @commands.command(pass_context=True)
