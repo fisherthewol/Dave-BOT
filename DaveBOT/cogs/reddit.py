@@ -85,6 +85,20 @@ class Reddit:
                                                        ctx.message.channel.name)
         await self.client.edit_message(msg, reply)
 
+    @commands.command()
+    async def prequel(self):
+        """Get top post from /r/prequelmemes."""
+        msg = await self.client.say("Getting post...")
+        post = await self.client.loop.run_in_executor(None,
+                                                      self.prawin,
+                                                      "prequelmemes",
+                                                      "top",
+                                                      "day")
+        await self.client.edit_message(msg,
+                                       self.fstr.format(post["img"],
+                                                        post["title"],
+                                                        post["id"]))
+
 
 def setup(bot):
     bot.add_cog(Reddit(bot))
