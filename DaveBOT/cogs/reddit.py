@@ -74,8 +74,15 @@ class Reddit:
            "nsfw" in their name.
         """
         msg = await self.client.say("Getting post...")
-        post = self.prawin(sub, "top", time=time)
-        reply = self.nsfwGuard(post, ctx.message.channel.name)
+        post = await self.client.loop.run_in_executor(None,
+                                                      self.prawin,
+                                                      sub,
+                                                      "top",
+                                                      time)
+        reply = await self.client.loop.run_in_executor(None,
+                                                       self.nsfwGuard,
+                                                       post,
+                                                       ctx.message.channel.name)
         await self.client.edit_message(msg, reply)
 
 
