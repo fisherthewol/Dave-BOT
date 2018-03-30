@@ -57,7 +57,7 @@ class Dave:
         streamhandle.setLevel(loglev)
         listener = logging.handlers.QueueListener(que, streamhandle)
         listener.start()
-        self.logger.warning("Logging setup in core.py")
+        self.logger.warning("Logging is setup in core.py")
 
     def sigterm(self, signal, frame):
         """Response to sigterm."""

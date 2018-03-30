@@ -8,81 +8,96 @@ class Reddit:
         self.client = bot
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
-                                      user_agent="dave:v104:t3rr0r_f3rr3t")
+                                      user_agent="dave:testing:t3rr0r_f3rr3t")
         self.fstr = "Image: {}\nTitle = {}\nComments = https://redd.it/{}\n"
 
-    def prawin(self, sub, sort):
+    def prawin(self, sub, sort, time="day"):
         """Praw-Based function, reads from reddit.
            Always returns top/first post for given sort.
         """
         subreddit = self.prawclient.subreddit(str(sub))
+        prop = {"title": "", "img": "", "id": "", "adult": subreddit.over18}
         if sort == "top":
-            postsort = subreddit.top("day", limit=1)
+            posts = subreddit.top(time, limit=1)
         elif sort == "new":
-            postsort = subreddit.new(limit=1)
+            posts = subreddit.new(limit=1)
         elif sort == "rising":
-            postsort = subreddit.rising(limit=1)
+            posts = subreddit.rising(limit=1)
         elif sort == "hot":
-            postsort = subreddit.hot(limit=1)
-        post = {"title": "", "img": "", "id": ""}
-        for submission in postsort:
-            post["title"] = str(submission.title)
-            post["img"] = str(submission.url)
-            post["id"] = str(submission.id)
-        return post
+            posts = subreddit.hot(limit=1)
+        for post in posts:
+            prop["title"] = str(post.title)
+            prop["img"] = str(post.url)
+            prop["id"] = str(post.id)
+        return prop
 
-    @commands.group(pass_context=True)
-    async def subreddit(self, ctx):
-        """Provides !subreddit cmds; see !subreddit help."""
-        if ctx.invoked_subcommand is None:
-            await self.client.say("Unrecognised command; see !subreddit help.")
-
-    @subreddit.command()
-    async def help(self):
-        await self.client.say("\n!subreddit help: "
-                              "\nSyntax: ```!subreddit sort sub```"
-                              "where ```sort``` is reddit sort type:\n"
-                              "```-top\n-new\n-rising\n-hot```"
-                              "```sub``` is any valid subreddit.\n"
-                              "Command should return "
-                              "```Invalid subreddit; try again.``` "
-                              "if an error is thrown.\n")
-
-    @subreddit.command()
-    async def top(self, sub: str):
-        post = self.prawin(sub, "top")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
-
-    @subreddit.command()
-    async def new(self, sub: str):
-        post = self.prawin(sub, "new")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
-
-    @subreddit.command()
-    async def rising(self, sub: str):
-        post = self.prawin(sub, "rising")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
-
-    @subreddit.command()
-    async def hot(self, sub: str):
-        post = self.prawin(sub, "hot")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
+    def nsfwGuard(self, post, channelname):
+        """Provides nsfw guard."""
+        if post["adult"]:
+            if "nsfw" in channelname:
+                return self.fstr.format(post["img"],
+                                        post["title"],
+                                        post["id"])
+            else:
+                return "E: Subreddit is NSFW, but command is from SFW channel."
+        else:
+            return self.fstr.format(post["img"],
+                                    post["title"],
+                                    post["id"])
 
     @commands.command(pass_context=True)
+    async def reddit(self, ctx, sub: str, sort: str):
+        """Gets first post in <sub>, sorted by <sort>.
+           If sort is top, time limit is day.
+           Valid sorts are:
+           top, new, rising, hot.
+           If the subreddit is 18+, bot will not post in channels without
+           "nsfw" in their name.
+        """
+        msg = await self.client.say("Getting post.")
+        post = await self.client.loop.run_in_executor(None,
+                                                      self.prawin,
+                                                      sub,
+                                                      sort)
+        reply = await self.client.loop.run_in_executor(None,
+                                                       self.nsfwGuard,
+                                                       post,
+                                                       ctx.message.channel.name)
+        await self.client.edit_message(msg, reply)
+
+    @commands.command(pass_context=True)
+    async def top(self, ctx, sub: str, time: str):
+        """Use for !reddit top but with time limit.
+           Valid <time>:
+           month, day, hour, week, all, year
+           If the subreddit is 18+, bot will not post in channels without
+           "nsfw" in their name.
+        """
+        msg = await self.client.say("Getting post...")
+        post = await self.client.loop.run_in_executor(None,
+                                                      self.prawin,
+                                                      sub,
+                                                      "top",
+                                                      time)
+        reply = await self.client.loop.run_in_executor(None,
+                                                       self.nsfwGuard,
+                                                       post,
+                                                       ctx.message.channel.name)
+        await self.client.edit_message(msg, reply)
+
+    @commands.command()
     async def prequel(self):
-        """Gives top post from /r/prequelmemes."""
-        post = self.prawin("prequelmemes", "top")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
+        """Get top post from /r/prequelmemes."""
+        msg = await self.client.say("Getting post...")
+        post = await self.client.loop.run_in_executor(None,
+                                                      self.prawin,
+                                                      "prequelmemes",
+                                                      "top",
+                                                      "day")
+        await self.client.edit_message(msg,
+                                       self.fstr.format(post["img"],
+                                                        post["title"],
+                                                        post["id"]))
 
 
 def setup(bot):
