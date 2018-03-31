@@ -9,22 +9,19 @@ class Reddit:
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
                                       user_agent="dave:testing:t3rr0r_f3rr3t")
-        self.fstr = "Image: {}\nTitle = {}\nComments = https://redd.it/{}\n"
+        self.fstr = "Content: {}\nTitle = {}\nComments = https://redd.it/{}\n"
 
     def prawin(self, sub, sort, time="day"):
         """Praw-Based function, reads from reddit.
            Always returns top/first post for given sort.
         """
         subreddit = self.prawclient.subreddit(str(sub))
+        functions = {"top": subreddit.top(time, limit=1),
+                     "new": subreddit.new(limit=1),
+                     "rising": subreddit.rising(limit=1),
+                     "hot": subreddit.hot(limit=1)}
+        posts = functions[sort]
         prop = {"title": "", "img": "", "id": "", "adult": subreddit.over18}
-        if sort == "top":
-            posts = subreddit.top(time, limit=1)
-        elif sort == "new":
-            posts = subreddit.new(limit=1)
-        elif sort == "rising":
-            posts = subreddit.rising(limit=1)
-        elif sort == "hot":
-            posts = subreddit.hot(limit=1)
         for post in posts:
             prop["title"] = str(post.title)
             prop["img"] = str(post.url)
@@ -54,7 +51,7 @@ class Reddit:
            If the subreddit is 18+, bot will not post in channels without
            "nsfw" in their name.
         """
-        msg = await self.client.say("Getting post.")
+        msg = await self.client.say("Getting post...")
         post = await self.client.loop.run_in_executor(None,
                                                       self.prawin,
                                                       sub,
