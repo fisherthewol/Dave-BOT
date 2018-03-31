@@ -61,65 +61,65 @@ class Weather:
 
     @commands.group(pass_context=True)
     async def weather(self, ctx):
-        """Provides !weather cmds; see !weather help."""
+        """Provides weather data."""
         if ctx.invoked_subcommand is None:
             await self.client.say("Unrecognised command; see !weather help.")
 
     @weather.command()
-    async def help(self):
-        await self.client.say("\nPossible !weather commands:"
-                              "\n-!weather city:"
-                              "\n--Use\n"
-                              "```!weather city <cityname>,"
-                              "<countrycode>```"
-                              "\n  where <city> is a city, and "
-                              "<countrycode>"
-                              "is a valid ISO 3166-1 alpha-2 code."
-                              "\n-!weather id:"
-                              "\n--Use\n"
-                              "```!weather id <id>```"
-                              "\n  where <id> is a valid city id from "
-                              "http://bulk.openweathermap.org/sample/"
-                              "city.list.json.gz"
-                              "\n-!weather zip:"
-                              "\n--Use\n"
-                              "```!weather zip <zipcode>```"
-                              "\n  where <zipcode> is a valid US zipcode.")
-
-    @weather.command()
-    async def city(self, citcun: str):
+    async def city(self, city: str, country: str):
+        """Gets weather for city given."""
         wthrmsg = await self.client.say("Fetching weather...")
-        sngs = citcun.split(",")
-        retjs = self.by_cityname(sngs[0], sngs[1])
+        retjs = await self.client.loop.run_in_executor(None,
+                                                       self.by_cityname,
+                                                       city,
+                                                       country)
         if retjs["cod"] == "404":
             await self.client.edit_message(wthrmsg, "Error: "
                                                     "City not found.")
         else:
-            await self.client.edit_message(wthrmsg,
-                                           self.wSF(retjs))
+            reply = await self.client.loop.run_in_executor(None,
+                                                           self.wSF,
+                                                           retjs)
+            await self.client.edit_message(wthrmsg, reply)
 
     @weather.command()
     async def id(self, cityid: int):
+        """Gets weather for city with valid <id>.
+           IDs can be found at
+           http://bulk.openweathermap.org/sample/city.list.json.gz
+        """
         wthrmsg = await self.client.say("Fetching weather...")
-        retjs = self.by_id(cityid)
+        retjs = await self.client.loop.run_in_executor(None,
+                                                       self.by_id,
+                                                       cityid)
         if retjs["cod"] == "404":
             await self.client.edit_message(wthrmsg, "Error: "
                                                     "City not found.")
         else:
-            await self.client.edit_message(wthrmsg, self.wSF(retjs))
+            reply = await self.client.loop.run_in_executor(None,
+                                                           self.wSF,
+                                                           retjs)
+            await self.client.edit_message(wthrmsg, reply)
 
     @weather.command()
     async def zip(self, zipcode: int):
+        """Gets weather for US city with <zipcode>."""
         wthrmsg = await self.client.say("Fetching weather...")
         try:
-            retjs = self.by_zip(zipcode)
+            retjs = await self.client.loop.run_in_executor(None,
+                                                           self.by_zip,
+                                                           zipcode)
         except ValueError as e:
             await self.client.edit_message(wthrmsg, "Error: {}".format(e))
+            return
         if retjs["cod"] == "404":
             await self.client.edit_message(wthrmsg, "Error: "
-                                                    " Zip not found.")
+                                                    "Zip not found.")
         else:
-            await self.client.edit_message(wthrmsg, self.wSF(retjs))
+            reply = await self.client.loop.run_in_executor(None,
+                                                           self.wSF,
+                                                           retjs)
+            await self.client.edit_message(wthrmsg, reply)
 
 
 def setup(bot):
