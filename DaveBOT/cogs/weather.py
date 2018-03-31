@@ -65,61 +65,58 @@ class Weather:
         if ctx.invoked_subcommand is None:
             await self.client.say("Unrecognised command; see !weather help.")
 
-    @weather.command()
-    async def city(self, city: str, country: str):
+    @weather.command(pass_context=True)
+    async def city(self, ctx, city: str, country: str):
         """Gets weather for city given."""
-        wthrmsg = await self.client.say("Fetching weather...")
+        await self.client.send_typing(ctx.message.channel)
         retjs = await self.client.loop.run_in_executor(None,
                                                        self.by_cityname,
                                                        city,
                                                        country)
         if retjs["cod"] == "404":
-            await self.client.edit_message(wthrmsg, "Error: "
-                                                    "City not found.")
+            await self.client.say("Error: City not found.")
         else:
-            reply = await self.client.loop.run_in_executor(None,
-                                                           self.wSF,
-                                                           retjs)
-            await self.client.edit_message(wthrmsg, reply)
+            msg = await self.client.loop.run_in_executor(None,
+                                                         self.wSF,
+                                                         retjs)
+            await self.client.say(msg)
 
-    @weather.command()
-    async def id(self, cityid: int):
+    @weather.command(pass_context=True)
+    async def id(self, ctx, cityid: int):
         """Gets weather for city with valid <id>.
            IDs can be found at
            http://bulk.openweathermap.org/sample/city.list.json.gz
         """
-        wthrmsg = await self.client.say("Fetching weather...")
+        await self.client.send_typing(ctx.message.channel)
         retjs = await self.client.loop.run_in_executor(None,
                                                        self.by_id,
                                                        cityid)
         if retjs["cod"] == "404":
-            await self.client.edit_message(wthrmsg, "Error: "
-                                                    "City not found.")
+            await self.client.edit_message("Error: City not found.")
         else:
-            reply = await self.client.loop.run_in_executor(None,
-                                                           self.wSF,
-                                                           retjs)
-            await self.client.edit_message(wthrmsg, reply)
+            msg = await self.client.loop.run_in_executor(None,
+                                                         self.wSF,
+                                                         retjs)
+            await self.client.say(msg)
 
-    @weather.command()
-    async def zip(self, zipcode: int):
+    @weather.command(pass_context=True)
+    async def zip(self, ctx, zipcode: int):
         """Gets weather for US city with <zipcode>."""
-        wthrmsg = await self.client.say("Fetching weather...")
+        await self.client.send_typing(ctx.message.channel)
         try:
             retjs = await self.client.loop.run_in_executor(None,
                                                            self.by_zip,
                                                            zipcode)
         except ValueError as e:
-            await self.client.edit_message(wthrmsg, "Error: {}".format(e))
+            await self.client.say("Error: {}".format(e))
             return
         if retjs["cod"] == "404":
-            await self.client.edit_message(wthrmsg, "Error: "
-                                                    "Zip not found.")
+            await self.client.say("Error: Zip not found.")
         else:
-            reply = await self.client.loop.run_in_executor(None,
-                                                           self.wSF,
-                                                           retjs)
-            await self.client.edit_message(wthrmsg, reply)
+            msg = await self.client.loop.run_in_executor(None,
+                                                         self.wSF,
+                                                         retjs)
+            await self.client.say(msg)
 
 
 def setup(bot):
