@@ -6,7 +6,6 @@ import signal
 import sys
 
 import discord
-import feedparser
 from discord.ext import commands
 
 
@@ -25,8 +24,9 @@ class Dave:
             # Enable weather cog.
             self.client.wk = wk
             self.cogs.append("DaveBOT.cogs.weather")
-        # enable meme cog
+        # enable meme & rss cogs
         self.cogs.append("DaveBOT.cogs.memes")
+        self.cogs.append("DaveBOT.cogs.rss")
         self.loadcogs()
         self.setupLogging(loglevel)
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
@@ -61,6 +61,7 @@ class Dave:
 
     def sigterm(self, signal, frame):
         """Response to sigterm."""
+        self.client.logout()
         self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 
@@ -110,29 +111,6 @@ class Dave:
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
-
-        @self.client.command(pass_context=True)
-        async def news(ctx):
-            """Returns top news from bbc and gameinformer."""
-            self.logger.info("!news called.")
-            bbcmsg = await self.client.say("Fetching bbc news...")
-            gmimsg = await self.client.say("Fetching gameinformer news...")
-            bbc = feedparser.parse("https://feeds.bbci.co.uk/news/world/"
-                                   "europe/rss.xml")
-            game = feedparser.parse("https://www.gameinformer.com/b/"
-                                    "mainfeed.aspx?Tags=feature")
-            await self.client.edit_message(bbcmsg, bbc.entries[0]["link"])
-            await self.client.edit_message(gmimsg, game.entries[0]["link"])
-
-        @self.client.command(pass_context=True)
-        async def pie(ctx):
-            """Replies with latest Jonathan Pie video"""
-            self.logger.info("!pie called.")
-            piemsg = await self.client.say("Fetching video.")
-            pie = await self.client.loop.run_in_executor(None,
-                                                         feedparser.parse,
-                                                         "https://www.youtube.com/feeds/videos.xml?channel_id=UCO79NsDE5FpMowUH1YcBFcA")
-            await self.client.edit_message(piemsg, pie.entries[0]['link'])
 
         self.client.run(str(self.code))
 
