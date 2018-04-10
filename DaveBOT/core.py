@@ -85,7 +85,7 @@ class Dave:
             self.logger.warning("Name : {}" .format(self.client.user.name))
             self.logger.warning("ID : {}" .format(self.client.user.id))
             self.logger.info("Successful self.client launch.")
-            await self.client.change_presence(game=discord.Game(name="!help"))
+            await self.client.change_presence(game=discord.Game(name="for !help", type=3))
 
         @self.client.command(pass_context=True)
         async def dave(ctx):
