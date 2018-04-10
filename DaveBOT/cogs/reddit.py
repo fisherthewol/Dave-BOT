@@ -51,16 +51,17 @@ class Reddit:
            If the subreddit is 18+, bot will not post in channels without
            "nsfw" in their name.
         """
-        msg = await self.client.say("Getting post...")
+        channel = ctx.message.channel
+        await self.client.send_typing(channel)
         post = await self.client.loop.run_in_executor(None,
                                                       self.prawin,
                                                       sub,
                                                       sort)
-        reply = await self.client.loop.run_in_executor(None,
-                                                       self.nsfwGuard,
-                                                       post,
-                                                       ctx.message.channel.name)
-        await self.client.edit_message(msg, reply)
+        msg = await self.client.loop.run_in_executor(None,
+                                                     self.nsfwGuard,
+                                                     post,
+                                                     channel.name)
+        await self.client.say(msg)
 
     @commands.command(pass_context=True)
     async def top(self, ctx, sub: str, time: str):
@@ -70,31 +71,31 @@ class Reddit:
            If the subreddit is 18+, bot will not post in channels without
            "nsfw" in their name.
         """
-        msg = await self.client.say("Getting post...")
+        channel = ctx.message.channel
+        await self.client.send_typing(channel)
         post = await self.client.loop.run_in_executor(None,
                                                       self.prawin,
                                                       sub,
                                                       "top",
                                                       time)
-        reply = await self.client.loop.run_in_executor(None,
-                                                       self.nsfwGuard,
-                                                       post,
-                                                       ctx.message.channel.name)
-        await self.client.edit_message(msg, reply)
+        msg = await self.client.loop.run_in_executor(None,
+                                                     self.nsfwGuard,
+                                                     post,
+                                                     channel.name)
+        await self.client.edit_message(msg)
 
-    @commands.command()
-    async def prequel(self):
+    @commands.command(pass_context=True)
+    async def prequel(self, ctx):
         """Get top post from /r/prequelmemes."""
-        msg = await self.client.say("Getting post...")
+        await self.client.send_typing(ctx.message.channel)
         post = await self.client.loop.run_in_executor(None,
                                                       self.prawin,
                                                       "prequelmemes",
                                                       "top",
                                                       "day")
-        await self.client.edit_message(msg,
-                                       self.fstr.format(post["img"],
-                                                        post["title"],
-                                                        post["id"]))
+        await self.client.say(self.fstr.format(post["img"],
+                                               post["title"],
+                                               post["id"]))
 
 
 def setup(bot):

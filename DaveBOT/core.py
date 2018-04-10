@@ -129,8 +129,9 @@ class Dave:
             """Replies with latest Jonathan Pie video"""
             self.logger.info("!pie called.")
             piemsg = await self.client.say("Fetching video.")
-            pie = feedparser.parse("https://www.youtube.com/feeds/videos.xml?"
-                                   "channel_id=UCO79NsDE5FpMowUH1YcBFcA")
+            pie = await self.client.loop.run_in_executor(None,
+                                                         feedparser.parse,
+                                                         "https://www.youtube.com/feeds/videos.xml?channel_id=UCO79NsDE5FpMowUH1YcBFcA")
             await self.client.edit_message(piemsg, pie.entries[0]['link'])
 
         self.client.run(str(self.code))
