@@ -1,5 +1,6 @@
-from discord.ext import commands
 import json
+
+from discord.ext import commands
 
 
 class Memes():
@@ -18,40 +19,37 @@ class Memes():
     @meme.command(pass_context=True)
     async def lst(self, ctx):
         """List all known memes. Usage: !meme lst"""
+        await self.client.send_typing(ctx.message.channel)
         await self.client.say("Listing memes:")
         await self.client.say(", ".join(self.known.keys()))
 
     @meme.command(pass_context=True)
     async def f(self, ctx, name: str):
         """Replies with file of known meme."""
-        msg = await self.client.say("Finding meme...")
+        await self.client.send_typing(ctx.message.channel)
         if name in self.known:
-            await self.client.edit_message(msg, "Meme found, uploading!")
-            filename = self.known[name][0]
+            await self.client.say("Meme found, uploading!")
+            filename = self.known.get(name)[0]
             if filename:
-                chan = ctx.message.channel
-                with open(filename, "rb") as tt:
-                    await self.client.send_file(chan, tt)
-                await self.client.edit_message(msg, "Meme:")
+                await self.client.say("Meme:")
+                with open(filename, "rb") as t:
+                    await self.client.send_file(ctx.message.channel, t)
             else:
-                await self.client.edit_message(msg,
-                                               "Meme doesn't have a file.")
+                await self.client.say("Meme doesn't have a file.")
         else:
-            self.client.edit_message(msg, "Meme not found, try again!")
+            self.client.say("Meme not found.")
 
     @meme.command(pass_context=True)
     async def yt(self, ctx, name: str):
         """Replies with youtube link of known meme."""
-        msg = await self.client.say("Finding meme...")
+        await self.client.send_typing(ctx.message.channel)
         if name in self.known:
-            await self.client.edit_message(msg, "Meme found, linking!")
+            msg = await self.client.say("Meme found, attempting to link...")
             link = self.known[name][1]
             if link:
-                await self.client.edit_message(msg,
-                                               str(link))
+                await self.client.edit_message(msg, str(link))
             else:
-                await self.client.edit_message(msg,
-                                               "Meme doesn't have a yt.")
+                await self.client.edit_message(msg, "Meme doesn't have a youtube link.")
         else:
             self.client.edit_message(msg, "Meme not found, try again!")
 
