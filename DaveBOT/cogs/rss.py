@@ -1,3 +1,5 @@
+import json
+
 import aiohttp
 import feedparser
 from discord.ext import commands
@@ -7,7 +9,12 @@ class RSS:
     """Commands involving feedparser."""
     def __init__(self, bot):
         self.client = bot
+        with open("data/feeds.json") as op:
+            self.feeds = json.load(op)
         self.session = aiohttp.ClientSession()
+
+    def __unload(self):
+        self.session.close()
 
     async def getData(self, url):
         resp = await self.session.get(url)
@@ -23,13 +30,11 @@ class RSS:
     @commands.command(pass_context=True)
     async def news(self, ctx):
         """Returns top news from bbc and gameinformer."""
-        await self.client.send_typing(ctx.message.channel)
-        bbc = await self.getData("https://feeds.bbci.co.uk/news/world/europe/rss.xml")
-        game = await self.getData("https://www.gameinformer.com/b/mainfeed.aspx?Tags=feature")
-        bbc = await self.parse(bbc)
-        game = await self.parse(game)
-        await self.client.say(bbc.entries[0]["link"])
-        await self.client.say(game.entries[0]["link"])
+        for feed in self.feeds:
+            await self.client.send_typing(ctx.message.channel)
+            data = await self.getData(feed)
+            news = await self.parse(data)
+            await self.client.say(news.entries[0]["link"])
 
     @commands.command(pass_context=True)
     async def pie(self, ctx):

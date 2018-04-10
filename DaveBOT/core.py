@@ -24,7 +24,7 @@ class Dave:
             # Enable weather cog.
             self.client.wk = wk
             self.cogs.append("DaveBOT.cogs.weather")
-        # enable meme cog
+        # enable meme & rss cogs
         self.cogs.append("DaveBOT.cogs.memes")
         self.cogs.append("DaveBOT.cogs.rss")
         self.loadcogs()
@@ -61,6 +61,7 @@ class Dave:
 
     def sigterm(self, signal, frame):
         """Response to sigterm."""
+        self.client.logout()
         self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 
