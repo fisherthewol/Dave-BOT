@@ -82,11 +82,11 @@ class Reddit:
                                                      self.nsfwGuard,
                                                      post,
                                                      channel.name)
-        await self.client.edit_message(msg)
+        await self.client.say(msg)
 
     @commands.command(pass_context=True)
     async def prequel(self, ctx):
-        """Get top post from /r/prequelmemes."""
+        """Get top post of the day from /r/prequelmemes."""
         await self.client.send_typing(ctx.message.channel)
         post = await self.client.loop.run_in_executor(None,
                                                       self.prawin,
