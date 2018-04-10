@@ -3,7 +3,7 @@ from discord.ext import commands
 
 
 class Reddit:
-    """Class for reddit functions and commands."""
+    """Reddit functions and commands."""
     def __init__(self, bot):
         self.client = bot
         self.prawclient = praw.Reddit(client_id=bot.rid,
