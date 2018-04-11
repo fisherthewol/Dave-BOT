@@ -51,16 +51,18 @@ class Reddit:
             return
         error = getattr(error, "original", error)
         if isinstance(error, commands.DisabledCommand):
-            return await self.client.say("{} is disabled.".format(ctx.command))
+            return await self.client.send_message(ctx.message.channel,
+                                                  "{} is disabled.".format(ctx.command))
         elif isinstance(error, commands.NoPrivateMessage):
             try:
-                return await ctx.author.send("{} can not be used in DMs.".format(ctx.command))
+                return await ctx.author.send("{} can't be used in DMs.".format(ctx.command))
             except:
                 pass
-
+        # If it's not one of these, print traceback:
         print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-        return await self.client.say("Error in command; issue has been logged.")
+        return await self.client.send_message(ctx.message.channel,
+                                              "Error in command; issue has been logged.")
 
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
