@@ -1,3 +1,6 @@
+import sys
+import traceback
+
 import praw
 from discord.ext import commands
 
@@ -42,6 +45,23 @@ class Reddit:
                                     post["title"],
                                     post["id"])
 
+    async def on_command_error(self, error, ctx):
+        """Event triggered on error raise."""
+        if hasattr(ctx.command, "on_error"):
+            return
+        error = getattr(error, "original", error)
+        if isinstance(error, commands.DisabledCommand):
+            return await self.client.say("{} is disabled.".format(ctx.command))
+        elif isinstance(error, commands.NoPrivateMessage):
+            try:
+                return await ctx.author.send("{} can not be used in DMs.".format(ctx.command))
+            except:
+                pass
+
+        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        return await self.client.say("Error in command; issue has been logged.")
+
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
         """Gets first post in <sub>, sorted by <sort>.
@@ -63,6 +83,20 @@ class Reddit:
                                                      channel.name)
         await self.client.say(msg)
 
+    @reddit.error
+    async def reddit_handler(self, error, ctx):
+        """Error handler for reddit."""
+        if isinstance(error, commands.MissingRequiredArgument):
+            param = str(error).split(" ")[0]
+            if param == "sub":
+                return await self.client.say("Missing <sub>, <sort>.")
+            elif param == "sort":
+                return await self.client.say("Missing <sort>.")
+        else:
+            print("Ignoring exception in command reddit:", file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            return await self.client.say("Error in command; issue has been logged.")
+
     @commands.command(pass_context=True)
     async def top(self, ctx, sub: str, time: str):
         """Use for !reddit top but with time limit.
@@ -83,6 +117,20 @@ class Reddit:
                                                      post,
                                                      channel.name)
         await self.client.say(msg)
+
+    @top.error
+    async def top_handler(self, error, ctx):
+        """Error handler for reddit."""
+        if isinstance(error, commands.MissingRequiredArgument):
+            param = str(error).split(" ")[0]
+            if param == "sub":
+                return await self.client.say("Missing <sub>, <sort>.")
+            elif param == "sort":
+                return await self.client.say("Missing <sort>.")
+        else:
+            print("Ignoring exception in command reddit:", file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            return await self.client.say("Error in command; issue has been logged.")
 
     @commands.command(pass_context=True)
     async def prequel(self, ctx):
