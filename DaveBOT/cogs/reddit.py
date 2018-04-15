@@ -55,7 +55,8 @@ class Reddit:
                                                   "{} is disabled.".format(ctx.command))
         elif isinstance(error, commands.NoPrivateMessage):
             try:
-                return await ctx.author.send("{} can't be used in DMs.".format(ctx.command))
+                return await self.client.send_message(ctx.author,
+                                                      "{} can't be used in DMs.".format(ctx.command))
             except:
                 pass
         # If it's not one of these, print traceback:
