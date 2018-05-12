@@ -98,7 +98,7 @@ class Dave:
             if self.host_is_Linux:
                 e = discord.Embed(title="Dave-BOT",
                                   type="rich",
-                                  description="Info on dave & it's host.",
+                                  description="Info on dave & its host.",
                                   url="https://github.com/DaveInc/Dave-BOT",
                                   colour=0xFFDFAA,
                                   timestamp=datetime.datetime.utcnow())
