@@ -15,6 +15,7 @@ class Dave:
     def __init__(self, code, loglevel, redid, redsc, wk):
         self.client = commands.Bot(command_prefix="!")
         self.inittime = datetime.datetime.utcnow()
+        self.setupLogging(loglevel)
         self.code = code
         self.cogs = []
         if (redid and redsc):
@@ -30,7 +31,6 @@ class Dave:
         self.cogs.append("DaveBOT.cogs.memes")
         self.cogs.append("DaveBOT.cogs.rss")
         self.loadcogs()
-        self.setupLogging(loglevel)
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
         signal.signal(signal.SIGTERM, self.sigterm)
 

@@ -2,7 +2,7 @@ import json
 import re
 import sys
 
-import requests
+import aiohttp
 from discord.ext import commands
 
 
@@ -11,6 +11,7 @@ class Weather:
     def __init__(self, bot):
         self.client = bot
         self.key = bot.wk
+        self.session = aiohttp.ClientSession()
         self.baseurl = "https://api.openweathermap.org/data/2.5/weather?"
         self.nameurl = self.baseurl + "q={},{}&appid=" + self.key
         self.idurl = self.baseurl + "id={}&appid=" + self.key
@@ -18,6 +19,15 @@ class Weather:
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
         with open("data/cond.json") as op:
             self.conditions = json.load(op)
+
+    def __unload(self):
+        self.session.close()
+
+    async def getJson(self, url):
+        resp = await self.session.get(url)
+        json = await resp.json()
+        resp.close()
+        return json
 
     def wSF(self, jtf):
         cond = self.retcond(str(jtf["weather"][0]["id"]))
@@ -45,18 +55,18 @@ class Weather:
 
     def by_cityname(self, cityname, country):
         """Returns based on name and country."""
-        r = requests.get(self.nameurl.format(cityname, country))
-        return r.json()
+        url = self.nameurl.format(cityname, country)
+        return self.getJson(url)
 
     def by_id(self, cityid):
         """Returns based on city id."""
-        r = requests.get(self.idurl.format(cityid))
-        return r.json()
+        url = self.idurl.format(cityid)
+        return self.getJson(url)
 
     def by_zip(self, zipcode):
         if self.regcomp.match(str(zipcode)):
-            r = requests.get(self.zipurl.format(zipcode))
-            return r.json()
+            url = self.zipurl.format(zipcode)
+            return self.getJson(url)
         else:
             raise ValueError("Zipcode is invalid (wrong or none-US).")
 
