@@ -25,9 +25,10 @@ class Weather:
 
     async def getJson(self, url):
         resp = await self.session.get(url)
-        json = await resp.json()
+        jsn = await resp.json()
+        print(jsn)
         resp.close()
-        return json
+        return jsn
 
     def wSF(self, jtf):
         cond = self.retcond(str(jtf["weather"][0]["id"]))
@@ -53,20 +54,20 @@ class Weather:
             return None
         return retval["label"].title()
 
-    def by_cityname(self, cityname, country):
+    async def by_cityname(self, cityname, country):
         """Returns based on name and country."""
         url = self.nameurl.format(cityname, country)
-        return self.getJson(url)
+        return await self.getJson(url)
 
-    def by_id(self, cityid):
+    async def by_id(self, cityid):
         """Returns based on city id."""
         url = self.idurl.format(cityid)
-        return self.getJson(url)
+        return await self.getJson(url)
 
-    def by_zip(self, zipcode):
+    async def by_zip(self, zipcode):
         if self.regcomp.match(str(zipcode)):
             url = self.zipurl.format(zipcode)
-            return self.getJson(url)
+            return await self.getJson(url)
         else:
             raise ValueError("Zipcode is invalid (wrong or none-US).")
 
@@ -100,10 +101,7 @@ class Weather:
     async def city(self, ctx, city: str, country: str):
         """Gets weather for city given."""
         await self.client.send_typing(ctx.message.channel)
-        retjs = await self.client.loop.run_in_executor(None,
-                                                       self.by_cityname,
-                                                       city,
-                                                       country)
+        retjs = await self.by_cityname(city, country)
         if retjs["cod"] == "404":
             await self.client.say("Error: City not found.")
         else:
@@ -119,9 +117,7 @@ class Weather:
            http://bulk.openweathermap.org/sample/city.list.json.gz
         """
         await self.client.send_typing(ctx.message.channel)
-        retjs = await self.client.loop.run_in_executor(None,
-                                                       self.by_id,
-                                                       cityid)
+        retjs = await self.by_id(cityid)
         if retjs["cod"] == "404":
             await self.client.edit_message("Error: City not found.")
         else:
@@ -135,9 +131,7 @@ class Weather:
         """Gets weather for US city with <zipcode>."""
         await self.client.send_typing(ctx.message.channel)
         try:
-            retjs = await self.client.loop.run_in_executor(None,
-                                                           self.by_zip,
-                                                           zipcode)
+            retjs = await self.by_zip(zipcode)
         except ValueError as e:
             await self.client.say("Error: {}".format(e))
             return
