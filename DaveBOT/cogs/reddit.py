@@ -60,15 +60,15 @@ class Reddit:
                 pass
 
         if isinstance(error, commands.MissingRequiredArgument):
-            # if len(ctx.command.clean_params.keys()) > 1:
-            #     for key in ctx.command.clean_params.keys():
-            #         if key in error.args[0]:
-            #             missingkey = key
             params = ctx.command.clean_params.keys()
             for param in params:
                 if param in error.args[0]:
                     frstparam = param
-            missparams = params[frstparam:]
+            missedparams = []
+            for i in reversed(params):
+                missedparams.append(i)
+                if i == frstparam:
+                    break
             print(missparams)
             return await self.client.send_message(ctx.message.channel,
                                                   "Error being handled.")
