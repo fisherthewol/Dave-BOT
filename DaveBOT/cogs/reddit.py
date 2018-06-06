@@ -70,7 +70,7 @@ class Reddit:
                 if i == frstparam:
                     break
             return await self.client.send_message(ctx.message.channel,
-                                                  "Missing params: {}".format(list(reversed(missedparams))))
+                                                  "Error: missing parameters: {}".format(list(reversed(missedparams))))
         print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
         return await self.client.send_message(ctx.message.channel,

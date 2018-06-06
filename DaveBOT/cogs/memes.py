@@ -12,25 +12,36 @@ class Memes():
         with open("data/memes.json") as op:
             self.known = json.load(op)
 
-#    async def on_command_error(self, error, ctx):
-#        """Event triggered on error raise."""
-#        if hasattr(ctx.command, "on_error"):
-#            return
-#        error = getattr(error, "original", error)
-#        if isinstance(error, commands.DisabledCommand):
-#            return await self.client.send_message(ctx.message.channel,
-#                                                  "{} is disabled.".format(ctx.command))
-#        elif isinstance(error, commands.NoPrivateMessage):
-#            try:
-#                return await self.client.send_message(ctx.author,
-#                                                      "{} can't be used in DMs.".format(ctx.command))
-#            except:
-#                pass
-#        # If it's not one of these, print traceback:
-#        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
-#        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-#        return await self.client.send_message(ctx.message.channel,
-#                                              "Error in command; issue has been logged.")
+    async def on_command_error(self, error, ctx):
+        """Event triggered on error raise."""
+        if hasattr(ctx.command, "on_error"):
+            return
+
+        error = getattr(error, "original", error)
+
+        if isinstance(error, commands.NoPrivateMessage):
+            try:
+                return await self.client.send_message(ctx.author,
+                                                      "{} can't be used in DMs.".format(ctx.command))
+            except:
+                pass
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            params = ctx.command.clean_params.keys()
+            for param in params:
+                if param in error.args[0]:
+                    frstparam = param
+            missedparams = []
+            for i in reversed(params):
+                missedparams.append(i)
+                if i == frstparam:
+                    break
+            return await self.client.send_message(ctx.message.channel,
+                                                  "Error: missing parameters: {}".format(list(reversed(missedparams))))
+        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        return await self.client.send_message(ctx.message.channel,
+                                              "Error in command; issue has been logged.")
 
     @commands.group(pass_context=True)
     async def meme(self, ctx):
