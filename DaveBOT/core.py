@@ -1,9 +1,11 @@
+import datetime
 import logging
 import logging.handlers
 import platform
 import queue
 import signal
 import sys
+import traceback
 
 import discord
 from discord.ext import commands
@@ -13,6 +15,8 @@ class Dave:
     """Main class for Bot."""
     def __init__(self, code, loglevel, redid, redsc, wk):
         self.client = commands.Bot(command_prefix="!")
+        self.inittime = datetime.datetime.utcnow()
+        self.setupLogging(loglevel)
         self.code = code
         self.cogs = []
         if (redid and redsc):
@@ -28,12 +32,11 @@ class Dave:
         self.cogs.append("DaveBOT.cogs.memes")
         self.cogs.append("DaveBOT.cogs.rss")
         self.loadcogs()
-        self.setupLogging(loglevel)
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
         signal.signal(signal.SIGTERM, self.sigterm)
 
     def loadcogs(self):
-        """Load discordpy cogs."""
+        """Load discord.py cogs."""
         for cog in self.cogs:
             try:
                 self.client.load_extension(cog)
@@ -65,7 +68,7 @@ class Dave:
         self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 
-    def uptimeFunc(self):
+    async def uptimeFunc(self):
         """Returns formatted host uptime."""
         if self.host_is_Linux:
             from datetime import timedelta
@@ -88,26 +91,72 @@ class Dave:
             self.logger.info("Successful self.client launch.")
             await self.client.change_presence(game=discord.Game(name="for !help", type=3))
 
+        @self.client.event
+        async def on_command_error(error, ctx):
+            """Event triggered on error raise."""
+            if hasattr(ctx.command, "on_error"):
+                return
+
+            error = getattr(error, "original", error)
+
+            if isinstance(error, commands.NoPrivateMessage):
+                try:
+                    return await self.client.send_message(ctx.author,
+                                                          "{} can't be used in DMs.".format(ctx.command))
+                except:
+                    pass
+
+            if isinstance(error, commands.MissingRequiredArgument):
+                params = ctx.command.clean_params.keys()
+                for param in params:
+                    if param in error.args[0]:
+                        frstparam = param
+                missedparams = []
+                for i in reversed(params):
+                    missedparams.append(i)
+                    if i == frstparam:
+                        break
+                return await self.client.send_message(ctx.message.channel,
+                                                      "Error: missing parameters: {}".format(list(reversed(missedparams))))
+            print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            return await self.client.send_message(ctx.message.channel,
+                                                  "Error in command; issue has been logged.")
+
         @self.client.command(pass_context=True)
         async def dave(ctx):
             """Provides data about Dave and the system it's running on."""
             self.logger.info("!dave called.")
+            await self.client.send_typing(ctx.message.channel)
             if self.host_is_Linux:
-                uptime = self.uptimeFunc()
-                version = platform.python_version()
-                compi = platform.python_compiler()
-                # next 3 lines will be depreceated in py3.7; find alternative?
+                e = discord.Embed(title="Dave-BOT",
+                                  type="rich",
+                                  description="Info on dave & its host.",
+                                  url="https://github.com/DaveInc/Dave-BOT",
+                                  colour=0xFFDFAA,
+                                  timestamp=datetime.datetime.utcnow())
+                e.set_thumbnail(url="https://theeu.uk/dave.jpg")
+                delta_uptime = datetime.datetime.utcnow() - self.inittime
+                hours, remainder = divmod(int(delta_uptime.total_seconds()),
+                                          3600)
+                minutes, seconds = divmod(remainder, 60)
+                days, hours = divmod(hours, 24)
+                botuptime = "{}d, {}h, {}m, {}s.".format(days,
+                                                         hours,
+                                                         minutes,
+                                                         seconds)
+                e.add_field(name="Bot Uptime", value=botuptime, inline=True)
+                e.add_field(name="Host Uptime", value=await self.uptimeFunc(),
+                            inline=True)
+                e.add_field(name="Python V", value=platform.python_version(),
+                            inline=True)
+                e.add_field(name="Python Compiler",
+                            value=platform.python_compiler(),
+                            inline=True)
                 lindist = platform.linux_distribution()
-                lindistn = lindist[0]
-                lindistv = lindist[1]
-                await self.client.say("\nHost Uptime: {}"
-                                      "\nPython Version: {}\n"
-                                      "\nPython Compiler: {}"
-                                      "\nDistro: {};v{}".format(uptime,
-                                                                version,
-                                                                compi,
-                                                                lindistn,
-                                                                lindistv))
+                lindists = "{};v{}".format(lindist[0], lindist[1])
+                e.add_field(name="Distro", value=lindists, inline=True)
+                await self.client.say(embed=e)
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")

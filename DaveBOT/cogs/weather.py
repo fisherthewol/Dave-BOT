@@ -1,7 +1,7 @@
 import json
 import re
 
-import requests
+import aiohttp
 from discord.ext import commands
 
 
@@ -10,6 +10,7 @@ class Weather:
     def __init__(self, bot):
         self.client = bot
         self.key = bot.wk
+        self.session = aiohttp.ClientSession()
         self.baseurl = "https://api.openweathermap.org/data/2.5/weather?"
         self.nameurl = self.baseurl + "q={},{}&appid=" + self.key
         self.idurl = self.baseurl + "id={}&appid=" + self.key
@@ -17,6 +18,15 @@ class Weather:
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
         with open("data/cond.json") as op:
             self.conditions = json.load(op)
+
+    def __unload(self):
+        self.session.close()
+
+    async def getJson(self, url):
+        resp = await self.session.get(url)
+        jsn = await resp.json()
+        resp.close()
+        return jsn
 
     def wSF(self, jtf):
         cond = self.retcond(str(jtf["weather"][0]["id"]))
@@ -42,20 +52,20 @@ class Weather:
             return None
         return retval["label"].title()
 
-    def by_cityname(self, cityname, country):
+    async def by_cityname(self, cityname, country):
         """Returns based on name and country."""
-        r = requests.get(self.nameurl.format(cityname, country))
-        return r.json()
+        url = self.nameurl.format(cityname, country)
+        return await self.getJson(url)
 
-    def by_id(self, cityid):
+    async def by_id(self, cityid):
         """Returns based on city id."""
-        r = requests.get(self.idurl.format(cityid))
-        return r.json()
+        url = self.idurl.format(cityid)
+        return await self.getJson(url)
 
-    def by_zip(self, zipcode):
+    async def by_zip(self, zipcode):
         if self.regcomp.match(str(zipcode)):
-            r = requests.get(self.zipurl.format(zipcode))
-            return r.json()
+            url = self.zipurl.format(zipcode)
+            return await self.getJson(url)
         else:
             raise ValueError("Zipcode is invalid (wrong or none-US).")
 
@@ -63,16 +73,13 @@ class Weather:
     async def weather(self, ctx):
         """Provides weather data."""
         if ctx.invoked_subcommand is None:
-            await self.client.say("Unrecognised command; see !weather help.")
+            await self.client.say("Unrecognised command; see !help weather.")
 
     @weather.command(pass_context=True)
     async def city(self, ctx, city: str, country: str):
         """Gets weather for city given."""
         await self.client.send_typing(ctx.message.channel)
-        retjs = await self.client.loop.run_in_executor(None,
-                                                       self.by_cityname,
-                                                       city,
-                                                       country)
+        retjs = await self.by_cityname(city, country)
         if retjs["cod"] == "404":
             await self.client.say("Error: City not found.")
         else:
@@ -88,9 +95,7 @@ class Weather:
            http://bulk.openweathermap.org/sample/city.list.json.gz
         """
         await self.client.send_typing(ctx.message.channel)
-        retjs = await self.client.loop.run_in_executor(None,
-                                                       self.by_id,
-                                                       cityid)
+        retjs = await self.by_id(cityid)
         if retjs["cod"] == "404":
             await self.client.edit_message("Error: City not found.")
         else:
@@ -104,9 +109,7 @@ class Weather:
         """Gets weather for US city with <zipcode>."""
         await self.client.send_typing(ctx.message.channel)
         try:
-            retjs = await self.client.loop.run_in_executor(None,
-                                                           self.by_zip,
-                                                           zipcode)
+            retjs = await self.by_zip(zipcode)
         except ValueError as e:
             await self.client.say("Error: {}".format(e))
             return
