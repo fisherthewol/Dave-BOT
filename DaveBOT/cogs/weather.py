@@ -1,7 +1,5 @@
 import json
 import re
-import sys
-import traceback
 
 import aiohttp
 from discord.ext import commands
@@ -70,37 +68,6 @@ class Weather:
             return await self.getJson(url)
         else:
             raise ValueError("Zipcode is invalid (wrong or none-US).")
-
-    async def on_command_error(self, error, ctx):
-        """Event triggered on error raise."""
-        if hasattr(ctx.command, "on_error"):
-            return
-
-        error = getattr(error, "original", error)
-
-        if isinstance(error, commands.NoPrivateMessage):
-            try:
-                return await self.client.send_message(ctx.author,
-                                                      "{} can't be used in DMs.".format(ctx.command))
-            except:
-                pass
-
-        if isinstance(error, commands.MissingRequiredArgument):
-            params = ctx.command.clean_params.keys()
-            for param in params:
-                if param in error.args[0]:
-                    frstparam = param
-            missedparams = []
-            for i in reversed(params):
-                missedparams.append(i)
-                if i == frstparam:
-                    break
-            return await self.client.send_message(ctx.message.channel,
-                                                  "Error: missing parameters: {}".format(list(reversed(missedparams))))
-        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-        return await self.client.send_message(ctx.message.channel,
-                                              "Error in command; issue has been logged.")
 
     @commands.group(pass_context=True)
     async def weather(self, ctx):

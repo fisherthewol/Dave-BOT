@@ -5,6 +5,7 @@ import platform
 import queue
 import signal
 import sys
+import traceback
 
 import discord
 from discord.ext import commands
@@ -89,6 +90,38 @@ class Dave:
             self.logger.warning("ID : {}" .format(self.client.user.id))
             self.logger.info("Successful self.client launch.")
             await self.client.change_presence(game=discord.Game(name="for !help", type=3))
+
+        @self.client.event
+        async def on_command_error(error, ctx):
+            """Event triggered on error raise."""
+            if hasattr(ctx.command, "on_error"):
+                return
+
+            error = getattr(error, "original", error)
+
+            if isinstance(error, commands.NoPrivateMessage):
+                try:
+                    return await self.client.send_message(ctx.author,
+                                                          "{} can't be used in DMs.".format(ctx.command))
+                except:
+                    pass
+
+            if isinstance(error, commands.MissingRequiredArgument):
+                params = ctx.command.clean_params.keys()
+                for param in params:
+                    if param in error.args[0]:
+                        frstparam = param
+                missedparams = []
+                for i in reversed(params):
+                    missedparams.append(i)
+                    if i == frstparam:
+                        break
+                return await self.client.send_message(ctx.message.channel,
+                                                      "Error: missing parameters: {}".format(list(reversed(missedparams))))
+            print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            return await self.client.send_message(ctx.message.channel,
+                                                  "Error in command; issue has been logged.")
 
         @self.client.command(pass_context=True)
         async def dave(ctx):

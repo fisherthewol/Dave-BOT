@@ -1,6 +1,3 @@
-import sys
-import traceback
-
 import praw
 from discord.ext import commands
 
@@ -44,37 +41,6 @@ class Reddit:
             return self.fstr.format(post["img"],
                                     post["title"],
                                     post["id"])
-
-    async def on_command_error(self, error, ctx):
-        """Event triggered on error raise."""
-        if hasattr(ctx.command, "on_error"):
-            return
-
-        error = getattr(error, "original", error)
-
-        if isinstance(error, commands.NoPrivateMessage):
-            try:
-                return await self.client.send_message(ctx.author,
-                                                      "{} can't be used in DMs.".format(ctx.command))
-            except:
-                pass
-
-        if isinstance(error, commands.MissingRequiredArgument):
-            params = ctx.command.clean_params.keys()
-            for param in params:
-                if param in error.args[0]:
-                    frstparam = param
-            missedparams = []
-            for i in reversed(params):
-                missedparams.append(i)
-                if i == frstparam:
-                    break
-            return await self.client.send_message(ctx.message.channel,
-                                                  "Error: missing parameters: {}".format(list(reversed(missedparams))))
-        print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-        return await self.client.send_message(ctx.message.channel,
-                                              "Error in command; issue has been logged.")
 
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
