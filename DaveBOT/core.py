@@ -121,7 +121,8 @@ class Dave:
             print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
             return await self.client.send_message(ctx.message.channel,
-                                                  "Error in command; issue has been logged.")
+                                                  "Error in command; "
+                                                  "issue has been logged.")
 
         @self.client.command(pass_context=True)
         async def dave(ctx):

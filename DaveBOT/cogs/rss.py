@@ -40,7 +40,9 @@ class RSS:
     async def pie(self, ctx):
         """Returns latest Jonathan Pie video."""
         await self.client.send_typing(ctx.message.channel)
-        pie = await self.getData("https://www.youtube.com/feeds/videos.xml?channel_id=UCO79NsDE5FpMowUH1YcBFcA")
+        pie = await self.getData("https://www.youtube.com/"
+                                 "feeds/videos.xml?channel_id="
+                                 "UCO79NsDE5FpMowUH1YcBFcA")
         pie = await self.parse(pie)
         await self.client.say(pie.entries[0]["link"])
 

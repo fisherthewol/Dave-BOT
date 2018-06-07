@@ -1,6 +1,4 @@
 import json
-import sys
-import traceback
 
 from discord.ext import commands
 
@@ -51,7 +49,8 @@ class Memes():
             if link:
                 await self.client.edit_message(msg, str(link))
             else:
-                await self.client.edit_message(msg, "Meme doesn't have a youtube link.")
+                await self.client.edit_message(msg, "Meme doesn't have a "
+                                                    "youtube link.")
         else:
             self.client.edit_message(msg, "Meme not found, try again!")
 
