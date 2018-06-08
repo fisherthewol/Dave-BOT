@@ -41,8 +41,7 @@ class Dave:
             try:
                 self.client.load_extension(cog)
             except Exception as e:
-                self.logger.critical("Failed load {}, exception {}".format(cog,
-                                                                           e))
+                self.logger.critical(f"Failed load {cog}, exception {e}")
 
     def setupLogging(self, loglev):
         """Sets up logging"""
@@ -86,8 +85,8 @@ class Dave:
         async def on_ready():
             """Outputs on successful launch."""
             self.logger.warning("Login Successful")
-            self.logger.warning("Name : {}" .format(self.client.user.name))
-            self.logger.warning("ID : {}" .format(self.client.user.id))
+            self.logger.warning(f"Name : {self.client.user.name}")
+            self.logger.warning(f"ID : {self.client.user.id}")
             self.logger.info("Successful self.client launch.")
             await self.client.change_presence(game=discord.Game(name="for !help", type=3))
 
@@ -102,7 +101,7 @@ class Dave:
             if isinstance(error, commands.NoPrivateMessage):
                 try:
                     return await self.client.send_message(ctx.author,
-                                                          "{} can't be used in DMs.".format(ctx.command))
+                                                          f"{ctx.command} can't be used in DMs.")
                 except:
                     pass
 
@@ -117,8 +116,8 @@ class Dave:
                     if i == frstparam:
                         break
                 return await self.client.send_message(ctx.message.channel,
-                                                      "Error: missing parameters: {}".format(list(reversed(missedparams))))
-            print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+                                                      f"Error: missing parameters: {list(reversed(missedparams))}")
+            print(f"Ignoring exception in command {ctx.command}:", file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
             return await self.client.send_message(ctx.message.channel,
                                                   "Error in command; "
@@ -142,10 +141,7 @@ class Dave:
                                           3600)
                 minutes, seconds = divmod(remainder, 60)
                 days, hours = divmod(hours, 24)
-                botuptime = "{}d, {}h, {}m, {}s.".format(days,
-                                                         hours,
-                                                         minutes,
-                                                         seconds)
+                botuptime = f"{days}d, {hours}h, {minutes}m, {seconds}s."
                 e.add_field(name="Bot Uptime", value=botuptime, inline=True)
                 e.add_field(name="Host Uptime", value=await self.uptimeFunc(),
                             inline=True)
@@ -155,7 +151,7 @@ class Dave:
                             value=platform.python_compiler(),
                             inline=True)
                 lindist = platform.linux_distribution()
-                lindists = "{};v{}".format(lindist[0], lindist[1])
+                lindists = f"{lindist[0]};v{lindist[1]}"
                 e.add_field(name="Distro", value=lindists, inline=True)
                 await self.client.say(embed=e)
             else:

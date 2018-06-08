@@ -9,7 +9,7 @@ class Reddit:
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
                                       user_agent="dave:testing:t3rr0r_f3rr3t")
-        self.fstr = "Content: {}\nTitle = {}\nComments = https://redd.it/{}\n"
+        # "Content: {}\nTitle = {}\nComments = https://redd.it/{}\n"
 
     def prawin(self, sub, sort, time="day"):
         """Praw-Based function, reads from reddit.
@@ -32,15 +32,11 @@ class Reddit:
         """Provides nsfw guard."""
         if post["adult"]:
             if "nsfw" in channelname:
-                return self.fstr.format(post["img"],
-                                        post["title"],
-                                        post["id"])
+                return f"Content: {post['img']}\nTitle = {post['title']}\nComments = https://redd.it/{post['id']}\n"
             else:
                 return "E: Subreddit is NSFW, but command is from SFW channel."
         else:
-            return self.fstr.format(post["img"],
-                                    post["title"],
-                                    post["id"])
+            return return f"Content: {post['img']}\nTitle = {post['title']}\nComments = https://redd.it/{post['id']}\n"
 
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
