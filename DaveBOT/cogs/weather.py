@@ -31,18 +31,12 @@ class Weather:
     def wSF(self, jtf):
         cond = self.retcond(str(jtf["weather"][0]["id"]))
         temp = jtf["main"]["temp"] - 273.15
-        return ("Weather in {}, {}:"
-                "\nConditions: {}"
-                "\nTemp: {} °C"
-                "\nHumidity: {} %"
-                "\nPressure: {} hPa"
-                "\nWind Speed: {} m/s".format(jtf["name"],
-                                              jtf["sys"]["country"],
-                                              cond,
-                                              round(temp, 2),
-                                              jtf["main"]["humidity"],
-                                              jtf["main"]["pressure"],
-                                              jtf["wind"]["speed"]))
+        return (f"Weather in {jtf['name']}, {jtf['sys']['country']}:"
+                "\nConditions: {cond}"
+                "\nTemp: {round(temp, 2)} °C"
+                "\nHumidity: {jtf['main']['humidity']} %"
+                "\nPressure: {jtf['main']['pressure']} hPa"
+                "\nWind Speed: {jtf['wind']['speed']} m/s")
 
     def retcond(self, conditionid):
         retval = ""
@@ -111,7 +105,7 @@ class Weather:
         try:
             retjs = await self.by_zip(zipcode)
         except ValueError as e:
-            await self.client.say("Error: {}".format(e))
+            await self.client.say(f"Error: {e}")
             return
         if retjs["cod"] == "404":
             await self.client.say("Error: Zip not found.")

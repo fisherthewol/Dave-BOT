@@ -52,12 +52,12 @@ def main():
     args = parser.parse_args()
 
     if args.clientcode:
-        logger.info("clientcode found: {}".format(args.clientcode))
+        logger.info(f"clientcode found: {args.clientcode}")
         cc = args.clientcode
     else:
         cc = os.environ.get("clientcode")
         if cc:
-            logger.info("clientcode found: {}".format(cc))
+            logger.info(f"clientcode found: {cc}")
         else:
             logger.critical("Empty clientcode: Not passed by env or cli.")
             parser.print_help()
@@ -67,7 +67,7 @@ def main():
         logger.info("Loglevel found, working out what it is...")
         ll = findLogLevel(args.loglevel)
         if ll:
-            logger.info("Loglevel is {}".format(str(ll)))
+            logger.info(f"Loglevel is {str(ll)}")
         else:
             logger.error("Loglevel invalid, using default.")
             ll = logging.WARNING
@@ -77,7 +77,7 @@ def main():
             logger.info("Loglevel found, working out what it is...")
             ll = findLogLevel(ll)
             if ll:
-                logger.info("Loglevel is {}".format(str(ll)))
+                logger.info(f"Loglevel is {str(ll)}")
             else:
                 logger.error("Loglevel invalid, using default.")
                 ll = logging.WARNING
@@ -86,12 +86,12 @@ def main():
             ll = logging.WARNING
 
     if args.reddit_id:
-        logger.info("reddit_id found: {}".format(args.reddit_id))
+        logger.info(f"reddit_id found: {args.reddit_id}")
         rid = args.reddit_id
     else:
         rid = os.environ.get("reddit_id")
         if rid:
-            logger.info("reddit_id found: {}".format(rid))
+            logger.info(f"reddit_id found: {rid}")
         else:
             logger.warning("reddit_id not found, not enabling reddit.")
             rid = False
@@ -99,27 +99,23 @@ def main():
 
     if rid:
         if args.reddit_sc:
-            logger.warning("reddit_sc found: {} , "
-                           "enabling reddit.".format(args.reddit_sc))
+            logger.warning(f"reddit_sc found: {args.reddit_sc} , enabling reddit.")
             rsc = args.reddit_sc
         else:
             rsc = os.environ.get("reddit_sc")
             if rsc:
-                logger.info("reddit_sc found {} , "
-                            "enabling reddit.".format(args.reddit_sc))
+                logger.info(f"reddit_sc found {args.reddit_sc} , enabling reddit.")
             else:
                 logger.warning("reddit_sc not found, not enabling reddit.")
                 rsc = False
 
     if args.weather:
-        logger.info("Weather found: {} , "
-                    "enabling weather.".format(args.weather))
+        logger.info(f"Weather found: {args.weather} , enabling weather.")
         wk = args.weather
     else:
         wk = os.environ.get("weather")
         if wk:
-            logger.info("Weather found: {} , "
-                        "enabling weather.".format(wk))
+            logger.info(f"Weather found: {wk} , enabling weather.")
         else:
             logger.warning("Weather not found, not enabling.")
             wk = False

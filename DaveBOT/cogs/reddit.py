@@ -36,7 +36,7 @@ class Reddit:
             else:
                 return "E: Subreddit is NSFW, but command is from SFW channel."
         else:
-            return return f"Content: {post['img']}\nTitle = {post['title']}\nComments = https://redd.it/{post['id']}\n"
+            return f"Content: {post['img']}\nTitle = {post['title']}\nComments = https://redd.it/{post['id']}\n"
 
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
@@ -89,9 +89,7 @@ class Reddit:
                                                       "prequelmemes",
                                                       "top",
                                                       "day")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
+        await client.say(f"Content: {post['img']}\nTitle = {post['title']}\nComments = https://redd.it/{post['id']}\n")
 
 
 def setup(bot):
