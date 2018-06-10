@@ -117,6 +117,7 @@ class Dave:
                         break
                 return await self.client.send_message(ctx.message.channel,
                                                       f"Error: missing parameters: {list(reversed(missedparams))}")
+
             print(f"Ignoring exception in command {ctx.command}:", file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
             return await self.client.send_message(ctx.message.channel,

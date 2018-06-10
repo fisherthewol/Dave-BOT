@@ -31,7 +31,11 @@ class Weather:
     def wSF(self, jtf):
         cond = self.retcond(str(jtf["weather"][0]["id"]))
         temp = jtf["main"]["temp"] - 273.15
-        return (f"Weather in {jtf['name']}, {jtf['sys']['country']}\nConditions: {cond}\nTemp: {round(temp, 2)} °C\nHumidity: {jtf['main']['humidity']} %\nPressure: {jtf['main']['pressure']} hPa\nWind Speed: {jtf['wind']['speed']} m/s")
+        return (f"Weather in {jtf['name']}, {jtf['sys']['country']}"
+                f"\nConditions: {cond}\nTemp: {round(temp, 2)} °C"
+                f"\nHumidity: {jtf['main']['humidity']} %"
+                f"\nPressure: {jtf['main']['pressure']} hPa"
+                f"\nWind Speed: {jtf['wind']['speed']} m/s")
 
     def retcond(self, conditionid):
         retval = ""
@@ -62,7 +66,7 @@ class Weather:
     async def weather(self, ctx):
         """Provides weather data."""
         if ctx.invoked_subcommand is None:
-            await self.client.say("Unrecognised command; see !help weather.")
+            await self.client.say("Unrecognised subcmd; see !help weather.")
 
     @weather.command(pass_context=True)
     async def city(self, ctx, city: str, country: str):
