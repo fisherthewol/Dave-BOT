@@ -105,6 +105,10 @@ class Dave:
                 except:
                     pass
 
+            if isinstance(error, commands.CommandNotFound):
+                return await self.client.send_message(ctx.message.channel,
+                                                      "Command not Found.")
+
             if isinstance(error, commands.MissingRequiredArgument):
                 params = ctx.command.clean_params.keys()
                 for param in params:
