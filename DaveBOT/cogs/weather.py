@@ -31,12 +31,7 @@ class Weather:
     def wSF(self, jtf):
         cond = self.retcond(str(jtf["weather"][0]["id"]))
         temp = jtf["main"]["temp"] - 273.15
-        return (f"Weather in {jtf['name']}, {jtf['sys']['country']}:"
-                "\nConditions: {cond}"
-                "\nTemp: {round(temp, 2)} °C"
-                "\nHumidity: {jtf['main']['humidity']} %"
-                "\nPressure: {jtf['main']['pressure']} hPa"
-                "\nWind Speed: {jtf['wind']['speed']} m/s")
+        return (f"Weather in {jtf['name']}, {jtf['sys']['country']}\nConditions: {cond}\nTemp: {round(temp, 2)} °C\nHumidity: {jtf['main']['humidity']} %\nPressure: {jtf['main']['pressure']} hPa\nWind Speed: {jtf['wind']['speed']} m/s")
 
     def retcond(self, conditionid):
         retval = ""
