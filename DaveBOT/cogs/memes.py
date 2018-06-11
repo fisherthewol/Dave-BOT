@@ -14,7 +14,7 @@ class Memes():
     async def meme(self, ctx):
         """Provides !meme cmds, see !help meme"""
         if ctx.invoked_subcommand is None:
-            await self.client.say("Unrecognised cmd; see !help meme")
+            await self.client.say("Unrecognised subcmd; see !help meme")
 
     @meme.command(pass_context=True)
     async def lst(self, ctx):
