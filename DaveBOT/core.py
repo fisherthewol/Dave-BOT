@@ -128,7 +128,9 @@ class Dave:
                                                   "Error in command; "
                                                   "issue has been logged.")
 
-        @self.client.command(pass_context=True)
+        @self.client.command(pass_context=True,
+                             name="dave",
+                             aliases=["about"])
         async def dave(ctx):
             """Provides data about Dave and the system it's running on."""
             self.logger.info("!dave called.")
