@@ -9,7 +9,7 @@ class Reddit:
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
                                       user_agent="dave:testing:t3rr0r_f3rr3t")
-        self.fstr = "Content: {}\nTitle = {}\nComments = https://redd.it/{}\n"
+        # "Content: {}\nTitle = {}\nComments = https://redd.it/{}\n"
 
     def prawin(self, sub, sort, time="day"):
         """Praw-Based function, reads from reddit.
@@ -28,19 +28,19 @@ class Reddit:
             prop["id"] = str(post.id)
         return prop
 
-    def nsfwGuard(self, post, channelname):
+    async def nsfwGuard(self, post, channelname):
         """Provides nsfw guard."""
         if post["adult"]:
             if "nsfw" in channelname:
-                return self.fstr.format(post["img"],
-                                        post["title"],
-                                        post["id"])
+                return (f"Content: {post['img']}"
+                        f"\nTitle = {post['title']}"
+                        f"\nComments = https://redd.it/{post['id']}\n")
             else:
                 return "E: Subreddit is NSFW, but command is from SFW channel."
         else:
-            return self.fstr.format(post["img"],
-                                    post["title"],
-                                    post["id"])
+            return (f"Content: {post['img']}"
+                    f"\nTitle = {post['title']}"
+                    f"\nComments = https://redd.it/{post['id']}\n")
 
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
@@ -57,10 +57,7 @@ class Reddit:
                                                       self.prawin,
                                                       sub,
                                                       sort)
-        msg = await self.client.loop.run_in_executor(None,
-                                                     self.nsfwGuard,
-                                                     post,
-                                                     channel.name)
+        msg = await self.nsfwGuard(post, channel.name)
         await self.client.say(msg)
 
     @commands.command(pass_context=True)
@@ -78,10 +75,7 @@ class Reddit:
                                                       sub,
                                                       "top",
                                                       time)
-        msg = await self.client.loop.run_in_executor(None,
-                                                     self.nsfwGuard,
-                                                     post,
-                                                     channel.name)
+        msg = await self.nsfwGuard(post, channel.name)
         await self.client.say(msg)
 
     @commands.command(pass_context=True)
@@ -93,9 +87,9 @@ class Reddit:
                                                       "prequelmemes",
                                                       "top",
                                                       "day")
-        await self.client.say(self.fstr.format(post["img"],
-                                               post["title"],
-                                               post["id"]))
+        await self.client.say(f"Content: {post['img']}"
+                              f"\nTitle = {post['title']}\n"
+                              f"Comments = https://redd.it/{post['id']}\n")
 
 
 def setup(bot):

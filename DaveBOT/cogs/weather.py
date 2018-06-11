@@ -31,18 +31,11 @@ class Weather:
     def wSF(self, jtf):
         cond = self.retcond(str(jtf["weather"][0]["id"]))
         temp = jtf["main"]["temp"] - 273.15
-        return ("Weather in {}, {}:"
-                "\nConditions: {}"
-                "\nTemp: {} °C"
-                "\nHumidity: {} %"
-                "\nPressure: {} hPa"
-                "\nWind Speed: {} m/s".format(jtf["name"],
-                                              jtf["sys"]["country"],
-                                              cond,
-                                              round(temp, 2),
-                                              jtf["main"]["humidity"],
-                                              jtf["main"]["pressure"],
-                                              jtf["wind"]["speed"]))
+        return (f"Weather in {jtf['name']}, {jtf['sys']['country']}"
+                f"\nConditions: {cond}\nTemp: {round(temp, 2)} °C"
+                f"\nHumidity: {jtf['main']['humidity']} %"
+                f"\nPressure: {jtf['main']['pressure']} hPa"
+                f"\nWind Speed: {jtf['wind']['speed']} m/s")
 
     def retcond(self, conditionid):
         retval = ""
@@ -73,7 +66,7 @@ class Weather:
     async def weather(self, ctx):
         """Provides weather data."""
         if ctx.invoked_subcommand is None:
-            await self.client.say("Unrecognised command; see !help weather.")
+            await self.client.say("Unrecognised subcmd; see !help weather.")
 
     @weather.command(pass_context=True)
     async def city(self, ctx, city: str, country: str):
@@ -111,7 +104,7 @@ class Weather:
         try:
             retjs = await self.by_zip(zipcode)
         except ValueError as e:
-            await self.client.say("Error: {}".format(e))
+            await self.client.say(f"Error: {e}")
             return
         if retjs["cod"] == "404":
             await self.client.say("Error: Zip not found.")
