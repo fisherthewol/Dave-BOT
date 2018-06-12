@@ -31,7 +31,7 @@ class Weather:
         return jsn
 
     async def genembed(self, jtf):
-        cond = self.retcond(str(jtf["weather"][0]["id"]))
+        cond = await self.retcond(str(jtf["weather"][0]["id"]))
         temp = jtf["main"]["temp"] - 273.15
         e = discord.Embed(title=f"Weather in {jtf['name']}, "
                                 f"{jtf['sys']['country']}",
@@ -57,13 +57,12 @@ class Weather:
                     inline=True)
         return e
 
-    def retcond(self, conditionid):
-        retval = ""
-        try:
-            retval = self.conditions[conditionid]
-        except KeyError:
-            return None
-        return retval["label"].title()
+    async def retcond(self, conditionid):
+        retval = self.conditions.get(conditionid)
+        if retval:
+            return retval["label"].title()
+        else:
+            return retval
 
     async def by_cityname(self, cityname, country):
         """Returns based on name and country."""
