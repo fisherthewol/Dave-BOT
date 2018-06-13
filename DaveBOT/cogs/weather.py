@@ -114,7 +114,7 @@ class Weather:
         await self.client.send_typing(ctx.message.channel)
         retjs = await self.by_id(cityid)
         if retjs["cod"] == "404":
-            await self.client.edit_message("Error: City not found.")
+            await self.client.say("Error: City not found.")
         else:
             e = await self.genembed(retjs)
             await self.client.say(embed=e)
