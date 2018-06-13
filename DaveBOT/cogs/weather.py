@@ -40,6 +40,8 @@ class Weather:
                           url="https://openweathermap.org/",
                           colour=0xFF8C18,
                           timestamp=datetime.datetime.utcnow())
+        ic = jtf["weather"][0]["icon"]
+        e.set_thumbnail(url=f"https://openweathermap.org/img/w/{ic}.png")
         e.add_field(name="Weather Conditions",
                     value=cond,
                     inline=True)
