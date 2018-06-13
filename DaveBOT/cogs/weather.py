@@ -31,8 +31,6 @@ class Weather:
         return jsn
 
     async def genembed(self, jtf):
-        cond = await self.retcond(str(jtf["weather"][0]["id"]))
-        temp = jtf["main"]["temp"] - 273.15
         e = discord.Embed(title=f"Weather in {jtf['name']}, "
                                 f"{jtf['sys']['country']}",
                           type="rich",
@@ -42,9 +40,11 @@ class Weather:
                           timestamp=datetime.datetime.utcnow())
         ic = jtf["weather"][0]["icon"]
         e.set_thumbnail(url=f"https://openweathermap.org/img/w/{ic}.png")
+        cond = await self.retcond(str(jtf["weather"][0]["id"]))
         e.add_field(name="Weather Conditions",
                     value=cond,
                     inline=True)
+        temp = jtf["main"]["temp"] - 273.15
         e.add_field(name="Temperature",
                     value=f"{round(temp, 2)} °C",
                     inline=True)
