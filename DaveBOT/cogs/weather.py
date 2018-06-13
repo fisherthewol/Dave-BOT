@@ -13,22 +13,12 @@ class Weather:
         self.client = bot
         self.key = bot.wk
         self.session = aiohttp.ClientSession()
-        self.baseurl = "https://api.openweathermap.org/data/2.5/weather?"
-        self.nameurl = self.baseurl + "q={},{}&appid=" + self.key
-        self.idurl = self.baseurl + "id={}&appid=" + self.key
-        self.zipurl = self.baseurl + "zip={},us&appid=" + self.key
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
         with open("data/cond.json") as op:
             self.conditions = json.load(op)
 
     def __unload(self):
         self.session.close()
-
-    async def getJson(self, url):
-        resp = await self.session.get(url)
-        jsn = await resp.json()
-        resp.close()
-        return jsn
 
     async def genembed(self, jtf):
         e = discord.Embed(title=f"Weather in {jtf['name']}, "
@@ -68,18 +58,33 @@ class Weather:
 
     async def by_cityname(self, cityname, country):
         """Returns based on name and country."""
-        url = self.nameurl.format(cityname, country)
-        return await self.getJson(url)
+        params = {"appid": self.key, "q": cityname+","+country}
+        resp = await self.session.get("https://api.openweathermap.org"
+                                      "/data/2.5/weather",
+                                      params=params)
+        jsn = await resp.json()
+        resp.close()
+        return jsn
 
     async def by_id(self, cityid):
         """Returns based on city id."""
-        url = self.idurl.format(cityid)
-        return await self.getJson(url)
+        params = {"appid": self.key, "id": cityid}
+        resp = await self.session.get("https://api.openweathermap.org"
+                                      "/data/2.5/weather",
+                                      params=params)
+        jsn = await resp.json()
+        resp.close()
+        return jsn
 
     async def by_zip(self, zipcode):
         if self.regcomp.match(str(zipcode)):
-            url = self.zipurl.format(zipcode)
-            return await self.getJson(url)
+            params = {"appid": self.key, "zip": str(zipcode)+",us"}
+            resp = await self.session.get("https://api.openweathermap.org"
+                                          "/data/2.5/weather",
+                                          params=params)
+            jsn = await resp.json()
+            resp.close()
+            return jsn
         else:
             raise ValueError("Zipcode is invalid (wrong or none-US).")
 
