@@ -9,7 +9,8 @@ You can use our copy of Dave-BOT. We take no responsibility for any issues arisi
 3. Select the server you want to add dave to.  
 4. Enjoy!  
 
-### Run your own: Docker:  
+### Run your own:  
+#### Docker:  
 This app will build into a docker container:
 - Get your [discord clientcode](https://discordapp.com/developers/applications/me).
 - Optionally, get your [reddit client_id and _secret](https://reddit.com/prefs/apps/) (we recommend using a personal user script), and your [openweathermap api key](https://home.openweathermap.org/api_keys).  
