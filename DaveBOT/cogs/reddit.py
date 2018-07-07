@@ -17,11 +17,12 @@ class Reddit:
     async def genembed(self, post):
         e = discord.Embed(title=f"{str(post.title)}",
                           type="rich",
-                          description=f"From /r/{str(post.subreddit.display_name)}",
                           url=post.shortlink,
                           colour=0xFF5700,
                           timestamp=datetime.datetime.utcnow())
+        e.set_footer(text=f"From /r/{str(post.subreddit.display_name)}")
         if post.is_self:
+            e.description = f"{post.selftext[0:len(post.selftext) // 4]}..."
             return e
         else:
             return "Post has media."
