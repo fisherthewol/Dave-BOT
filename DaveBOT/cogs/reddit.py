@@ -119,9 +119,11 @@ class Reddit:
                                                       "prequelmemes",
                                                       "top",
                                                       "day")
-        await self.client.say(f"Content: {post[0].url}"
-                              f"\nTitle = {post[0].title}\n"
-                              f"Comments = {post[0].shortlink}\n")
+        msg = await self.nsfwGuard(post, ctx.message.channel)
+        if type(msg) is discord.Embed:
+            await self.client.say(embed=msg)
+        else:
+            await self.client.say(msg)
 
 
 def setup(bot):
