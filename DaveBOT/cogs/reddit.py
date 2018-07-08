@@ -12,7 +12,8 @@ class Reddit:
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
                                       user_agent="dave:testing:t3rr0r_f3rr3t")
-        # "Content: {}\nTitle = {}\nComments = https://redd.it/{}\n"
+        self.knownExtensions = [".jpg", ".jpeg", ".png",
+                                ".webp", ".gif", ".svg"]
 
     async def genembed(self, post):
         e = discord.Embed(title=f"{str(post.title)}",
@@ -25,7 +26,19 @@ class Reddit:
             e.description = f"{post.selftext[0:len(post.selftext) // 4]}..."
             return e
         else:
-            return "Post has media."
+            for ext in self.knownExtensions:
+                if ext in post.url:
+                    image = True
+                    break
+                else:
+                    image = False
+                    continue
+            if image:
+                e.set_image(url=post.url)
+                return e
+            else:
+                e.description = post.url
+                return e
 
     def prawin(self, sub, sort, time="day"):
         """Praw-Based function, reads from reddit.
