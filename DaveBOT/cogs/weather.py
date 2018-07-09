@@ -1,6 +1,7 @@
 import datetime
 import json
 import re
+import socket
 
 import aiohttp
 import discord
@@ -12,7 +13,7 @@ class Weather:
     def __init__(self, bot):
         self.client = bot
         self.key = bot.wk
-        self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(family=socket.AF_INET))
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
         with open("data/cond.json") as op:
             self.conditions = json.load(op)

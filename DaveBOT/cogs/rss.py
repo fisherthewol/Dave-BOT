@@ -1,4 +1,5 @@
 import json
+import socket
 
 import aiohttp
 import feedparser
@@ -11,7 +12,7 @@ class RSS:
         self.client = bot
         with open("data/feeds.json") as op:
             self.feeds = json.load(op)
-        self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(family=socket.AF_INET))
 
     def __unload(self):
         self.session.close()
