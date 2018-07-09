@@ -1,7 +1,9 @@
+import datetime
 import json
 import re
 
 import aiohttp
+import discord
 from discord.ext import commands
 
 
@@ -11,10 +13,6 @@ class Weather:
         self.client = bot
         self.key = bot.wk
         self.session = aiohttp.ClientSession()
-        self.baseurl = "https://api.openweathermap.org/data/2.5/weather?"
-        self.nameurl = self.baseurl + "q={},{}&appid=" + self.key
-        self.idurl = self.baseurl + "id={}&appid=" + self.key
-        self.zipurl = self.baseurl + "zip={},us&appid=" + self.key
         self.regcomp = re.compile(r"\d{5}([ \-]\d{4})?")
         with open("data/cond.json") as op:
             self.conditions = json.load(op)
@@ -22,43 +20,70 @@ class Weather:
     def __unload(self):
         self.session.close()
 
-    async def getJson(self, url):
-        resp = await self.session.get(url)
+    async def genembed(self, jtf):
+        e = discord.Embed(title=f"Weather in {jtf['name']}, "
+                                f"{jtf['sys']['country']}",
+                          type="rich",
+                          description="Provided by openweathermap.org",
+                          url="https://openweathermap.org/",
+                          colour=0xFF8C18,
+                          timestamp=datetime.datetime.utcnow())
+        e.set_thumbnail(url=f"https://openweathermap.org/img/w/{jtf['weather'][0]['icon']}.png")
+        cond = await self.retcond(str(jtf["weather"][0]["id"]))
+        e.add_field(name="Weather Conditions",
+                    value=cond,
+                    inline=True)
+        temp = jtf["main"]["temp"] - 273.15
+        e.add_field(name="Temperature",
+                    value=f"{round(temp, 2)} °C",
+                    inline=True)
+        e.add_field(name="Humidity",
+                    value=f"{jtf['main']['humidity']} %",
+                    inline=True)
+        e.add_field(name="Air Pressure",
+                    value=f"{jtf['main']['pressure']} hPa",
+                    inline=True)
+        e.add_field(name="Wind Speed",
+                    value=f"{jtf['wind']['speed']} m/s",
+                    inline=True)
+        return e
+
+    async def retcond(self, conditionid):
+        retval = self.conditions.get(conditionid)
+        if retval:
+            return retval["label"].title()
+        else:
+            return retval
+
+    async def by_cityname(self, cityname, country):
+        """Returns based on name and country."""
+        params = {"appid": self.key, "q": cityname+","+country}
+        resp = await self.session.get("https://api.openweathermap.org"
+                                      "/data/2.5/weather",
+                                      params=params)
         jsn = await resp.json()
         resp.close()
         return jsn
 
-    def wSF(self, jtf):
-        cond = self.retcond(str(jtf["weather"][0]["id"]))
-        temp = jtf["main"]["temp"] - 273.15
-        return (f"Weather in {jtf['name']}, {jtf['sys']['country']}"
-                f"\nConditions: {cond}\nTemp: {round(temp, 2)} °C"
-                f"\nHumidity: {jtf['main']['humidity']} %"
-                f"\nPressure: {jtf['main']['pressure']} hPa"
-                f"\nWind Speed: {jtf['wind']['speed']} m/s")
-
-    def retcond(self, conditionid):
-        retval = ""
-        try:
-            retval = self.conditions[conditionid]
-        except KeyError:
-            return None
-        return retval["label"].title()
-
-    async def by_cityname(self, cityname, country):
-        """Returns based on name and country."""
-        url = self.nameurl.format(cityname, country)
-        return await self.getJson(url)
-
     async def by_id(self, cityid):
         """Returns based on city id."""
-        url = self.idurl.format(cityid)
-        return await self.getJson(url)
+        params = {"appid": self.key, "id": cityid}
+        resp = await self.session.get("https://api.openweathermap.org"
+                                      "/data/2.5/weather",
+                                      params=params)
+        jsn = await resp.json()
+        resp.close()
+        return jsn
 
     async def by_zip(self, zipcode):
         if self.regcomp.match(str(zipcode)):
-            url = self.zipurl.format(zipcode)
-            return await self.getJson(url)
+            params = {"appid": self.key, "zip": str(zipcode)+",us"}
+            resp = await self.session.get("https://api.openweathermap.org"
+                                          "/data/2.5/weather",
+                                          params=params)
+            jsn = await resp.json()
+            resp.close()
+            return jsn
         else:
             raise ValueError("Zipcode is invalid (wrong or none-US).")
 
@@ -76,10 +101,8 @@ class Weather:
         if retjs["cod"] == "404":
             await self.client.say("Error: City not found.")
         else:
-            msg = await self.client.loop.run_in_executor(None,
-                                                         self.wSF,
-                                                         retjs)
-            await self.client.say(msg)
+            e = await self.genembed(retjs)
+            await self.client.say(embed=e)
 
     @weather.command(pass_context=True)
     async def id(self, ctx, cityid: int):
@@ -90,12 +113,10 @@ class Weather:
         await self.client.send_typing(ctx.message.channel)
         retjs = await self.by_id(cityid)
         if retjs["cod"] == "404":
-            await self.client.edit_message("Error: City not found.")
+            await self.client.say("Error: City not found.")
         else:
-            msg = await self.client.loop.run_in_executor(None,
-                                                         self.wSF,
-                                                         retjs)
-            await self.client.say(msg)
+            e = await self.genembed(retjs)
+            await self.client.say(embed=e)
 
     @weather.command(pass_context=True)
     async def zip(self, ctx, zipcode: int):
@@ -109,10 +130,8 @@ class Weather:
         if retjs["cod"] == "404":
             await self.client.say("Error: Zip not found.")
         else:
-            msg = await self.client.loop.run_in_executor(None,
-                                                         self.wSF,
-                                                         retjs)
-            await self.client.say(msg)
+            e = await self.genembed(retjs)
+            await self.client.say(embed=e)
 
 
 def setup(bot):

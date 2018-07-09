@@ -1,4 +1,7 @@
+import datetime
+
 import praw
+import discord
 from discord.ext import commands
 
 
@@ -9,7 +12,33 @@ class Reddit:
         self.prawclient = praw.Reddit(client_id=bot.rid,
                                       client_secret=bot.rsc,
                                       user_agent="dave:testing:t3rr0r_f3rr3t")
-        # "Content: {}\nTitle = {}\nComments = https://redd.it/{}\n"
+        self.knownExtensions = [".jpg", ".jpeg", ".png",
+                                ".webp", ".webm", ".gif", ".svg"]
+
+    async def genembed(self, post):
+        e = discord.Embed(title=f"{str(post.title)}",
+                          type="rich",
+                          url=post.shortlink,
+                          colour=0xFF5700,
+                          timestamp=datetime.datetime.utcnow())
+        e.set_footer(text=f"From /r/{str(post.subreddit.display_name)}")
+        if post.is_self:
+            e.description = f"{post.selftext[0:len(post.selftext) // 4]}..."
+            return e
+        else:
+            for ext in self.knownExtensions:
+                if ext in post.url:
+                    image = True
+                    break
+                else:
+                    image = False
+                    continue
+            if image:
+                e.set_image(url=post.url)
+                return e
+            else:
+                e.description = post.url
+                return e
 
     def prawin(self, sub, sort, time="day"):
         """Praw-Based function, reads from reddit.
@@ -20,27 +49,24 @@ class Reddit:
                      "new": subreddit.new(limit=1),
                      "rising": subreddit.rising(limit=1),
                      "hot": subreddit.hot(limit=1)}
-        posts = functions[sort]
-        prop = {"title": "", "img": "", "id": "", "adult": subreddit.over18}
-        for post in posts:
-            prop["title"] = str(post.title)
-            prop["img"] = str(post.url)
-            prop["id"] = str(post.id)
-        return prop
+        posts = functions.get(sort)
+        if posts:
+            for post in posts:
+                return (post, subreddit.over18)
+        else:
+            return None
 
     async def nsfwGuard(self, post, channelname):
         """Provides nsfw guard."""
-        if post["adult"]:
+        if post is None:
+            return "Error: invalid sort."
+        elif post[1]:
             if "nsfw" in channelname:
-                return (f"Content: {post['img']}"
-                        f"\nTitle = {post['title']}"
-                        f"\nComments = https://redd.it/{post['id']}\n")
+                return await self.genembed(post[0])
             else:
                 return "E: Subreddit is NSFW, but command is from SFW channel."
         else:
-            return (f"Content: {post['img']}"
-                    f"\nTitle = {post['title']}"
-                    f"\nComments = https://redd.it/{post['id']}\n")
+            return await self.genembed(post[0])
 
     @commands.command(pass_context=True)
     async def reddit(self, ctx, sub: str, sort: str):
@@ -58,7 +84,10 @@ class Reddit:
                                                       sub,
                                                       sort)
         msg = await self.nsfwGuard(post, channel.name)
-        await self.client.say(msg)
+        if type(msg) is discord.Embed:
+            await self.client.say(embed=msg)
+        else:
+            await self.client.say(msg)
 
     @commands.command(pass_context=True)
     async def top(self, ctx, sub: str, time: str):
@@ -76,7 +105,10 @@ class Reddit:
                                                       "top",
                                                       time)
         msg = await self.nsfwGuard(post, channel.name)
-        await self.client.say(msg)
+        if type(msg) is discord.Embed:
+            await self.client.say(embed=msg)
+        else:
+            await self.client.say(msg)
 
     @commands.command(pass_context=True)
     async def prequel(self, ctx):
@@ -87,9 +119,11 @@ class Reddit:
                                                       "prequelmemes",
                                                       "top",
                                                       "day")
-        await self.client.say(f"Content: {post['img']}"
-                              f"\nTitle = {post['title']}\n"
-                              f"Comments = https://redd.it/{post['id']}\n")
+        msg = await self.nsfwGuard(post, ctx.message.channel)
+        if type(msg) is discord.Embed:
+            await self.client.say(embed=msg)
+        else:
+            await self.client.say(msg)
 
 
 def setup(bot):
