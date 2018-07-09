@@ -13,7 +13,7 @@ class Reddit:
                                       client_secret=bot.rsc,
                                       user_agent="dave:testing:t3rr0r_f3rr3t")
         self.knownExtensions = [".jpg", ".jpeg", ".png",
-                                ".webp", ".gif", ".svg"]
+                                ".webp", ".webm", ".gif", ".svg"]
 
     async def genembed(self, post):
         e = discord.Embed(title=f"{str(post.title)}",
