@@ -18,19 +18,14 @@ class Dave:
         self.inittime = datetime.datetime.utcnow()
         self.setupLogging(loglevel)
         self.code = code
-        self.cogs = []
+        self.cogs = ["DaveBOT.cogs.admin"]
         if (redid and redsc):
-            # Enable reddit cog.
+            # set reddit stuff
             self.client.rid = redid
             self.client.rsc = redsc
-            self.cogs.append("DaveBOT.cogs.reddit")
         if wk:
-            # Enable weather cog.
+            # Set weather stuff
             self.client.wk = wk
-            self.cogs.append("DaveBOT.cogs.weather")
-        # enable meme & rss cogs
-        self.cogs.append("DaveBOT.cogs.memes")
-        self.cogs.append("DaveBOT.cogs.rss")
         self.loadcogs()
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
         signal.signal(signal.SIGTERM, self.sigterm)
@@ -102,12 +97,12 @@ class Dave:
                 try:
                     return await self.client.send_message(ctx.author,
                                                           f"{ctx.command} can't be used in DMs.")
-                except:
-                    pass
+                except Exception as e:
+                    self.logger.warning(f"{type(e).__name__}: {e}")
 
             if isinstance(error, commands.CommandNotFound):
                 return await self.client.send_message(ctx.message.channel,
-                                                      "Command not Found.")
+                                                      "E: Command not Found.")
 
             if isinstance(error, commands.MissingRequiredArgument):
                 params = ctx.command.clean_params.keys()
@@ -164,6 +159,9 @@ class Dave:
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
+
+        async def load():
+            pass
 
         self.client.run(str(self.code))
 
