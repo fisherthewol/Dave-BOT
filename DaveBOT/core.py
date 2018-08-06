@@ -13,35 +13,37 @@ from discord.ext import commands
 
 class Dave:
     """Main class for Bot."""
-    def __init__(self, code, loglevel, redid, redsc, wk):
+    def __init__(self, code, adminid, loglevel, redid, redsc, wk):
         self.client = commands.Bot(command_prefix="!")
         self.inittime = datetime.datetime.utcnow()
         self.setupLogging(loglevel)
         self.code = code
-        self.cogs = []
+        self.adid = adminid
+        self.cogs = ["DaveBOT.cogs.rss",
+                     "DaveBOT.cogs.memes"]
         if (redid and redsc):
-            # Enable reddit cog.
+            # set reddit stuff
             self.client.rid = redid
             self.client.rsc = redsc
             self.cogs.append("DaveBOT.cogs.reddit")
         if wk:
-            # Enable weather cog.
+            # Set weather stuff
             self.client.wk = wk
             self.cogs.append("DaveBOT.cogs.weather")
-        # enable meme & rss cogs
-        self.cogs.append("DaveBOT.cogs.memes")
-        self.cogs.append("DaveBOT.cogs.rss")
         self.loadcogs()
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
         signal.signal(signal.SIGTERM, self.sigterm)
 
     def loadcogs(self):
         """Load discord.py cogs."""
-        for cog in self.cogs:
-            try:
-                self.client.load_extension(cog)
-            except Exception as e:
-                self.logger.critical(f"Failed load {cog}, exception {e}")
+        if self.adid:
+            self.client.load_extension("DaveBOT.cogs.admin")
+        else:
+            for cog in self.cogs:
+                try:
+                    self.client.load_extension(cog)
+                except Exception as e:
+                    self.logger.critical(f"Failed load {cog}, exception {e}")
 
     def setupLogging(self, loglev):
         """Sets up logging"""
@@ -102,12 +104,12 @@ class Dave:
                 try:
                     return await self.client.send_message(ctx.author,
                                                           f"{ctx.command} can't be used in DMs.")
-                except:
-                    pass
+                except Exception as e:
+                    self.logger.warning(f"{type(e).__name__}: {e}")
 
             if isinstance(error, commands.CommandNotFound):
                 return await self.client.send_message(ctx.message.channel,
-                                                      "Command not Found.")
+                                                      "E: Command not Found.")
 
             if isinstance(error, commands.MissingRequiredArgument):
                 params = ctx.command.clean_params.keys()
@@ -164,6 +166,9 @@ class Dave:
             else:
                 self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
+
+        async def load():
+            pass
 
         self.client.run(str(self.code))
 
