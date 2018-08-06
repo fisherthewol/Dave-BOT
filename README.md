@@ -31,7 +31,7 @@ weather=KEY HERE
 - Get your ID by running ```sudo docker logs <name>``` where <name> is the container name/id; insert it as ```ID``` into https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0; this allows you to add it to any servers where you are allowed to do so.  
 - To stop, ```sudo docker stop <name>```  
 
-Once the bot is connected, you can use !load to load modules.
+Once the bot is connected, you can use `!load` to load modules.
 For running without docker, see docs/sansdocker.md  
 For development and contributing, see docs/CONTRIBUTING.md  
 
