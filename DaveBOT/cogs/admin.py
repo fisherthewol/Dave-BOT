@@ -8,7 +8,7 @@ class Admin:
         self.client = bot
 
     @commands.command(hidden=True)
-    @checks.adminonly()
+    @checks.alloweduser("193471911878066176")
     async def load(self, *, module: str):
         """Load a module."""
         try:
@@ -19,7 +19,7 @@ class Admin:
             await self.client.say("Module loaded.")
 
     @commands.command(hidden=True)
-    @checks.adminonly()
+    @checks.alloweduser("193471911878066176")
     async def unload(self, *, module: str):
         """Unload a module."""
         try:
@@ -30,7 +30,7 @@ class Admin:
             await self.client.say("Module unloaded.")
 
     @commands.command(hidden=True)
-    @checks.adminonly()
+    @checks.alloweduser("193471911878066176")
     async def reload(self, *, module: str):
         """Reload a module."""
         try:

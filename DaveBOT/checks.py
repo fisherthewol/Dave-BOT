@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 
-def adminonly():
+def alloweduser(userid: str):
     def predicate(ctx):
-        return ctx.message.author.id == "193471911878066176"
+        return ctx.message.author.id == userid
     return commands.check(predicate)
