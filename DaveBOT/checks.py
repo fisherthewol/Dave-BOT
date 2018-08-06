@@ -1,7 +1,8 @@
+import os
 from discord.ext import commands
 
 
-def alloweduser(userid: str):
+def adminonly():
     def predicate(ctx):
-        return ctx.message.author.id == userid
+        return ctx.message.author.id == os.environ.get("adminid")
     return commands.check(predicate)

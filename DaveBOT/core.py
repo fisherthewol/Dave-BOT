@@ -18,9 +18,8 @@ class Dave:
         self.inittime = datetime.datetime.utcnow()
         self.setupLogging(loglevel)
         self.code = code
-        self.adid = str(adminid)
-        self.cogs = ["DaveBOT.cogs.admin",
-                     "DaveBOT.cogs.rss",
+        self.adid = adminid
+        self.cogs = ["DaveBOT.cogs.rss",
                      "DaveBOT.cogs.memes"]
         if (redid and redsc):
             # set reddit stuff

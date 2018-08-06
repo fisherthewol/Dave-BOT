@@ -69,6 +69,7 @@ def main():
 
     if args.adminid:
         logger.info(f"adminid found: {args.adminid}")
+        os.environ["adminid"] = args.adminid
         adid = args.adminid
     else:
         adid = os.environ.get("adminid")
