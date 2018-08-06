@@ -13,6 +13,7 @@ You can use our copy of Dave-BOT. We take no responsibility for any issues arisi
 #### Docker:  
 This app will build into a docker container:
 - Get your [discord clientcode](https://discordapp.com/developers/applications/me).
+- Get your discord user id (enable developer tools).
 - Optionally, get your [reddit client_id and _secret](https://reddit.com/prefs/apps/) (we recommend using a personal user script), and your [openweathermap api key](https://home.openweathermap.org/api_keys).  
 - Download and install docker.  
 - Clone the master branch/get the source of the latest release of the repo.  
@@ -21,6 +22,7 @@ This app will build into a docker container:
 - Create a file called env.list and put your discord clientcode (and optional keys) in it:  
 ```
 clientcode=CODE HERE
+adminid=ID HERE
 client_id=ID HERE
 client_secret=SECRET HERE
 weather=KEY HERE
@@ -29,6 +31,7 @@ weather=KEY HERE
 - Get your ID by running ```sudo docker logs <name>``` where <name> is the container name/id; insert it as ```ID``` into https://discordapp.com/oauth2/authorize?client_id=ID&scope=bot&permissions=0; this allows you to add it to any servers where you are allowed to do so.  
 - To stop, ```sudo docker stop <name>```  
 
+Once the bot is connected, you can use !load to load modules.
 For running without docker, see docs/sansdocker.md  
 For development and contributing, see docs/CONTRIBUTING.md  
 
