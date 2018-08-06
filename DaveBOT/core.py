@@ -13,30 +13,38 @@ from discord.ext import commands
 
 class Dave:
     """Main class for Bot."""
-    def __init__(self, code, loglevel, redid, redsc, wk):
+    def __init__(self, code, adminid, loglevel, redid, redsc, wk):
         self.client = commands.Bot(command_prefix="!")
         self.inittime = datetime.datetime.utcnow()
         self.setupLogging(loglevel)
         self.code = code
-        self.cogs = ["DaveBOT.cogs.admin"]
+        self.adid = str(adminid)
+        self.cogs = ["DaveBOT.cogs.admin",
+                     "DaveBOT.cogs.rss",
+                     "DaveBOT.cogs.memes"]
         if (redid and redsc):
             # set reddit stuff
             self.client.rid = redid
             self.client.rsc = redsc
+            self.cogs.append("DaveBOT.cogs.reddit")
         if wk:
             # Set weather stuff
             self.client.wk = wk
+            self.cogs.append("DaveBOT.cogs.weather")
         self.loadcogs()
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
         signal.signal(signal.SIGTERM, self.sigterm)
 
     def loadcogs(self):
         """Load discord.py cogs."""
-        for cog in self.cogs:
-            try:
-                self.client.load_extension(cog)
-            except Exception as e:
-                self.logger.critical(f"Failed load {cog}, exception {e}")
+        if self.adid:
+            self.client.load_extension("DaveBOT.cogs.admin")
+        else:
+            for cog in self.cogs:
+                try:
+                    self.client.load_extension(cog)
+                except Exception as e:
+                    self.logger.critical(f"Failed load {cog}, exception {e}")
 
     def setupLogging(self, loglev):
         """Sets up logging"""

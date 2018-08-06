@@ -32,6 +32,10 @@ def main():
                         "--clientcode",
                         help="client code for discord.py",
                         type=str)
+    parser.add_argument("-a",
+                        "--adminid",
+                        help="discord admin id",
+                        type=str)
     parser.add_argument("-l",
                         "--loglevel",
                         help="change loglevel; valid levels are: debug,"
@@ -62,6 +66,16 @@ def main():
             logger.critical("Empty clientcode: Not passed by env or cli.")
             parser.print_help()
             raise RuntimeError("Empty clientcode: Not passed by env or cli.")
+
+    if args.adminid:
+        logger.info(f"adminid found: {args.adminid}")
+        adid = args.adminid
+    else:
+        adid = os.environ.get("adminid")
+        if adid:
+            logger.info("adminid")
+        else:
+            logger.warning("Adminid not found; loading all cogs by default.")
 
     if args.loglevel:
         logger.info("Loglevel found, working out what it is...")
@@ -104,9 +118,10 @@ def main():
         else:
             rsc = os.environ.get("reddit_sc")
             if rsc:
-                logger.info(f"reddit_sc found {args.reddit_sc} , enabling reddit.")
+                logger.info(f"reddit_sc found: {args.reddit_sc} , enabling reddit.")
             else:
                 logger.warning("reddit_sc not found, not enabling reddit.")
+                rid = False
                 rsc = False
 
     if args.weather:
@@ -120,7 +135,7 @@ def main():
             logger.warning("Weather not found, not enabling.")
             wk = False
 
-    bot = core.Dave(cc, ll, rid, rsc, wk)
+    bot = core.Dave(cc, adid, ll, rid, rsc, wk)
     bot.discout()
 
 
