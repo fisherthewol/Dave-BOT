@@ -8,10 +8,9 @@ from DaveBOT import core
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-co",
-                        "--configorigin",
-                        help="specify where to find config; "
-                             "defaults to envrionment",
-                        choices=["object", "environ"],
+                        "--configobject",
+                        help="specify where to find config file; "
+                             "uses environ if not specified",
                         type=str)
     parser.add_argument("-tk",
                         "--token",
@@ -26,8 +25,11 @@ def main():
                         action="store_true")
     args = parser.parse_args()
 
-    if args.configorigin == "object":
-        pass
+    if args.configobject:
+        config = configparser.ConfigParser()
+        config.read(args.configobject)
+        print(config["DaveBOT"])
+        return
     else:
         if args.token:
             os.environ["token"] = args.token
