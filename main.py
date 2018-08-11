@@ -28,8 +28,7 @@ def main():
     if args.configobject:
         config = configparser.ConfigParser()
         config.read(args.configobject)
-        print(config["DaveBOT"])
-        return
+        os.environ.update(config["DaveBOT"])
     else:
         if args.token:
             os.environ["token"] = args.token
@@ -37,10 +36,13 @@ def main():
             raise RuntimeError("No discord token found.")
 
         if args.adminid:
-            os.environ["adminid"] = args.admin
+            os.environ["adminid"] = args.adminid
 
-    bot = core.Dave(cc, adid, ll, rid, rsc, wk)
-    bot.discout()
+        if args.v4:
+            os.environ["ipv4"] = "1"
+
+    #bot = core.Dave(cc, adid, ll, rid, rsc, wk)
+    #bot.discout()
 
 
 if __name__ == "__main__":

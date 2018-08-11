@@ -106,3 +106,5 @@ mypraw\.ini
 env\.list
 
 \.vscode/
+
+*.ini
