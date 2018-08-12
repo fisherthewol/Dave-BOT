@@ -162,8 +162,8 @@ class Dave:
                 # self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
 
-        async def load():
-            pass
+        # async def load():
+        #     pass
 
         self.client.run(self.token)
 

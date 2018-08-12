@@ -1,7 +1,8 @@
 import datetime
+import os
 
-import praw
 import discord
+import praw
 from discord.ext import commands
 
 
@@ -9,8 +10,8 @@ class Reddit:
     """Reddit functions and commands."""
     def __init__(self, bot):
         self.client = bot
-        self.prawclient = praw.Reddit(client_id=bot.rid,
-                                      client_secret=bot.rsc,
+        self.prawclient = praw.Reddit(client_id=os.environ.get("reddit_id"),
+                                      client_secret=os.environ.get("reddit_sc"),
                                       user_agent="dave:testing:t3rr0r_f3rr3t")
         self.knownExtensions = [".jpg", ".jpeg", ".png",
                                 ".webp", ".webm", ".gif", ".svg"]
