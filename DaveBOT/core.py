@@ -1,8 +1,9 @@
 import datetime
-import logging
-import logging.handlers
+# import logging
+# import logging.handlers
+import os
 import platform
-import queue
+# import queue
 import signal
 import sys
 import traceback
@@ -13,60 +14,50 @@ from discord.ext import commands
 
 class Dave:
     """Main class for Bot."""
-    def __init__(self, code, adminid, loglevel, redid, redsc, wk):
+    def __init__(self):
         self.client = commands.Bot(command_prefix="!")
         self.inittime = datetime.datetime.utcnow()
-        self.setupLogging(loglevel)
-        self.code = code
-        self.adid = adminid
+        self.token = os.environ.get("token")
         self.cogs = ["DaveBOT.cogs.rss",
                      "DaveBOT.cogs.memes"]
-        if (redid and redsc):
-            # set reddit stuff
-            self.client.rid = redid
-            self.client.rsc = redsc
-            self.cogs.append("DaveBOT.cogs.reddit")
-        if wk:
-            # Set weather stuff
-            self.client.wk = wk
-            self.cogs.append("DaveBOT.cogs.weather")
         self.loadcogs()
         self.host_is_Linux = True if ("Linux" in platform.system()) else False
         signal.signal(signal.SIGTERM, self.sigterm)
 
     def loadcogs(self):
         """Load discord.py cogs."""
-        if self.adid:
+        if os.environ.get("adminid"):
             self.client.load_extension("DaveBOT.cogs.admin")
         else:
             for cog in self.cogs:
                 try:
                     self.client.load_extension(cog)
                 except Exception as e:
-                    self.logger.critical(f"Failed load {cog}, exception {e}")
+                    # self.logger.critical(f"Failed load {cog}, exception {e}")
+                    print(f"Failed load {cog}, exception {e}")
 
-    def setupLogging(self, loglev):
-        """Sets up logging"""
-        # Setup queue and queue handler:
-        que = queue.Queue(-1)
-        queue_handler = logging.handlers.QueueHandler(que)
-        queue_handler.setLevel(loglev)
-        self.logger = logging.getLogger(__name__)
-        self.logger.addHandler(queue_handler)
-        # Setup listener:
-        streamhandle = logging.StreamHandler()
-        streamhandle.setFormatter(logging.Formatter(
-            "%(asctime)s %(levelname)s: %(message)s"
-            " [in %(pathname)s:%(lineno)d]"))
-        streamhandle.setLevel(loglev)
-        listener = logging.handlers.QueueListener(que, streamhandle)
-        listener.start()
-        self.logger.warning("Logging is setup in core.py")
+#    def setupLogging(self, loglev):
+#        """Sets up logging"""
+#        # Setup queue and queue handler:
+#        que = queue.Queue(-1)
+#        queue_handler = logging.handlers.QueueHandler(que)
+#        queue_handler.setLevel(loglev)
+#        self.logger = logging.getLogger(__name__)
+#        self.logger.addHandler(queue_handler)
+#        # Setup listener:
+#        streamhandle = logging.StreamHandler()
+#        streamhandle.setFormatter(logging.Formatter(
+#            "%(asctime)s %(levelname)s: %(message)s"
+#            " [in %(pathname)s:%(lineno)d]"))
+#        streamhandle.setLevel(loglev)
+#        listener = logging.handlers.QueueListener(que, streamhandle)
+#        listener.start()
+#        self.logger.warning("Logging is setup in core.py")
 
     def sigterm(self, signal, frame):
         """Response to sigterm."""
         self.client.logout()
-        self.logger.critical("SIGTERM recieved, ending.")
+        # self.logger.critical("SIGTERM recieved, ending.")
         sys.exit("SIGTERM recieved, ending.")
 
     async def uptimeFunc(self):
@@ -78,7 +69,7 @@ class Dave:
                 uptime_string = str(timedelta(seconds=uptime_seconds))
             return uptime_string
         else:
-            self.logger.warning("Host is not linux, uptimeFunc not supported.")
+            # self.logger.warning("Host is not linux, uptimeFunc not supported.")
             return "incomp host."
 
     def discout(self):
@@ -86,10 +77,14 @@ class Dave:
         @self.client.event
         async def on_ready():
             """Outputs on successful launch."""
-            self.logger.warning("Login Successful")
-            self.logger.warning(f"Name : {self.client.user.name}")
-            self.logger.warning(f"ID : {self.client.user.id}")
-            self.logger.info("Successful self.client launch.")
+            # self.logger.warning("Login Successful")
+            # self.logger.warning(f"Name : {self.client.user.name}")
+            # self.logger.warning(f"ID : {self.client.user.id}")
+            # self.logger.info("Successful self.client launch.")
+            print("Login Successful")
+            print(f"Name : {self.client.user.name}")
+            print(f"ID : {self.client.user.id}")
+            print("Successful self.client launch.")
             await self.client.change_presence(game=discord.Game(name="for !help", type=3))
 
         @self.client.event
@@ -105,7 +100,8 @@ class Dave:
                     return await self.client.send_message(ctx.author,
                                                           f"{ctx.command} can't be used in DMs.")
                 except Exception as e:
-                    self.logger.warning(f"{type(e).__name__}: {e}")
+                    # self.logger.warning(f"{type(e).__name__}: {e}")
+                    print(f"{type(e).__name__}: {e}")
 
             if isinstance(error, commands.CommandNotFound):
                 return await self.client.send_message(ctx.message.channel,
@@ -135,7 +131,6 @@ class Dave:
                              aliases=["about"])
         async def dave(ctx):
             """Provides data about Dave and the system it's running on."""
-            self.logger.info("!dave called.")
             await self.client.send_typing(ctx.message.channel)
             if self.host_is_Linux:
                 e = discord.Embed(title="Dave-BOT",
@@ -164,13 +159,13 @@ class Dave:
                 e.add_field(name="Distro", value=lindists, inline=True)
                 await self.client.say(embed=e)
             else:
-                self.logger.warning("Host not linux, !dave is not supported.")
+                # self.logger.warning("Host not linux, !dave is not supported.")
                 await self.client.say("Host !=linux; feature coming soon.\n")
 
         async def load():
             pass
 
-        self.client.run(str(self.code))
+        self.client.run(self.token)
 
 
 if __name__ == "__main__":

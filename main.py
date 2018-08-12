@@ -41,8 +41,8 @@ def main():
         if args.v4:
             os.environ["ipv4"] = "1"
 
-    #bot = core.Dave(cc, adid, ll, rid, rsc, wk)
-    #bot.discout()
+    bot = core.Dave()
+    bot.discout()
 
 
 if __name__ == "__main__":
