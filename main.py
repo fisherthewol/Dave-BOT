@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import os
+import logging
 
 from DaveBOT import core
 
@@ -40,6 +41,17 @@ def main():
 
         if args.v4:
             os.environ["ipv4"] = "1"
+
+    if os.environ.get("LOGLEVEL"):
+        loglevels = {"debug": logging.DEBUG,
+                     "info": logging.INFO,
+                     "warning": logging.WARNING,
+                     "error": logging.ERROR,
+                     "critical": logging.CRITICAL}
+        x = loglevels.get(os.environ.get("LOGLEVEL").lower())
+        logging.basicConfig(level=x)
+    else:
+        logging.basicConfig(level=logging.WARNING)
 
     bot = core.Dave()
     bot.discout()
